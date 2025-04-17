@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: rgb(244, 244, 247);
+  --foreground: rgb(14, 14, 16);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: rgb(14, 14, 16);
+    --foreground: rgb(244, 244, 247);
+  }
+}
+
+@layer components {
+  .nav-web {
+    @apply 
+    fixed top-0 left-0 w-full flex justify-center items-center 
+    gap-8 z-[100] pb-1 pt-1
+    font-bold text-lg 
+    text-gray-500 dark:text-gray-400
+    shadow-md;
+  };
+
+  .nav-web-item {
+    @apply 
+    cursor-pointer 
+    hover:text-black dark:text-gray-300 dark:hover:text-white hover:underline
+    transition-all duration-300 
+  };
+
+  .nav-toggle-theme {
+    @apply 
+    flex gap-2 absolute right-5 p-1 rounded-md
+    cursor-pointer 
+    text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700
+    transition-all duration-300 
+  };
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
