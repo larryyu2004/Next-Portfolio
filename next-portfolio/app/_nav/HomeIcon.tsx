@@ -82,7 +82,7 @@ const CpuIcon = forwardRef<CpuIconHandle, CpuIconProps>(
 
     return (
       <div
-        className={`cursor-pointer select-none p-2 hover:bg-gradient-to-br hover:text-black dark:hover:text-white from-blue-200 to-violet-400
+        className={`cursor-pointer select-none hover:bg-gradient-to-br hover:text-black dark:hover:text-white from-blue-200 to-violet-400
           dark:from-amber-400 dark:to-red-800 rounded-md transition-colors duration-300 flex items-center justify-center ${className}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
