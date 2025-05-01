@@ -1,0 +1,762 @@
+# Next.js Tutorial
+
+---
+
+## Create next.js Project
+### Make sure you already download Node.js
+1. In terminal, enter `node -v`, it will return v22.12.0 (or something similar).
+2. In terminal, enter `npx create-next-app@latest`.
+3. Choose tools you needed.
+
+---
+
+## Run Next.js
+1. In terminal, enter `cd <your project name>`.
+2. In terminal, enter `npm run dev`.
+
+---
+
+## Project Structure
+### app
+1. Container for routing system (We don't need to create route map)
+2. Example: next-my-portfolio/app/user/new with a page.tsx, we can access it by URL http://localhost:3000/users/new
+### public
+1. Where we can put images
+
+## Navigation
+### Use anchor
+1. When loading /users, web will load everything.
+2. Reload existing file.
+3. Low Performance.
+```JS
+<a href='/users'>Users</a>
+```
+### Use Link
+1. When loading /users, web will load things that is not existing.
+2. Will not Reload existing file.
+3. High Performance.
+```JS
+<Link href='/users'>Users</Link>
+```
+
+---
+
+## Client vs Server Components
+### Client-side Rendering
+1. Large bundles
+2. Resource intensive
+3. No SEO (Search Engine Optimization)
+4. Less secure
+### Server-side Rendering
+1. Smaller bundles
+2. Resource efficient
+3. SEO (Search Engine Optimization)
+4. More secure
+5. Lose interactivity
+### Server-side Rendering cannot 
+1. Listen to browser events
+2. Access browser APIs (local storage)
+3. Maintain state
+4. Use effect
+
+### Example:
+1. If this component depends on other component, those components will automatically become to client components.
+2. They will be included in JavaScript bundle
+3. In this example, ProductCard is a server component
+4. When user trigger AddToCart, the client component will render on the client side
+```JS
+import React from 'react'
+import AddToCart from './AddToCart';
+
+const ProductCard = () => {
+  return (
+    <div>
+        <AddToCart />
+    </div>
+  )
+}
+
+export default ProductCard
+```
+```JS
+"use client";
+import React from "react";
+
+const AddToCart = () => {
+  return (
+    <div>
+      <button onClick={() => console.log("Click")}>Add to Cart</button>
+    </div>
+  );
+};
+
+export default AddToCart;
+```
+
+---
+
+## Data Fetching
+1. When you mark the function as **async**, it will always return a promise
+2. The function will wait until all the **await** finish their work
+3. You can only fetch the data on the server component
+	•	It runs only on the server during the initial page load.
+	•	Data is fetched on the server.
+	•	The HTML is generated with the data.
+	•	Then sent to the browser — ready to go (no loading spinner, no extra fetch in the browser).
+```JS
+// Data fetching on the server component
+import React from "react";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+const UsersPage = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/users");
+  const users: User[] = await res.json();
+  return (
+    <>
+      <h1>Users</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default UsersPage;
+```
+
+---
+
+## Caching
+1. next: `{ revalidate: 10 }` will re-fetch it every 10 seconds in the background to keep it fresh
+```JS
+import React from "react";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+const UsersPage = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/users", { 
+    next: { revalidate: 10 }
+    });
+  const users: User[] = await res.json();
+  return (
+    <>
+      <h1>Users</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default UsersPage;
+```
+2. `{ cache: 'no-store' }` will not cache this fetch at all. Always go to the source — every single time this page is requested
+```JS
+import React from "react";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+const UsersPage = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/users", 
+    { cache: 'no-store' },
+  );
+  const users: User[] = await res.json();
+  return (
+    <>
+      <h1>Users</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default UsersPage;
+```
+
+---
+
+# Static and Dynamic Rendering 
+1. In terminal, enter `npm run build`, it will change to static mode (○  (Static)  prerendered as static content)
+2. In terminal, enter `npm start`, it will statically render the web page
+3. When you update the web, the time will always stop at the first time it loaded.
+```JS
+import React from "react";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+const UsersPage = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/users");
+  const users: User[] = await res.json();
+  return (
+    <>
+      <h1>Users</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default UsersPage;
+```
+1. If you add `{ cache: 'no-store' }`, and enter `npm run build` in the terminal
+2. You will see `├ ƒ /users` and `ƒ  (Dynamic)  server-rendered on demand`
+3. You will find only users page is dynamic
+
+---
+
+# NavBar -> Client Component
+1. If NavBar uses interactivity or needs client-side hooks → 
+2. Make it a Client Component. Otherwise, keep it a Server Component for better performance.
+
+---
+
+# Highlight the Active Nav Component
+1. usePathname() to get the path
+2. link.href === currentPath (When the URL of the dashboard element matches the active URL)
+3. The element will be highlighted
+```JS
+const NavLinks = () => {
+  const currentPath = usePathname();
+
+  const links = [
+    { label: "Dashboard", href: "/" },
+    { label: "Issues", href: "/issues/list" },
+  ];
+
+  return (
+    <ul className="flex space-x-6">
+      {links.map((link) => (
+        <li key={link.href}>
+          <Link
+            className={`${link.href == currentPath ? 'text-zinc-900' : 'text-zinc-500'} hover: text-zinc-800 transition-colors`}
+            href={link.href}
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
+```
+
+---
+
+# classNames
+1. In terminal, enter `npm i classnames@2.3.2`, it will download the classnames
+2. Import classnames: import classnames from 'classnames';
+```JS
+const NavLinks = () => {
+  const currentPath = usePathname();
+
+  const links = [
+    { label: "Dashboard", href: "/" },
+    { label: "Issues", href: "/issues/list" },
+  ];
+
+  return (
+    <ul className="flex space-x-6">
+      {links.map((link) => (
+        <li key={link.href}>
+          <Link
+            className={classnames({
+              "nav-link": true,
+              "!text-zinc-900": link.href === currentPath,
+            })}
+            href={link.href}
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
+```
+
+---
+
+# Prisma
+1. In terminal, enter `npm i prisma@5.3.1`, it will download the prisma
+2. In terminal, enter `npx prisma init`, it will initialize the prisma
+3. It will create a prisma folder, and with a schema.prisma file
+```Prisma
+datasource db {
+  provider = "mysql" // change the provider from postgresql to mysql
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+```
+
+4. Config Prisma
+```env
+DATABASE_URL = "mysql://root:MyPassword@localhost:3306/issue-tracker"
+```
+
+5. Create a table
+```Prisma
+model Issue {
+  id               Int      @id @default(autoincrement())
+  title            String   @db.VarChar(255)
+  description      String   @db.Text
+  status           Status   @default(OPEN)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  assignedToUserId String?  @db.VarChar(255)
+  assignedToUser   User?    @relation(fields: [assignedToUserId], references: [id])
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  assignedIssues Issue[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+```
+
+6. In terminal, enter `npx prisma format`, it will format the prisma file
+7. In terminal, enter `npx prisma migrate dev`, it will sync prisma with database, and it will create the migration folder
+
+# Create API
+1. Create app/api/issues/route.ts
+2. In terminal, enter `npm i zod@3.22.2`, it will download the zod
+3. Import zod: `import { z }` from 'zod'
+4. We will find Issue table in the prisma -> title and description have no default value.
+
+```ts
+import { NextRequest } from "next/server";
+import { z } from 'zod';
+
+const createIssueSchema = z.object ({
+    title: z.string().min(1).max(255),
+    description: z.string.min(1)
+});
+
+export async function POST(request: NextRequest) {
+    const body = await request.json();
+    const validation = createIssueSchema.safeParse(body);
+
+    if (!validation.success)
+        // The server cannot or will not process the request because something is wrong with the client’s request.
+        return NextResponse.json(validation.error.format(), { status: 400 }); 
+}
+```
+
+5. Search next.js prisma client and paste code into prisma/client.ts
+```ts
+import { PrismaClient } from '@prisma/client'
+
+const prismaClientSingleton = () => {
+  return new PrismaClient()
+}
+
+type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClientSingleton | undefined
+}
+
+const prisma = globalForPrisma.prisma ?? prismaClientSingleton()
+
+export default prisma
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+```
+
+6. Back to app/api/issues/route.ts
+```ts
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import prisma from "@/prisma/client"
+
+const createIssueSchema = z.object ({
+    title: z.string().min(1).max(255),
+    description: z.string.min(1)
+});
+
+export async function POST(request: NextRequest) {
+    const body = await request.json();
+    const validation = createIssueSchema.safeParse(body);
+
+    if (!validation.success)
+        return NextResponse.json(validation.error.format(), { status: 400 });
+
+    const newIssue = await prisma.issue.create({
+        data: { title: body.title, description: body.description }
+    });
+
+    // The server has successfully received and processed the request, and as a result, a new resource has been created.
+    return NextResponse.json(newIssue, { status: 201 }); 
+}
+```
+
+7. Open Postman to test API
+8. Set Post Request
+9. Enter http://localhost:3000/api.issues
+10. In the Body tab
+11. Select raw format and select JSON data type
+12. Write this, click send, and you will find a bad request (400)
+```JSON
+{
+    "title": ""
+}
+```
+13. Write This, click send, and you will find a request was created (201)
+```JSON
+{
+    "title": "First issue",
+    "description": "Description of the first issue"
+}
+```
+
+# Radix UI
+1. In terminal, enter `npm install @radix-ui/themes` to install radix UI.
+2. Import `import @radix-ui/themes/styles.css;` in the root layout (layout.tsx).
+3. Import `import { Theme } from '@radix-ui/themes';` in the root layout (layout.tsx)
+4. Add `<Theme>` component:
+```JS
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={inter.variable}>
+            <Theme>
+              <NavBar />
+              <main>
+                <Container>{children}</Container>
+              </main>
+              <ThemePanel /> 
+            </Theme>
+      </body>
+    </html>
+  );
+}
+```
+5. Text theme component: `import { Button } from '@radix-ui/themes'` and try `<Button>`New Issue`</Button>`
+6. Add `<ThemePanel />` to adjust the theme
+
+---
+
+# Markdown Editor
+1. Search Google react-simplemde-editor
+2. In terminal, Enter `npm install --save react-simplemde-editor easymde`
+3. Import
+```JS
+import React from "react";
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
+
+<SimpleMDE />;
+```
+
+# React Hook Form
+1. In terminal, Enter `npm i react-hook-form@7.46.1`
+2. Import
+```JS
+import React from "react";
+import { Button, TextField } from '@radix-ui/themes';
+import SimpleMDE from "react-simplemde-editor";
+import { useForm, Controller } from 'react-hook-form'
+import "easymde/dist/easymde.min.css";
+
+interface IssueForm {
+    title: string;
+    description: string;
+}
+
+const NewIssuepage = () => {
+    const {register, control, handleSubmit} = useForm<IssueForm>();
+
+    return (
+        <form 
+            onSubmit={handleSubmit((data) => console.log(data))}>
+
+            <TextField.Root>
+                <TextField.Input placeholder='Title' {...register('title')}>
+            </ TextField.Root>
+            <Controller
+                name='description'
+                control={control}
+                render={({ field }) => <SimpleMDE placeholder='Description' {...field}/>}
+            />
+            <Button>Submit New Issue</Button>
+        </form>
+    )
+}
+
+```
+
+# Axios
+1. In terminal, Enter `npm i axios@1.5.0`
+2. Import: `import axios from 'axios'`
+```JS
+import React from "react";
+import { Button, TextField } from '@radix-ui/themes';
+import SimpleMDE from "react-simplemde-editor";
+import { useForm, Controller } from 'react-hook-form'
+import axios from 'axios';
+import "easymde/dist/easymde.min.css";
+import { useRouter } from 'next/navigation';
+
+interface IssueForm {
+    title: string;
+    description: string;
+}
+
+const NewIssuepage = () => {
+    const router = useRouter()
+    const {register, control, handleSubmit} = useForm<IssueForm>();
+
+    return (
+        <form 
+            onSubmit={handleSubmit(async (data) => {
+                await axios.post('/api/issues', data);
+                router.push('/issue');
+            })}>
+
+            <TextField.Root>
+                <TextField.Input placeholder='Title' {...register('title')} />
+            </ TextField.Root>
+            <Controller
+                name='description'
+                control={control}
+                render={({ field }) => <SimpleMDE placeholder='Description' {...field}/>}
+            />
+            <Button>Submit New Issue</Button>
+        </form>
+    )
+}
+```
+
+---
+
+# Error handler
+1. Use try and catch
+```JS
+const NewIssuepage = () => {
+    <div>
+        <form 
+        onSubmit={handleSubmit(async (data) => {
+                    try {
+                        await axios.post('/api/issues', data);
+                        router.push('/issue');
+                    } catch (error) {
+                        console.log(error)
+                    }
+                })}
+        >
+    <div>
+    ...
+}
+```
+2. setError, and Go to Radix UI, search callout
+```JS
+const [error, setError] = useState('');
+<div>
+    {error & (
+        <Callout.Root color='red'>
+            <Callout.Text>
+                {error}
+            </Callout.Text>
+        </Callout.Root>
+    )}
+    <form 
+        onSubmit={handleSubmit(async (data) => {
+            try {
+                await axios.post('/api/issues', data);
+                router.push('/issue');
+            } catch (error) {
+                setError('An unexpected error occured.')
+            }
+        })}
+    >
+</div>
+```
+
+3. Add error messages when creating schema
+```ts
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import prisma from "@/prisma/client"
+
+// min(1, [error message])
+const createIssueSchema = z.object ({
+    title: z.string().min(1, 'Title is required').max(255),
+    description: z.string.min(1, 'Description is required')
+});
+
+export async function POST(request: NextRequest) {
+    const body = await request.json();
+    const validation = createIssueSchema.safeParse(body);
+
+    if (!validation.success)
+        return NextResponse.json(validation.error.format(), { status: 400 });
+
+    const newIssue = await prisma.issue.create({
+        data: { title: body.title, description: body.description }
+    });
+
+    // The server has successfully received and processed the request, and as a result, a new resource has been created.
+    return NextResponse.json(newIssue, { status: 201 }); 
+}
+```
+
+---
+
+# Validation schema
+1. app/validationSchemas.ts
+```JS
+import { z } from "zod";
+
+export const issueSchema = z.object({
+  title: z.string().min(1, "Title is required.").max(255),
+  description: z
+    .string()
+    .min(1, "Description is required.")
+    .max(65535),
+});
+
+export const patchIssueSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required.")
+    .max(255)
+    .optional(),
+  description: z
+    .string()
+    .min(1, "Description is required.")
+    .max(65535)
+    .optional(),
+  assignedToUserId: z
+    .string()
+    .min(1, "AssignedToUserId is required.")
+    .max(255)
+    .optional()
+    .nullable(),
+});
+```
+
+# How to resolve schema issues
+1. In terminal, Enter `npm i @hookform/resolvers@3.3.1`
+2. Import: `import { createIssueSchema } from @/app/validationSchemas`
+```JS
+import { z } from 'zod';
+import { issueSchema } from '@/app/validationSchemas';
+
+type IssueFormData = z.infer<typeof issueSchema>;
+
+const IssueForm = ({ issue }: { issue?: Issue }) => {
+  const router = useRouter();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueFormData>({
+    resolver: zodResolver(issueSchema),
+  });
+  const [error, setError] = useState('');
+```
+
+# Spinner
+1. Search Tailwind CSS spinner
+```JS
+<div
+  class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+  role="status">
+  <span
+    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+    >Loading...</span
+  >
+</div>
+```
+
+2. Prevent double submitting (disabled={`state`})
+```JS
+<Button disabled={isSubmitting}>
+    {issue ? 'Update Issue' : 'Submit New Issue'}{' '}
+    {isSubmitting && <Spinner />}
+</Button>
+```
+
+# Dynamic Routes
+1. Folder name: [folder_name] and with a page.tsx
+
+```JS
+const page = ({ params }) => {
+    return (<div>Project Id: {params.projectId} <div>);
+};
+
+export default page;
+```

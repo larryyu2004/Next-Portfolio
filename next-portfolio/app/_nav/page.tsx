@@ -1,9 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import NavHome from "./nav-web/NavHome";
 import NavProject from "./nav-web/NavProject";
 import NavBlog from "./nav-web/NavBlog";
-import { CpuIcon } from "./HomeIcon";
+import { CpuIcon } from "../HomeIcon";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const NavWeb = () => {
   const navComponents = [
@@ -20,34 +22,67 @@ const NavWeb = () => {
   >(null);
 
   const [dropDownState, setDropDownState] = useState<
-    "loading" | "changing" | "unloading" | null
+    | "loading"
+    | "home_to_projects"
+    | "home_to_blog"
+    | "projects_to_home"
+    | "projects_to_blog"
+    | "blog_to_home"
+    | "blog_to_projects"
+    | "unloading"
+    | null
   >(null);
 
-  console.log("activeNav", activeNav);
-  console.log("preActiveNav", preActiveNav);
-  console.log("dropDownState", dropDownState);
+  useEffect(() => {
+    if (preActiveNav === null && activeNav !== null && dropDownState === null) {
+      setDropDownState("loading");
+      setTimeout(() => {}, 300);
+    }
+  }, [preActiveNav, activeNav, dropDownState]);
 
   useEffect(() => {
-    if (preActiveNav === null && activeNav !== null) {
-      console.log("start dropdown-------------------------------------");
-      setDropDownState("loading");
-      setTimeout(() => {
-        setDropDownState(null);
-      }, 300);
+    if (preActiveNav === "home" && activeNav === "projects") {
+      setDropDownState("home_to_projects");
+      setTimeout(() => {}, 600);
     }
   }, [preActiveNav, activeNav]);
 
   useEffect(() => {
-    if (preActiveNav !== null && preActiveNav !== activeNav) {
-      setDropDownState("changing");
-      setTimeout(() => {
-        setDropDownState(null);
-      }, 300);
+    if (preActiveNav === "home" && activeNav === "blog") {
+      setDropDownState("home_to_blog");
+      setTimeout(() => {}, 300);
+    }
+  }, [preActiveNav, activeNav]);
+
+  useEffect(() => {
+    if (preActiveNav === "projects" && activeNav === "home") {
+      setDropDownState("projects_to_home");
+      setTimeout(() => {}, 300);
+    }
+  }, [preActiveNav, activeNav]);
+
+  useEffect(() => {
+    if (preActiveNav === "projects" && activeNav === "blog") {
+      setDropDownState("projects_to_blog");
+      setTimeout(() => {}, 300);
+    }
+  }, [preActiveNav, activeNav]);
+
+  useEffect(() => {
+    if (preActiveNav === "blog" && activeNav === "home") {
+      setDropDownState("blog_to_home");
+      setTimeout(() => {}, 300);
+    }
+  }, [preActiveNav, activeNav]);
+
+  useEffect(() => {
+    if (preActiveNav === "blog" && activeNav === "projects") {
+      setDropDownState("blog_to_projects");
+      setTimeout(() => {}, 600);
     }
   }, [preActiveNav, activeNav]);
 
   const handleMouseLeave = () => {
-    console.log("finish dropdown-------------------------------------");
     setDropDownState("unloading");
     setTimeout(() => {
       setActiveNav(null);
@@ -56,29 +91,46 @@ const NavWeb = () => {
     }, 300);
   };
 
+  const currentPath = usePathname();
+  console.log(currentPath)
+
   const chooseAnimation = () => {
-    if (dropDownState == "unloading") {
-      return "animate-[shrinkHeight_0.3s_ease-in-out_forwards]";
-    } else if (dropDownState == "changing") {
-      return "animate-[extendHalfHeight_0.6s_ease-in-out_forwards]";
-    } else if (dropDownState == "loading" || dropDownState == "pending") {
-      return "animate-[extendHeight_0.3s_ease-in-out_forwards]";
+    switch (dropDownState) {
+      case "loading":
+        return "animate-[extendHeight_0.3s_ease-in-out_forwards]";
+      case "unloading":
+        return "animate-[shrinkHeight_0.3s_ease-in-out_forwards]";
+      case "projects_to_home":
+        return "animate-[SixtoFour_0.3s_ease-in-out_forwards]";
+      case "home_to_projects":
+        return "animate-[FourtoSix_0.6s_ease-in-out_forwards]";
+      case "home_to_blog":
+        return "animate-[FourtoFour_0.3s_ease-in-out_forwards]";
+      case "projects_to_blog":
+        return "animate-[SixtoFour_0.3s_ease-in-out_forwards]";
+      case "blog_to_home":
+        return "animate-[FourtoFour_0.3s_ease-in-out_forwards]";
+      case "blog_to_projects":
+        return "animate-[FourtoSix_0.6s_ease-in-out_forwards]";
+      default:
+        return "";
     }
   };
 
   return (
     <>
-      <nav className={`nav-web`} onMouseLeave={handleMouseLeave}>
-        <CpuIcon />
+      <nav className="nav-web" onMouseLeave={handleMouseLeave}>
+        <Link href="/">
+          <CpuIcon />
+        </Link>
         {navComponents.map(({ Component, key }) => (
           <Component
             key={key}
             activeNav={activeNav}
             setActiveNav={setActiveNav}
-            preActiveNav={preActiveNav}
             setPreActiveNav={setPreActiveNav}
-            dropDownState={dropDownState}
             chooseAnimation={chooseAnimation}
+            currentPath={currentPath}
           />
         ))}
       </nav>

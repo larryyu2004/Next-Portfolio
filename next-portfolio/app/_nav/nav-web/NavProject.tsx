@@ -5,24 +5,22 @@ interface NavProjectsProps {
   activeNav: "home" | "projects" | "blog" | null;
   setActiveNav: (activeNav: "home" | "projects" | "blog" | null) => void;
 
-  preActiveNav: "home" | "projects" | "blog" | null;
   setPreActiveNav: (activeContent: "home" | "projects" | "blog" | null) => void;
 
-  dropDownState: "loading" | "changing" | "unloading" | null;
-
   chooseAnimation: () => string | undefined;
+
+  currentPath: string;
 }
 
 const NavProjects = ({
   activeNav,
   setActiveNav,
 
-  preActiveNav,
   setPreActiveNav,
 
-  dropDownState,
-
   chooseAnimation,
+
+  currentPath,
 }: NavProjectsProps) => {
   const projects = [
     {
@@ -75,14 +73,15 @@ const NavProjects = ({
     }
   };
 
+  const pathClass = currentPath === "/projects" ? "nav-dropDown-item-active" : "";
+
   return (
     <>
       <div className="nav-web-item" onMouseEnter={handleMouseEnter}>
-        Projects
+        <Link href={"/projects"} className={`${pathClass}`} >Projects</Link>
         {activeNav === "projects" && (
           <>
             <div
-              key={dropDownState === "changing" || dropDownState === "loading" || dropDownState === "unloading" ? dropDownState : undefined} // 👈 forces re-mount when dropDownState changes
               className={`nav-dropDown-page 
                 ${chooseAnimation()}`}
             >
@@ -90,7 +89,7 @@ const NavProjects = ({
                 <Link
                   key={index}
                   href={project.href}
-                  className={`nav-dropDown-item ${project.padding} animate-fade-in`}
+                  className={`nav-dropDown-item ${project.padding} animate-fade-in `}
                   style={{ animationDelay: `${project.delay}s` }}
                 >
                   {project.label}

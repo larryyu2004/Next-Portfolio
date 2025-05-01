@@ -3,15 +3,13 @@ import Link from "next/link";
 
 interface NavBlogProps {
   activeNav: "home" | "projects" | "blog" | null;
-  setActiveNav: (
-    activeNav: "home" | "projects"| "blog" | null
-  ) => void;
+  setActiveNav: (activeNav: "home" | "projects" | "blog" | null) => void;
 
-  setPreActiveNav: (
-    activeContent: "home" | "projects" | "blog" | null
-  ) => void;
+  setPreActiveNav: (activeContent: "home" | "projects" | "blog" | null) => void;
 
   chooseAnimation: () => string | undefined;
+
+  currentPath: string;
 }
 
 const NavProjects = ({
@@ -19,6 +17,7 @@ const NavProjects = ({
   setActiveNav,
   setPreActiveNav,
   chooseAnimation,
+  currentPath,
 }: NavBlogProps) => {
   const projects = [
     {
@@ -54,13 +53,16 @@ const NavProjects = ({
     if (activeNav !== "blog") {
       setPreActiveNav(activeNav);
       setActiveNav("blog");
+    
     }
   };
+
+  const pathClass = currentPath === "/blog" ? "nav-dropDown-item-active" : "";
 
   return (
     <>
       <div className="nav-web-item" onMouseEnter={handleMouseEnter}>
-        Blog
+        <Link href={"/blog"} className={`${pathClass}`}>Blog</Link>
         {activeNav == "blog" && (
           <>
             <div

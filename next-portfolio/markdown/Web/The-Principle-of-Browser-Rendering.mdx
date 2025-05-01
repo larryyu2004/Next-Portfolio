@@ -1,0 +1,338 @@
+# The Principle of Browser Rendering
+
+## Rendering time point
+<Key>
+After Network thread fetch HTML document, it will generate a rendering task, and pass it to message queue of the main rendering thread. With the event loop, main rendering thread will fetch the task in the message queue, and start rendering process.
+</Key>
+
+```Text
+Network thread (Communication) -> fetch HTML ->
+Push into message queue ->
+Main rendering thread -> render
+```
+
+
+## Rendering pipeline
+<Key>
+- The entire rendering process is divided into multiple stages:
+
+1. HTML parsing.
+2. Recalculation Style.
+3. Layout.
+4. Layer.
+5. Painting.
+6. Tiling.
+7. Raster.
+8. Draw.
+
+- Each stage has its own output, the output will become to the input of next stage.
+</Key>
+
+## Parse HTML
+
+- HTML document -> parseHTML -> DOM (Document Object Model) tree and CSSOM (CSS Object Model) tree.
+```DOM Tree
+document
+├── head
+│   ├── title
+│   │   └── page title
+│   └── style
+├── body
+│   ├── h1
+│   │   └── title
+│   ├── div
+│   │   └── p
+│   │       └── paragraph
+│   └── script
+...
+```
+```CSSOM
+StyleSheetList
+└── CSSStyleSheet
+    ├── CSSStyleRule
+    │   ├── body h1
+    │   └── style
+    │       ├── color: red
+    │       └── font-size: 3em
+    └── CSSStyleRule
+        ├── ...
+        └── ...
+            ├── ...
+            └── ...
+```
+#### When it comes to CSS, what will happen?
+- In order to make it more efficiency, browser will start a pre-parser to download and parse CSS
+```Text
+                                                          +---> CSSOM                   +----> DOM
+                                                          |                             |
+                        +---------------------------------+--+-----------------------+--+
+Main Rendering Thread   |           parse HTML            |  |      parse HTML       |------->
+                        +---------------------------------^--+-----------------------+
+                                                          |
+                                                          |
+                                                          |
+                        +---------------+-----------------+------------+
+Pre-parse Thread        |   go through  |       ...       |    parse   |--------------------->
+                        +---------------+-----------------^------------+
+                                        |                 |
+                                        |                 |
+                                        |                 |
+                        +---------------v-----------------+-----------------------+
+Network Thread          |      ...      |   Download CSS  |          ...          |---------->
+                        +---------------+-----------------+-----------------------+
+```
+<Key>
+The first step is to parse HTML:
+
+When it comes to CSS, it will parse CSS and when it comes to JS, it will execute JS. In order to make it more efficiency, it will start a thread to pre-parse: download external CSS files and external JS files.
+</Key>
+
+<Key>
+If the main thread parses `<link>`, at the same time, external CSS files haven't finished their parsing, main thread will continue to parse the following HTML, instead of waiting for them. It is because parse CSS will be downloaded and parse in pre-parse thread, that's the reason of why CSS will not block parsing HTML. 
+</Key>
+
+#### When it comes to JS, what will happen?
+- When the main rendering thread meet JS code, it will pause until network thread finishes downloading JS code.
+- Then the main rendering thread will execute JS code.
+- Then the main rendering thread will continue to parse HTML.
+```Text
+                                            +---> meet JS code                              +----> DOM
+                                            |                                               |
+                        +-------------------+----------------+---------------+-----------------+
+Main Rendering Thread   |    parse HTML     |      pause     |   Execute JS  |    parse HTML   |------->
+                        +-------------------+----------------^---------------+-----------------+
+                                                             |
+                                                             |
+                                                             |
+                        +---------------+-----------------+--+----------+
+Pre-parse Thread        |   go through  |       ...       |  |   ...    |--------------------->
+                        +---------------+-----------------^--+----------+
+                                        |                 |
+                                        |                 |
+                                        |                 |
+                        +---------------v-----------------+-----------------------+
+Network Thread          |      ...      |   Download JS   |          ...          |---------->
+                        +---------------+-----------------+-----------------------+
+```
+- Why we should not treat JS as CSS? JS code may modify DOM.
+
+<Key>
+If the main thread parses `<script>`, it will stop parsing HTML until network thread finishes downloading JS code. Additionally, Main rendering thread will parse and execute JS code, then continue to parse HTML. It is because after executing JS code, it may change the DOM tree, that's why we must stop generating DOM tree. That's the reason why JS will block parse HTML.
+</Key>
+
+<Key>
+After finishing the first step, we will get DOM tree and CSSOM tree, the default style, internal style, external style and inline style of the browser will all be included in the CSSOM tree. 
+</Key>
+
+## Recalculation Style
+- Travel DOM and CSSOM to get the DOM tree with computed style.
+<Key>
+The next step is to recalculate style.
+The main rendering thread will traverse the DOM tree from step 1 and calculate style for each node, we call it computed style.
+
+During this process, many preset value will become to absolute value. For example, `red` will become `rgb (255,0,0)`; Relative units will become absolute units. For example, `em` will become `px`.
+</Key>
+
+## Layout 
+- After this, DOM tree will become to Layout tree.
+- The DOM tree and the layout tree are not necessarily one-to-one corresponding.
+
+<Key>
+The next step is layout, after the layout completed, we will get a layout tree.
+
+The layout stage will traverse each node of the DOM tree in sequence and calculate the geometric information of each node. For example, the width and height of the nodes, and the relative positions of the contained block.
+For example, a node with `display: none` has no geometric information will be not included in the layout tree. If you use pseudo-element selectors, although DOM tree has no these pseudo-element node, but they have geometric information, so they will be included in the layout tree. There are also anonymous row boxes, anonymous block boxes, etc., these will make DOM tree and layout tree cannot correspond one by one.
+</Key>
+
+## Layer
+<Key>
+The next step is layering.
+
+The main rendering thread will use a complex strategy to layer the entire layout tree.
+The benefit of layering is that when a layer changes in the future, only that layer will be processed, thereby improving efficiency.
+
+Styles such as scrollbars, stacking contexts, `transform` and `opacity` etc. will more and less affect the layering results, and the `will-change` can affect it as well.
+</Key>
+
+## Paint
+- Generate painting instructions for each layer.
+- Main rendering thread will stop at painting, other thread will finish the following works.
+```Text
+                        +-------+-------+--------+-------+-------+
+Main Rendering Thread   | parse | style | layout | layer | paint |
+                        +-------+-------+--------+-------+-------+
+                                                                 |
+                                                                 v-------+
+Other Threads                                                    |  ...  |
+                                                                 +-------+
+```
+<Key>
+Main rendering thread will generate instruction sets for each layer to describe how to paint them.
+</Key>
+
+# Tiling
+
+- Tiling will divide each layer to small areas.
+- Tiling will be assigned to multiple threads.
+
+```Text
+                        +-----+-------+
+Main Rendering Thread   | ... | paint |
+                        +-----+-------+
+                                      |
+                                      v----------+-------+---------+-----+
+Thread (Compositor)                   |  tiling  |  ...  |  tiles  | ... |
+                                      +----------+-------+---------+-----+
+                                                 |       |
+                                                 v-------+
+Thread 1                                         |  ...  |
+                                                 +-------+
+                                                 |       |
+                                                 v-------+
+Thread 2                                         |  ...  |
+                                                 +-------+        
+```
+<Key>
+After finishing painting, the rest works will be handled by compositor (thread).
+
+Compositor will start multiple threads from thread pool to tile each layer to some small areas.
+</Key>
+
+# Raster
+- Rasterization is the process of turning each block into a bitmap, with priority given to blocks close to the view point.
+- In this process, it will use GPU to accelerate.
+```Text
+                        +---------+----------+-----------------+----------+
+Thread (Compositor)     |  tiles  |  Raster  |                 |  Bitmap  |
+                        +---------+----------+-----------------^----------+
+                                             |                 |
+                        +---------+----------v-----------------+
+GPU Process             |        ...         |  Rasterisation  |
+                        +---------+----------+-----------------+
+
+```
+<Key>
+After Tiling, rasterization stage will start.
+
+Compositor will give the tiles information to GPU process and finish rasterization stage at a very high speed.
+The GPU process (on the web) will start multiple threads to complete the rasterization, and give priority to process tiles close to the viewport.
+
+The result of the rasterization is a bitmap.
+</Key>
+
+## Draw
+- Compositor will calculate the position if each bitmap on screen.
+<Key>
+The last stage is drawing. 
+
+After Compositor get the bitmaps for each layer and each tile, it will generate a "quad" information.
+
+The guide will indicate where each bitmap should be drawn on the screen, and take into account deformation such as `rotation` and `scaling`.
+
+The deformation occurs in the compositor and has nothing to do with main rendering thread. This is the essential reason why `transform` is efficient.
+
+Compositor will submit the "quad" to GPU process (On the OS), which will generate a system call and submit it to the GPU hardware to complete the final screen imaging. 
+</Key>
+
+---
+
+
+## Reflow
+<Key>
+The essence of reflow is recalculate the layout tree.
+
+If we did some operations that will affect the layout tree, the layout tree needs to be recalculated, it will trigger layout stage.
+
+In order to avoid repeat recalculations of the layout tree due to continues operations, the browser will merge these operations and recalculate that after finishing executing all JS code.
+</Key>
+
+## Repaint
+
+<Key>
+The essence of repaint is to recalculate the drawing instruction based on the layering information.
+
+When the visible style changed, it needs to be recalculated, which will trigger a repaint.
+
+Since the layout information of element also belongs to the visible style, reflow will cause a repaint as well.
+</Key>
+
+## Why is "transform" efficient?
+<Key>
+Because `transform` will not affect layout or drawing instructions. It only affects the last "draw" stage of rendering process.
+
+Since the draw stage is in the compositor, changes in the `transform` will hardly affect the main rendering thread. In contrast, no matter how busy the main rendering thread is, it will not affect changes in the `transform`.
+</Key>
+
+
+## Interview: How does browser render page?
+<Key>
+After Network thread fetch HTML document, it will generate a rendering task, and pass it to message queue of the main rendering thread. With the event loop, main rendering thread will fetch the task in the message queue, and start rendering process.
+
+The entire rendering process is divided into multiple stages:
+
+1. HTML parsing.
+2. Recalculation Style.
+3. Layout.
+4. Layer.
+5. Painting.
+6. Tiling.
+7. Raster.
+8. Draw.
+
+Each stage has its own output, the output will become to the input of next stage.
+
+---
+
+
+The first step is to parse HTML:
+
+When it comes to CSS, it will parse CSS and when it comes to JS, it will execute JS. In order to make it more efficiency, it will start a thread to pre-parse: download external CSS files and external JS files.
+
+If the main thread parses `<link>`, at the same time, external CSS files haven't finished their parsing, main thread will continue to parse the following HTML, instead of waiting for them. It is because parse CSS will be downloaded and parse in pre-parse thread, that's the reason of why CSS will not block parsing HTML. 
+
+If the main thread parses `<script>`, it will stop parsing HTML until network thread finishes downloading JS code. Additionally, Main rendering thread will parse and execute JS code, then continue to parse HTML. It is because after executing JS code, it may change the DOM tree, that's why we must stop generating DOM tree. That's the reason why JS will block parse HTML.
+
+After finishing the first step, we will get DOM tree and CSSOM tree, the default style, internal style, external style and inline style of the browser will all be included in the CSSOM tree. 
+
+The next step is to recalculate style.
+The main rendering thread will traverse the DOM tree from step 1 and calculate style for each node, we call it computed style.
+
+During this process, many preset value will become to absolute value. For example, `red` will become `rgb (255,0,0)`; Relative units will become absolute units. For example, `em` will become `px`.
+
+---
+
+The next step is layout, after the layout completed, we will get a layout tree.
+
+The layout stage will traverse each node of the DOM tree in sequence and calculate the geometric information of each node. For example, the width and height of the nodes, and the relative positions of the contained block.
+For example, a node with `display: none` has no geometric information will be not included in the layout tree. If you use pseudo-element selectors, although DOM tree has no these pseudo-element node, but they have geometric information, so they will be included in the layout tree. There are also anonymous row boxes, anonymous block boxes, etc., these will make DOM tree and layout tree cannot correspond one by one.
+
+The next step is layering.
+
+The main rendering thread will use a complex strategy to layer the entire layout tree.
+The benefit of layering is that when a layer changes in the future, only that layer will be processed, thereby improving efficiency.
+
+Styles such as scrollbars, stacking contexts, `transform` and `opacity` etc. will more and less affect the layering results, and the `will-change` can affect it as well.
+
+Main rendering thread will generate instruction sets for each layer to describe how to paint them.
+
+After finishing painting, the rest works will be handled by compositor (thread).
+
+Compositor will start multiple threads from thread pool to tile each layer to some small areas.
+
+After Tiling, rasterization stage will start.
+
+Compositor will give the tiles information to GPU process and finish rasterization stage at a very high speed.
+The GPU process (on the web) will start multiple threads to complete the rasterization, and give priority to process tiles close to the viewport.
+
+The result of the rasterization is a bitmap.
+
+The last stage is drawing. 
+
+After Compositor get the bitmaps for each layer and each tile, it will generate a "quad" information.
+
+The guide will indicate where each bitmap should be drawn on the screen, and take into account deformation such as `rotation` and `scaling`.
+
+The deformation occurs in the compositor and has nothing to do with main rendering thread. This is the essential reason why `transform` is efficient.
+
+Compositor will submit the "quad" to GPU process (On the OS), which will generate a system call and submit it to the GPU hardware to complete the final screen imaging. 
+</Key>

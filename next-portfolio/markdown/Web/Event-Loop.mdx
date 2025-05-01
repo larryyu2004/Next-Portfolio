@@ -1,0 +1,316 @@
+# Event Loop
+- Single thread is the reason of the async.
+- Event loop is the way to implement the async.
+
+## Process Model in Browser
+### What is process?
+- It must have its own memory space when program is running, we can easily treat the memory space as process.
+- Each application has 1 process at least, each process must be independent with each other. Even if they want to communicate, it needs the agreement from each other.
+```Example
+YouTube -> takes up 500MB in Memory
+vscode -> takes up 1GB in Memory
+Google -> takes up 750MB in Memory
+
+If vscode breaks, it will not influence YouTube and Google.
+```
+### What is thread?
+- A process needs 1 thread at least.
+- When process starts, it will automatically create a thread to run the code -> called main thread.
+- Some application needs to execute multiple codes at same time, so it can have a lot of threads.
+```Example
+GTA5 has a main thread -> task 1, task 2, task 3...
+GTA5 has a gaming thread -> task 1, task 2, task 3...
+GTA5 has a network thread -> task 1, task 2, task 3...
+```
+
+### What kinds of processes and threads does browser have?
+#### Browser is a multi-processes and multi-threads application.
+- When a browser boots, it will start several processes.
+1. Google Chrome has some processes:
+- **Browser process** -> tab, nav, user interaction, sub-processes management... rendering, and it will have a lot of threads.
+- **Network process** -> load network resource.
+- **Rendering process** -> When Rendering process boots, it will start a main render process. The main render process will execute HTML, CSS, JS. Each tab will start a new rendering process by default to prevent the influence between different tab.
+
+
+## How main rendering process works?
+1. Main rendering process is the busiest thread:
+- Resolve HTML
+- Resolve CSS
+- Calculate (rem to px, z-index, ...)
+- Layout
+- ...
+
+2. How to prioritize these tasks?
+- Example1: When the process is executing a JS function, what if user click a button?
+- Example2: When the process is executing a JS function, what if a timer finishes? 
+- Example3: When user clicked a button, and there is a timer finishes as well, which one should execute first?
+
+```Queue
+                        +-----------+-----------+-----------+-----------+
+Main Rendering Process  |   Task1   |                                   |
+(Is executing)          +-----+-----+-----------+-----------+-----------+
+                              |
+                              +-----------+ (Task1 may generate more tasks)
+                                          |
+                                          |
+                        +-----------+-----v-----+-----------+-----------+
+Message Queue           |   Task1   |   Task2   |   Task3   |   Task4   |
+                        +-----------+-----------+-----^-----+-----^-----+
+                                                      |           |
+                                                      |           |
+                                                   thread1     thread2
+```
+
+- At the very first beginning, main rendering process will enter an infinite loop.
+```CPP
+// Chrome src code
+// message_pump_default.cpp
+void MessagePumpDefault::Run(Delegate* delegate) {
+  AutoReset<bool> auto_reset_keep_running(&keep_running_, true);
+
+  for (;;) {
+    ...
+  }
+  ...
+}
+```
+- In each loop, it will check if there is any task exists in the message queue. If so, it will execute the first task. After finishing executing that, it will enter next loop. If not, it will enter sleep mode.
+- Other threads can push tasks to message to the back of the message queue. When pushing new tasks, if main process is on sleep mode, it will wake up main process so that the process can fetch the new tasks.
+
+## Explanation
+
+### What is async?
+1. When executing code, there will be some tasks cannot execute immediately:
+- Timer: `setTimeout()`, `setInterval`;
+- Network Communication: `Fetch`;
+- After operation from user: `addEventListener()`;
+
+2. If main rendering process needs to wait these tasks, it will be on block states -> make browser laggy.
+```Queue
+                                           (On block state, waiting...) (Execute the timer callback)
+                        +-----------------+---------------------------+----------------+
+Main Rendering Process  |   time starts   |           Block           |  Execute task  |
+(Is executing)          +--------+--------+---------------------------^----------------+
+                                 |                                    |
+        +------------------------+ (inform timing thread)             +--------------------+
+        |                                                                                  | 
+        v               +----------------+------------------------+-----------------+      |
+Timing Thread           |   time starts  |   timing in progress   |   timing over   |------+
+                        +----------------+------------------------+-----------------+
+
+```
+- That's why main rendering thread must not be blocked.
+- That's why browser chooses async.
+
+```Queue
+                        +-----------------+--------------------------------------------+
+Main Rendering Process  |   time starts   |  Task0           ...                       |
+(Is executing)          +--------+--------+--------------------------------------------+
+                                 |
+                +----------------+ (inform timing thread)
+                |
+                |       +-----------+-----v-----+-----------+-----------+
+Message Queue   |       |   Task1   |   Task2   |   Task3   |   Task4   |
+                |       +-----------+-----------+-----------+-----^-----+
+                |                                                 |
+                |                                                 +---------+
+                |                                                           |
+                |       +----------------+------------------------+---------^-------+
+Timing Thread<--+       |   time starts  |   timing in progress   |   timing over   |
+                        +----------------+------------------------+-----------------+
+```
+- The timer callback function will be added to Message Queue
+
+
+<Key>
+#### **Interview: How to understand the async in the JS?**
+
+JS is a single thread language, it is because it will run in the main rendering thread, and there is only one main rendering thread. Main rendering thread will do a lot of jobs such as rendering page, execute JS code.
+If we use sync, it will block the main rendering thread, so that the following tasks in the message queue cannot be executed. It will waste time of the main rendering thread and also cannot update the page on time, leads to laggy.
+
+So browser chooses async to avoid it. When timer, network or event listener happens, main rendering thread will pass these to other threads, finish these tasks immediately and pick up the following tasks. When other threads finish their task, they will pack these callback functions as some tasks and push them to the back of the message queue, waiting for dispatch and executing from main rendering thread.
+With the async, browser will never block and make sure the single thread can run smoothly.
+</Key>
+
+
+### Why JS will block rendering.
+```HTML
+<h1>Mr.Yu is awesome!</h1> 
+<button>change</button> 
+<script>
+    var h1 = document.querySelector('h1');
+    var btn = document.querySelector('button');
+
+    // Endless loop
+    function delay(duration) {
+        var start = Date.now():
+        while (Date.now() - start ‹ duration) {}
+    }
+    btn.onclick = function () {
+        h1.textContent ='Mr.Yu is handsome!'；
+        delay(3000);
+    };
+</script>
+```
+1. Why user clicks the button, it will wait for 3 seconds instead of changing the h1 immediately?
+```Queue
+                        +---------------------+--------+------------------------------------+
+Main Rendering Process  |   execute JS code   |   Fn  -> Delay 3000ms       ...             |
+                        +--------+------------+----^---+------------------------------------+
+                                 |                 |
+(inform Event Listener Thread)   |                 |
+                        +--------+                 |
+                        |             +------------+
+                        |       +-----v-----+-----------+-----------+-----------+
+Message Queue           |       |    Fn     |                ...                |
+                        |       +-----^-----+-----------+-----------+-----------+
+                        |             |
+                        |             |
+                        |             |
+                        |       +-----^------------------------+
+Event Listener Thread<--+       |     if click, execute fn     |
+(If user clicks the button)     +------------------------------+
+```
+- Fn in the main rendering thread will set the DOM text to 'Mr.Yu is handsome!' and add a rendering task in the message queue.
+- Fn will call `delay(3000)` as well. So in the main rendering thread, it will stop 3000ms.
+- Then it will fetch the tasks in the message queue to render the new h1 text.
+- So, when the main rendering process is stopping, if you scroll the page, click other buttons, change the window size, they all need to wait in the message queue (nothing will happen when stopping (laggy)).
+- JS and rendering tasks are both in the main rendering thread, so that's why JS will block rendering.
+
+### Does the task have priority?
+1. Task have no priority.
+2. Message queues have priority.
+
+#### The explanation from W3C:
+- Each task has its own task type. Same type of the task must be in the same queue.
+- Different types of the task can be allocated to different message queue, or they can be allocated in the same message queue.
+- In each event loop, the browser can fetch the tasks from different message queue.
+- Browser must have a micro-task queue, tasks in it must be executed before any other tasks.
+
+#### Message queues in the Chrome
+1. Delay queue: store the callback functions after timer over (Priority: median);
+2. Interaction queue: store the tasks after the interaction of user (Priority: high);
+3. Micro-task queue: store some tasks that need to be executed at first (Priority: highest)
+
+#### How to add tasks to micro-task queue:
+```JS
+// Add the function to the micro-task queue.
+Promise.resolve().then(function())
+```
+#### Question1:
+```JS
+setTimeout(function () {
+    console.log(1)
+}, 0);
+
+console.log(2)
+```
+It will print 2, then 1, why?
+1. Main rendering thread will execute JS code at first (`setTimeOut` then `console.log(2)`).
+2. Main rendering thread call timing thread to set timer (0s).
+3. Timing thread finish and push the `console.log(1)` to delay queue.
+4. Main rendering thread finish executing `console.log(2)`.
+5. Main rendering thread now is idle.
+6. Main rendering thread find delay queue have a task.
+7. Main rendering thread fetch the task from delay queue and execute it.
+8. Print 2 and then 1.
+
+#### Question2:
+```JS
+function delay(duration) {
+    var start = Date.now():
+    while (Date.now() - start < duration) {};
+}
+
+setTimeout(function () {
+    console.log(1)
+}, 0);
+
+delay(1000);
+
+console.log(2);
+```
+It will wait for 1000ms, print 2 then 1.
+1. Main rendering thread will execute JS code at first (`setTimeOut`, `delay(1000)`, `console.log(2)`).
+2. Main rendering thread call timing thread to set timer (0s).
+3. Timing thread finish and push the `console.log(1)` to delay queue.
+4. Main rendering thread will execute `delay(1000)`.
+5. Main rendering thread finish executing `console.log(2)`.
+6. Main rendering thread now is idel.
+7. Main rendering thread find delay queue have a task.
+8. Main rendering thread fetch the task from delay queue and execute it.
+9. Print 2 and then 1.
+
+#### Question3
+```JS
+setTimeout(function () {
+    console.log(1);
+}, 0);
+
+Promise.resolve().then(function () {
+    console.log(2);
+});
+
+console.log(3);
+```
+It will print 3, 2 then 1.
+1. Main rendering thread will execute JS code at first.
+2. Main rendering thread call timing thread to set timer (0s).
+3. Timing thread finish and push the `console.log(1)` to delay queue.
+4. (Main rendering thread will finish all the tasks itself, then go to message queues), push `console.log(2)` to micro-task queue.
+5. Print 3.
+6. Check micro-task queue, print 2.
+7. Print 1.
+
+#### Question4
+```JS
+function a () {
+    console.log(1);
+    Promise.resolve().then(function () {
+        console.log(2);
+    });
+};
+
+setTimeout(function () {
+    console.log(3);
+    Promise.resolve().then(a);
+}, 0);
+
+Promise.resolve().then(function () {
+    console.log(4);
+});
+
+console.log(5);
+```
+1. Main rendering thread will execute JS code at first.
+2. Main rendering thread call timing thread to set timer (0s).
+3. Timing thread finish and push the `console.log(3)` and `Promise.resolve().then(a);` to delay queue.
+4. Push `console.log(4)` to micro-task queue.
+5. Print 5.
+6. Check micro-task queue, print 4.
+7. Check delay queue, print 3 and push `function a` to micro-task queue.
+8. Print 1 and push `console.log(2)` to micro-task queue.
+9. Check micro-task queue, print 2.
+
+<Key>
+#### **Interview: Can you explain the event loop in the JS?**
+Event loop is message loop, it is how browser works.
+
+In the source code of the Chrome, it will start an infinite loop, each time the main rendering thread will fetch the first task from message queue. Other thread will push some tasks on the back of the message queue.
+
+Before we have micro message queue and macro message queue, but now we make it more flexible.
+
+Based on the W3C, each task has its own type, same type of the tasks will be allocated to same queue, different types of the tasks can be allocated to different message queue. Different message queues have different priorities. In each message queue, browser will determine which message queue it will fetch the tasks. But browser must have a micro-task queue, micro-task queue has the highest priority, it must be dispatched and executed at first.
+</Key>
+
+<Key>
+#### **Can the timer in JS achieve precise timing?**
+
+No, Computer hardware does not have atomic clock and thus cannot achieve precise timekeeping.
+
+The timer function from OS itself has a small amount of deviation. Because the timer in the JS will call the timer from the OS, it will carry these deviations.
+
+Based on the W3C standard, when a browser implements the timer, if the nesting level excesses 5 levels, it will have a minimum time of 4 milliseconds. This brings a deviation when the timing time is less than 4 milliseconds.
+
+Affected by the event loop, the callback function of the timer can only run when the main thread is idle, thus bringing about another deviation.
+</Key>

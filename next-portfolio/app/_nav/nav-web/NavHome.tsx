@@ -5,24 +5,22 @@ interface NavHomeProps {
   activeNav: "home" | "projects" | "blog" | null;
   setActiveNav: (activeNav: "home" | "projects" | "blog" | null) => void;
 
-  preActiveNav: "home" | "projects" | "blog" | null;
   setPreActiveNav: (activeContent: "home" | "projects" | "blog" | null) => void;
 
-  dropDownState: "loading" | "changing" | "unloading" | null;
-
   chooseAnimation: () => string | undefined;
+
+  currentPath: string;
 }
 
 const NavHome = ({
   activeNav,
   setActiveNav,
 
-  preActiveNav,
   setPreActiveNav,
 
-  dropDownState,
-
   chooseAnimation,
+
+  currentPath,
 }: NavHomeProps) => {
   const homeItems = [
     {
@@ -56,6 +54,8 @@ const NavHome = ({
     }
   };
 
+  const pathClass = currentPath === "/" ? "nav-dropDown-item-active" : "";
+
   return (
     <>
       <div
@@ -64,7 +64,7 @@ const NavHome = ({
           handleMouseEnter();
         }}
       >
-        Home
+        <Link href={"/"} className={`${pathClass}`}>Home</Link>
         {activeNav === "home" && (
           <>
             <div

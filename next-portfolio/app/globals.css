@@ -1,8 +1,13 @@
 @import "tailwindcss";
+@import 'highlight.js/styles/github.css'; /* or another theme you like */
 
 :root {
   --background: rgb(244, 244, 247);
   --foreground: rgb(14, 14, 16);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @theme inline {
@@ -30,15 +35,6 @@
     }
   }
 
-  @keyframes show {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
   @keyframes extendHeight {
     0% {
       max-height: 0;
@@ -47,13 +43,33 @@
       max-height: 500px;
     }
   }
-
-  @keyframes extendHalfHeight {
+  /* Four -> 244 */
+  /* Six -> 324 */
+  /* Plus One -> +40 */
+  @keyframes FourtoSix {
     0% {
       min-height: 244px;
     }
     100% {
       max-height: 500px;
+    }
+  }
+
+  @keyframes FourtoFour {
+    0% {
+      min-height: 244px;
+    }
+    100% {
+      min-height: 244px;
+    }
+  }
+
+  @keyframes SixtoFour {
+    0% {
+      min-height: 324px;
+    }
+    100% {
+      min-height: 244px;
     }
   }
 
@@ -111,14 +127,14 @@
     @apply fixed top-0 left-0 w-full flex justify-center items-center 
     gap-8 z-[100] pb-2 pt-2 bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)]
     font-bold text-lg
-    text-gray-500 dark:text-gray-400
+    text-gray-500 dark:text-gray-300
     shadow-md;
+    
   }
 
   .nav-web-item {
-    @apply 
-    hover:text-black dark:hover:text-white hover:underline
-    transition-all duration-300;
+    @apply hover:text-black dark:hover:text-white hover:underline
+    transition-all duration-300 cursor-pointer;
   }
 
   .nav-toggle-theme {
@@ -130,14 +146,18 @@
 
   .nav-dropDown-page {
     @apply fixed left-0 w-full flex flex-col bg-[rgb(244,244,246)] pl-12 dark:bg-[rgb(9,9,10)] 
-    text-gray-500 dark:text-gray-400
-    overflow-hidden max-h-0 shadow-md;
+    text-gray-500 dark:text-gray-300
+    overflow-hidden max-h-0 shadow-md dark:shadow-gray-700 cursor-default;
   }
 
   .nav-dropDown-item {
-    @apply pb-3 font-bold opacity-0 w-1/4
+    @apply pb-3 font-bold opacity-0 w-1/4 
     hover:text-black dark:hover:text-white hover:underline
     transition-colors duration-300 cursor-pointer;
+  }
+
+  .nav-dropDown-item-active {
+    @apply text-black dark:text-white
   }
 }
 

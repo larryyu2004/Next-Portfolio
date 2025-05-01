@@ -7,37 +7,10 @@ export default function Home() {
   return (
     <main>
       <NavWeb />
-      
+      <div className={`mt-[45px]`}>
       <Education />
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
-      <h1 className="text-4xl font-bold dark:text-[rgb(244,244,246)] transition-colors duration-200">Welcome to My Portfolio</h1>
-      <p className="mt-4 dark:text-[rgb(244,244,246)] transition-colors duration-200">Frontend Developer | React Specialist</p>
+      <Introduction />
+      </div>
     </main>
   );
 }
