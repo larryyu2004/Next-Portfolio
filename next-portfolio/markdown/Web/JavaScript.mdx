@@ -1,0 +1,1304 @@
+# JavaScript
+
+## ES6
+
+### Arrow Functions
+
+```JS
+const foo = function foo() {
+    //do something
+}
+```
+
+Equivalent to
+
+```JS
+const foo = () => {
+    //do something
+}
+```
+
+With default value
+
+```JS
+const dosomething = (foo = 1, bar = 'hey') => {
+    //do something
+}
+```
+
+### Promises
+
+```JS
+setTimeout(function() {
+    console.log('I promised to run after 1s')
+    setTimeout(function() {
+        console.log('I promised to run after 2s')
+    }, 1000)
+}, 1000)
+```
+
+→
+
+```JS
+const wait = () => new Promise((resolve, reject) => {
+    setTimeout(resolve, 1000)
+})
+wait().then(() => {
+    console.log('I promised to run after 1s')
+    return wait()
+})
+.then(() => console.log('I promised to run after 2s'))
+```
+
+### Generators
+
+```JS
+function *calculator(input) {
+    var doubleThat = 2 * (yield (input / 2))
+    var another = yield (doubleThat)
+    return (input * doubleThat * another)
+}
+```
+
+### The spread operator
+
+```JS
+const a = [1, 2, 3];
+const b = [...a, 4, 5, 6]
+
+const hey = 'hey'
+const arrayized = [...hey] // ['h', 'e', 'y']
+
+const f = (foo, bar) => {}
+const a = [1, 2]
+f(...a)
+```
+
+### For-of loop
+
+```JS
+// ['a', 'b', 'c'].entries() returns an iterator of [index, value] pairs
+for (const [i, v] of ['a', 'b', 'c'].entries()) {
+  console.log(i, v);
+}
+```
+
+## ES2016
+
+### Array.prototype.includes()
+
+```JS
+// Checks the index in the array, and returns -1 if the element is not there.
+if (![1,2].indexOf(3)) {
+  console.log('Not found');
+}
+
+if (![1,2].includes(3)) {
+  console.log('Not found');
+}
+```
+
+## Exponentiation Operator
+
+```JS
+Math.pow(4, 2) == 4 ** 2;
+```
+
+## ES2017
+
+### String padding
+
+```JS
+// '_' = space (' ')
+'test'.padStart(4) // 'test'
+'test'.padStart(5) // '_test'
+'test'.padStart(8) // '____test'
+'test'.padStart(8, 'abcd') // 'abcdatest'
+
+'test'.padEnd(4) // 'test'
+'test'.padEnd(5) // 'test_'
+'test'.padEnd(8) // 'test____'
+'test'.padEnd(8, 'abcd') // 'testabcd'
+```
+
+### Object.values()
+
+```JS
+const person = { name: 'Fred', age: 87 };
+console.log(Object.values(person)); // ['Fred', 87]
+```
+
+## Object.entries()
+
+```JS
+const person = { name: 'Fred', age: 87 };
+console.log(Object.entries(person));
+// Output: [['name', 'Fred'], ['age', 87]]
+
+const people = ['Fred', 'Tony'];
+console.log(Object.entries(people));
+// Output: [['0', 'Fred'], ['1', 'Tony']]
+```
+
+### getOwnPropertyDescriptors()
+
+- value: the value of the property
+- writable: true the property can be changed
+- get: a getter function for the property, called when the property is read
+- set: a setter function for the property, called when the property is set to a value
+- configurable: if false, the property cannot be removed nor any attribute can be changed, except its value
+- enumerable: true if the property is enumerable
+
+### Async functions
+
+```JS
+// Example of Callback Hell
+doSomething(function(result1) {
+  doSomethingElse(result1, function(result2) {
+    doAnotherThing(result2, function(result3) {
+      doFinalThing(result3, function(result4) {
+        console.log('All done:', result4);
+      });
+    });
+  });
+});
+```
+
+```JS
+function doSomethingAsync() {
+  return new Promise(resolve => {
+    setTimeout(() => resolve('I did something'), 3000);
+  });
+}
+
+async function doSomething() {
+  console.log(await doSomethingAsync());
+}
+
+console.log('Before');
+doSomething();
+console.log('After');
+/*
+Output:
+Before
+After
+I did something //after 3s
+*/
+```
+
+```JS
+function promiseToDoSomething() {
+    return new Promise(resolve => {
+        setTimeout(() => resolve('I did something'), 10000)
+    })
+}
+async function watchOverSomeoneDoingSomething() {
+    const something = await promiseToDoSomething()
+    return something + ' and I watched'
+}
+async function watchOverSomeoneWatchingSomeoneDoingSomething() {
+    const something = await watchOverSomeoneDoingSomething()
+    return something + ' and I watched as well'
+}
+watchOverSomeoneWatchingSomeoneDoingSomething().then(res => {
+    console.log(res)
+})
+
+/*
+Output:
+(Wait for 10000ms) I did something and I watched and I watched as well
+*/
+```
+
+## ES2018
+
+### Rest/Spread Properties
+
+- ES6 introduced the concept of a rest element when working with array destructing:
+
+```JS
+const numbers = [1, 2, 3, 4, 5]
+[first, second, ...others] = numbers
+```
+
+- and spread elements:
+
+```JS
+const numbers = [1, 2, 3, 4, 5]
+const sum = (a, b, c, d, e) => a + b + c + d + e
+const sum = sum(...numbers)
+```
+
+## Prototype
+
+```JS
+const car = {}
+// or
+const car = new Object()
+// In the case, the prototype of the `car` is `object`
+```
+
+```JS
+const list = [];
+// or
+const list = new Array()
+// In this case, the prototype is `Array`
+```
+
+```JS
+car.__proto__ == Object.prototype //true
+car.__proto__ == new Object().__proto__ //true
+list.__proto__ == Object.prototype //false
+list.__proto__ == Array.prototype //true
+list.__proto__ == new Array().__proto__ //true
+// A more reliable way to get a prototype is to use `Object.getPrototypeOf(new Object())`
+```
+
+- Prototype Chain
+
+```JS
+[]                     // instance of Array
+[].__proto__           === Array.prototype       √
+Array.prototype.__proto__ === Object.prototype   √
+Object.prototype.__proto__ === null              √ (end of chain)
+```
+
+### Declare a new function in prototype
+- Declare a new function → last() to print the last element of the array.k
+```TS
+interface Array<T> {
+    last(): T | -1;
+}
+
+Array.prototype.last = function() {
+    return this.length === 0 ? -1: this[this.length-1];
+};
+
+/**
+ * const arr = [1, 2, 3];
+ * arr.last(); // 3
+ */
+```
+
+## Class
+
+### Static methods
+
+```JS
+class Person {
+    static genericHello() {
+        return 'Hello'
+    }
+}
+Person.genericHello() //Hello
+```
+
+- `static` means the method belongs to the class itself, not to instances of the class.
+- You cannot call it from an instance like `const p = new Person();` and `p.genericHello()` → that would cause an error.
+
+## Template Literals
+
+### Template tags
+
+```JS
+tag`Some ${value} here`
+// is equivalent to calling:
+tag(["Some ", " here"], value)
+
+
+//Example
+function tag(literals, ...expressions) {
+  console.log('Literals:', literals)
+  console.log('Expressions:', expressions)
+}
+const result = tag`Hello ${1 + 2}, how are you ${'today'}?`
+/*
+Literals: ["Hello ", ", how are you ", "?"]
+Expressions: [3, "today"]
+*/
+```
+
+## Closure
+
+```JS
+// Example 1
+const bark = dog => {
+  const say = `${dog} barked!`; // say is defined in bark's scope
+  (() => console.log(say))();   // IIFE using `say`
+}
+bark(`Roger\n`); // Output: Roger\n barked!
+
+// Example 2
+function makeCounter() {
+  let count = 0;
+  return () => ++count;
+}
+
+const counter = makeCounter();
+counter(); // 1
+counter(); // 2
+counter(); // 3
+// Each call “remembers” the `count` variable — that’s closure in action.
+```
+
+## Array
+
+### Initialize Array
+
+```JS
+const a = []
+const a = [1, 2, 3]
+const a = Array.of(1, 2, 3)
+const a = Array(6).fill(1) //init an array of 6 items of value 1
+```
+
+### Iterating the array
+
+#### every & some
+
+```JS
+// Iterates a until f() returns false
+a.every(f)
+
+// Example 1
+const nums = [1, 2, 3, 4];
+const allPositive = nums.every(n => n > 0);
+console.log(allPositive); // true
+// Example 2
+const words = ['hi', 'dog', 'cat'];
+const shortWords = words.every(word => word.length < 5);
+console.log(shortWords); // true
+
+// Iterates a until f() returns true
+a.some(f)
+
+// Example 1
+const names = ['Alice', '', 'Bob'];
+const hasEmpty = names.some(name => name === '');
+console.log(hasEmpty); // true
+// Example 2
+const nums = [1, 2, 3];
+const allNegative = nums.some(n => n < 0);
+console.log(allNegative); // false
+```
+
+#### Iterate the array and return a new one with the returned result of a function
+
+```JS
+
+const b = a.map(f)
+
+// Example 1
+const a = [1, 2, 3];
+const b = a.map(x => x * 2);
+console.log(b); // [2, 4, 6]
+// Example 2
+const names = ['Alice', 'Bob'];
+const upper = names.map(name => name.toUpperCase());
+console.log(upper); // ['ALICE', 'BOB']
+```
+
+#### Filter an array
+
+```JS
+// Iterates a and builds a new array with elements of a that returned true when executing f() on each a element
+const b = a.filter(f)
+
+// Example 1
+const a = [1, 2, 3, 4, 5];
+const b = a.filter(x => x % 2 === 0); // keep only even numbers
+console.log(b); // [2, 4]
+
+// Example 2
+const names = ['Alice', 'Bob', 'Ann'];
+const b = names.filter(name => name.startsWith('A'));
+console.log(b); // ['Alice', 'Ann']
+```
+
+#### Reduce
+
+```JS
+/*
+reduce() executes a callback function on all the items of the array and allows to progressively compute a result. If initialvalue is specified, accumulator in the first iteration will equal to that value.
+*/
+
+// Example 1
+[1, 2, 3, 4].reduce((accumulator, currentValue) => {
+  return accumulator * currentValue;
+}, 1);
+
+// iteration 1: 1 * 1 => return 1
+// iteration 2: 1 * 2 => return 2
+// iteration 3: 2 * 3 => return 6
+// iteration 4: 6 * 4 => return 24
+// return value is 24
+```
+
+#### forEach
+
+```JS
+// Iterates f on a without a way to stop
+
+// Example 1
+const a = [1, 2, 3];
+a.forEach(x => {
+  console.log(x * 2);
+});
+// Output:
+// 2
+// 4
+// 6
+```
+
+#### for...of...
+
+```JS
+// Example 1
+for (let v of a) {
+    console.log(v)
+}
+```
+
+#### @@iterator
+
+```JS
+// Getting the iterator from an array returns an iterator of values
+const a = [1, 2, 3]
+let it = a[Symbol.iterator]()
+console.log(it.next().value) //1
+console.log(it.next().value) //2
+console.log(it.next().value) //3
+
+// .entries() returns an iterator of key/value pairs
+let it = a.entries()
+console.log(it.next().value) //[0, 1]
+console.log(it.next().value) //[1, 2]
+console.log(it.next().value) //[2, 3]
+
+// .keys() allows to iterate on the keys:
+let it = a.keys()
+console.log(it.next().value) //0
+console.log(it.next().value) //1
+console.log(it.next().value) //2
+```
+
+### Adding to an array
+
+### Array.splice()
+- `Array.splice(a, b)` removes `b` elements in the array from index `a` and returns them.
+```JS
+const arr = [1, 2, 3, 4, 5];
+const size = 2;
+const res = [];
+
+res.push(arr.splice(0, 2)); // res = [[1, 2]], arr = [3, 4, 5]
+res.push(arr.splice(0, 2)); // res = [[1, 2], [3, 4]], arr = [5]
+res.push(arr.splice(0, 2)); // res = [[1, 2], [3, 4], [5]], arr = []
+```
+
+
+#### Add at the end
+
+```JS
+a.push(4);
+```
+
+#### Add at the beginning
+
+```JS
+a.unshift(0);
+a.unshift(-2, -1);
+```
+
+### Removing an item from an array
+
+#### From the end
+
+```JS
+a.pop()
+```
+
+#### From the beginning
+
+```JS
+a.shift()
+```
+
+#### At a random position
+
+```JS
+a.splice(0, 2) // get the first 2 items
+a.splice(3, 2) // get the 2 items starting from index 3
+```
+
+#### Remove and insert in place
+
+```JS
+a.splice(2, 3, 2, 'a', 'b')
+//removes 3 items starting from index 2, and adds 2 items, still starting from index 2
+```
+
+### Join multiple arrays
+
+```JS
+const a = [1, 2]
+const b = [3, 4]
+a.concat(b) // 1, 2, 3, 4
+```
+
+### Lookup the array for a specific element
+
+#### ES5
+
+```JS
+// Returns the index of the first matching item found, or -1 if not found
+a.indexOf()
+
+// Returns the index of the last matching item found, or -1 if not found
+a.lastIndexOf()
+```
+
+#### ES6
+
+```JS
+// Array.prototype.find()
+const a = [{id: 1}, {id: 2}, {id: 3}];
+const result = a.find(x => x.id === 2);
+console.log(result); // {id: 2}
+
+
+// Array.prototype.findIndex()
+const a = [{id: 1}, {id: 2}, {id: 3}];
+const index = a.findIndex(x => x.id === 2);
+console.log(index); // 1
+const notFound = a.findIndex(x => x.id === 99);
+console.log(notFound); // -1
+```
+
+#### ES7
+
+```JS
+const a = [1, 2, 3, 4, 5];
+
+a.includes(3);       // true
+a.includes(6);       // false
+a.includes(3, 3);    // false → starts checking from index 3 (value is 4)
+a.includes(3, 1);    // true  → starts checking from index 1
+```
+
+### Get a portion of an array
+
+```JS
+const a = [10, 20, 30, 40, 50];
+
+a.slice(1, 3);  // [20, 30]
+a.slice(2);     // [30, 40, 50]
+a.slice();      // [10, 20, 30, 40, 50] → makes a shallow copy
+a.slice(-2);    // [40, 50]
+```
+
+### Sort the array
+
+```JS
+// Sort alphabetically (by ASCII value - 0-9A-Za-z )
+const a = [1, 2, 3, 10, 11];
+a.sort(); // → [1, 10, 11, 2, 3]
+// Because: '1', '10', '11', '2', '3' → sorted alphabetically
+
+
+// Mixed types and undefined:
+const b = [1, 'a', 'Z', undefined, 3, 2, 11];
+b.sort(); // → [1, 11, 2, 3, 'Z', 'a', undefined]
+// Numbers are sorted as strings, 'Z' < 'a', and undefined goes to the end
+
+
+// Sort by a custom function
+const a = [1, 10, 3, 2, 11]
+a.sort((a, b) => a - b) //1, 2, 3, 10, 11
+
+// Reverse the order of an array
+a.reverse()
+```
+
+### Get a string representation of an array
+
+```JS
+// Returns a string representation of an array
+a.toString()
+
+// Returns a string concatenation of the array elements. Pass a parameter to add a custom separator:
+const a = ['hello', 'world'];
+a.join();           // "hello,world"
+a.join(' ');        // "hello world"
+a.join('-');        // "hello-world"
+a.join('');         // "helloworld"
+```
+
+### Copy an existing array by value
+
+```JS
+const a = [1, 2, 3];
+const b = Array.from(a);
+console.log(b); // [1, 2, 3]
+console.log(b === a); // false (different reference)
+
+// Copy just some values from an existing array
+const b = Array.from(a, x => x % 2 == 0)
+
+// Another way
+const b = Array.of(...a)
+
+
+// Copy portions of an array into the array itself, in other positions
+// Example 1
+const a = [1, 2, 3, 4]
+a.copyWithin(0, 2) // → [3, 4, 3, 4]
+
+// Example 2
+const c = [1, 2, 3, 4, 5]
+c.copyWithin(0, 2, 4) // → [3, 4, 3, 4, 5]
+```
+
+## Loop
+
+### do...while
+
+```JS
+const list = ['a', 'b', 'c'];
+let i = 0;
+do {
+  console.log(list[i]); // logs the value (or undefined if it's a hole)
+  console.log(i);       // logs the index
+  i = i + 1;
+} while (i < list.length);
+```
+
+### for...in...
+
+- Iterates over enumerable property names (keys) of an object.
+- Useful when working with objects.
+
+```JS
+const obj = { a: 1, b: 2, c: 3 };
+for (let property in obj) {
+  console.log(property);        // Logs: 'a', 'b', 'c' (the keys)
+  console.log(obj[property]);   // Logs: 1, 2, 3 (the values)
+}
+```
+
+### for...of...
+
+- Introduced in ES2015 (ES6).
+- Iterates over the values of an iterable object (like arrays, strings, maps, sets).
+
+```JS
+const array = ['a', 'b', 'c'];
+for (const [index, value] of array.entries()) {
+  console.log(index); // 0, 1, 2
+  console.log(value); // 'a', 'b', 'c'
+}
+```
+
+## Events
+
+### Event bubbling and event capturing
+
+```HTML
+<div id="container">
+  <button id="btn">Click me</button>
+</div>
+```
+
+```JS
+// Capturing phase (3rd argument true)
+document.getElementById('container').addEventListener(
+  'click',
+  () => console.log('Container - Capturing'),
+  true
+);
+
+// Bubbling phase (3rd argument false or omitted)
+document.getElementById('container').addEventListener(
+  'click',
+  () => console.log('Container - Bubbling')
+);
+
+document.getElementById('btn').addEventListener(
+  'click',
+  () => console.log('Button clicked')
+);
+```
+
+```Outputs
+Container - Capturing
+Button clicked
+Container - Bubbling
+```
+
+- This happens because of the event propagation model:
+
+1. Capturing phase: The event travels from the top of the DOM (e.g., window → document) down to the target element. You attached a listener to #container with `{ capture: true }`, so it fires during this phase.
+2. Target phase: The event reaches the button (the actual target). The button’s listener fires.
+3. Bubbling phase: After hitting the target, the event bubbles back up the DOM tree. The default listener on #container (without true) fires during this phase.
+
+```Text
+[Window]
+   |
+   V        (Capturing Phase ↓)
+[Document]
+   |
+   V
+[<div id="container">]      <-- Capturing listener (fires if `capture: true`)
+   |
+   V
+[<button>]                  <-- Target (event happens here)
+   |
+   A        (Bubbling Phase ↑)
+[<div id="container">]      <-- Bubbling listener (fires by default)
+   |
+   A
+[Document]
+   |
+   A
+[Window]
+```
+
+### Stopping the propagation
+
+```HTML
+<html>
+  <body>
+    <section>
+      <a id="my-link" href="#">Click Me</a>
+    </section>
+  </body>
+</html>
+```
+
+```JS
+document.body.addEventListener('click', () => console.log('Body clicked'));
+document.querySelector('section').addEventListener('click', () => console.log('Section clicked'));
+document.getElementById('my-link').addEventListener('click', (event) => {
+  console.log('Link clicked');
+  event.stopPropagation(); // 🛑 Stop bubbling here
+});
+```
+
+- If u click the button, it will output 'Link clicked'
+- Section clicked and Body clicked will not run because `stopPropagation()` prevented the event from going up the DOM tree.
+
+## Promises
+
+### Creating a promise
+
+```JS
+// The Promise API exposes a Promise constructor, which you initialize using new Promise():
+let done = true;
+
+const isItDoneYet = new Promise((resolve, reject) => {
+  if (done) {
+    const workDone = 'Here is the thing I built';
+    resolve(workDone);
+  } else {
+    const why = 'Still working on something else';
+    reject(why);
+  }
+});
+
+// Consume the promise
+isItDoneYet
+  .then((result) => {
+    console.log(result); // → 'Here is the thing I built'
+  })
+  .catch((error) => {
+    console.log(error); // → 'Still working on something else'
+  });
+
+// As you can see the promise checks the done global constant, and if that's true, we return a resolved promise, otherwise a rejected promise.
+// Using resolve and reject we can communicate back a value, in the above case we just return a string, but it could be an object as well.
+```
+
+### Consuming a promise
+
+```JS
+const isItDoneYet = new Promise((resolve, reject) => {
+  const done = true;
+
+  if (done) {
+    const workDone = 'Here is the thing I built';
+    resolve(workDone);
+  } else {
+    const why = 'Still working on something else';
+    reject(why);
+  }
+});
+
+const checkIfItsDone = () => {
+  isItDoneYet
+    .then((ok) => {
+      console.log(ok); // Will log if promise resolves
+    })
+    .catch((err) => {
+      console.error(err); // Will log if promise rejects
+    });
+};
+
+checkIfItsDone(); // Call the function to run it
+
+/*
+Running checkIfItsDone() will execute the isItDoneYet() promise and will wait for it to
+resolve, using the then callback, and if there is an error, it will handle it in the catch
+callback.
+* /
+```
+
+### Chaining promises
+
+```JS
+const status = (response) => {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response);
+  }
+  return Promise.reject(new Error(response.statusText));
+};
+
+const json = (response) => response.json();
+
+fetch('/todos.json')
+  .then(status)
+  .then(json)
+  .then((data) => {
+    console.log('Request succeeded with JSON response', data);
+  })
+  .catch((error) => {
+    console.log('Request failed', error);
+  });
+```
+
+### Promise.all()
+
+- If you need to synchronize different promises, Promise.all() helps you define a list of promises, and execute something when they are all resolved.
+
+```JS
+const f1 = fetch('/something.json')
+const f2 = fetch('/something2.json')
+
+Promise.all([f1, f2]).then((res) => {
+  console.log('Array of results', res)
+})
+.catch((err) => {
+  console.error(err)
+})
+```
+
+### Promise.race()
+
+- Promise.race() runs when the first of the promises you pass to it resolves, and it runs the attached callback just once, with the result of the first promise resolved.
+
+```JS
+const first = new Promise((resolve, reject) => {
+  setTimeout(resolve, 500, 'first');
+});
+
+const second = new Promise((resolve, reject) => {
+  setTimeout(resolve, 100, 'second');
+});
+
+Promise.race([first, second]).then((result) => {
+  console.log(result); // → 'second'
+});
+```
+
+## Loops and Scope
+
+- 🔥 Problem Recap (Using var):
+
+```JS
+const operations = [];
+for (var i = 0; i < 5; i++) {
+  operations.push(() => {
+    console.log(i);
+  });
+}
+for (const operation of operations) {
+  operation(); // Logs: 5, 5, 5, 5, 5
+}
+/*
+var is function-scoped, not block-scoped.
+All functions in operations share the same i, which ends at 5 after the loop.
+So every function logs the final value of i: 5.
+*/
+```
+
+```JS
+// Solution
+const operations = [];
+for (let i = 0; i < 5; i++) {
+  operations.push(() => {
+    console.log(i);
+  });
+}
+for (const operation of operations) {
+  operation(); // Logs: 0, 1, 2, 3, 4
+}
+/*
+✅ Why it works:
+let is block-scoped, so each iteration of the loop gets a fresh new copy of i.
+*/
+```
+
+## Strict Mode
+
+## Enable Strict Mode
+
+- You can put it at the beginning of a file, to apply it to all the code contained in the file:
+
+```JS
+'use strict'
+
+const name = 'Flavio'
+const hello = () => 'hey'
+```
+
+- You can also enable Strict Mode for an individual function, by putting `use strict` at the beginning of the function body
+
+```JS
+function hello() {
+  'use strict'
+
+  return 'hey'
+}
+```
+
+### Accidental global variables
+
+```JS
+(function() {
+  'use strict'
+  variable = 'hey' // ❌ ReferenceError: variable is not defined
+})();
+
+(() => {
+  'use strict'
+  myname = 'Flavio' // ❌ ReferenceError: myname is not defined
+})();
+
+
+// Correct Way to Write It (with strict mode):
+;(function() {
+  'use strict'
+  let variable = 'hey'
+  console.log(variable)
+})();
+
+(() => {
+  'use strict'
+  let myname = 'Flavio'
+  console.log(myname)
+})();
+```
+
+### Overwriting Reserved Values (like undefined, Infinity, NaN):
+
+```JS
+undefined = 1;   // 🚫 But JavaScript won't complain
+Infinity = 2;
+NaN = 3;
+
+// These changes do nothing, but JS won’t tell you — which is risky.
+```
+
+#### Overwriting Read-Only Properties
+
+```JS
+const car = {};
+Object.defineProperty(car, 'color', {
+  value: 'blue',
+  writable: false
+});
+
+car.color = 'red'; // ❌ Does nothing in sloppy mode
+
+// In Strict Mode:
+'use strict';
+car.color = 'yellow'; // ❌ Throws TypeError: Cannot assign to read only property
+```
+
+### Assigning to Getters Only:
+
+```JS
+const car = {
+  get color() {
+    return 'blue';
+  }
+};
+
+car.color = 'red'; // ❌ No setter, but sloppy mode ignores this
+
+// In Strict Mode:
+'use strict';
+car.color = 'yellow'; // ❌ TypeError: Cannot set property
+```
+
+### Adding Properties to Non-Extensible Objects:
+
+```JS
+const car = { color: 'blue' };
+Object.preventExtensions(car); // Locks the object
+
+car.model = 'Fiesta'; // ❌ Sloppy mode silently fails
+
+// In Strict Mode:
+'use strict';
+car.owner = 'Flavio'; // ❌ TypeError: Cannot add property to non-extensible object
+```
+
+### Adding Properties to Primitives (meaningless):
+
+```JS
+true.false = ''; // Does nothing
+1.name = 'xxx';  // Does nothing
+'test'.testing = true; // Does nothing
+
+// In Strict Mode:
+'use strict';
+true.false = '';      // ❌ TypeError
+1.name = 'xxx';       // ❌ TypeError
+'test'.testing = true; // ❌ TypeError
+```
+
+### Deletion errors
+
+- In sloppy mode, if you try to delete a property that you cannot delete, JavaScript simply returns false, while in Strict Mode, it raises a TypeError:
+
+```JS
+// Object.prototype is the root of all JavaScript objects. Deleting it would break almost everything.
+(() => {
+  'use strict';
+  delete Object.prototype; // ❌ TypeError
+})();
+```
+
+### Function arguments with the same name
+
+```JS
+(function(a, a, b) {
+  console.log(a, b);
+})(1, 2, 3);
+// Output: 2 3
+
+// In Strict Mode:
+(function(a, a, b) {
+  'use strict';
+  console.log(a, b);
+})(1, 2, 3);
+// ❌ Uncaught SyntaxError: Duplicate parameter name not allowed in this context
+
+// Arrow Functions (always strict)
+((a, a, b) => {
+  console.log(a, b);
+})(1, 2, 3);
+// ❌ Uncaught SyntaxError: Duplicate parameter name not allowed in this context
+```
+
+### Octal syntax
+
+```JS
+(() => {
+  'use strict';
+  console.log(010); // ❌ SyntaxError
+})();
+
+// Use Modern Octal Syntax: 0o Prefix
+(() => {
+  'use strict';
+  console.log(0o10); // → 8
+})();
+```
+
+### Removed with
+
+- Strict Mode disables the with keyword, to remove some edge cases and allow more optimization at the compiler level.
+
+## Immediately-invoked Function Expressions (IIFE)
+
+### What is an IIFE?
+
+- An IIFE is a function that runs immediately after it’s defined.
+
+```JS
+;(function() {
+  // Code here runs immediately
+})()
+
+// Or using an arrow function:
+;(() => {
+  // This runs immediately too
+})()
+```
+
+### Alternative syntax using unary operators
+
+```JS
+// Minus
+-(function() {
+  console.log('IIFE with -')
+})()
+
+// Plus
++(function() {
+  console.log('IIFE with +')
+})()
+
+// Bitwise NOT
+~(function() {
+  console.log('IIFE with ~')
+})()
+
+// Logical NOT
+!(function() {
+  console.log('IIFE with !')
+})()
+```
+
+### Named IIFE
+
+```JS
+;(function doSomething() {
+  /* */
+})()
+```
+
+## Operators
+
+### Math Operator: Remainder (%)
+
+```JS
+const result = 20 % 5 //result === 0
+const result = 20 % 7 //result === 6
+```
+
+### Math Operator: Unary negation (-)
+
+```JS
+let x = 2
+-x //-2
+x //2
+```
+
+### Math Operator: Unary plus (+)
+
+```JS
+let x = 2
++x //2
+x = '2'
++x //2
+x = '2a'
++x //NaN
+```
+
+### Nullish Coalescing Operator (??)
+- Returns the right-hand side only if the left-hand side is null or undefined.
+```JS
+let name;
+let displayName = name ?? "Anonymous";
+console.log(displayName); // "Anonymous"
+```
+
+## The Math object
+
+### Constants
+
+- `Math.E` The constant e, base of the natural logarithm (means ~2.71828).
+- `Math.LN10` The constant that represents the base e (natural) logarithm of 10.
+- `Math.LN2` The constant that represents the base e (natural) logarithm of 2.
+- `Math.LOG10E` The constant that represents the base 10 logarithms of e.
+- `Math.LOG2E` The constant that represents the base 2 logarithms of e.
+- `Math.PI` The π constant (~3.14159).
+- `Math.SQRT1_2` The constant that represents the reciprocal of the square root of 2.
+- `Math.SQRT2` The constant that represents the square root of 2.
+
+### Math.abs()
+
+```JS
+Math.abs(2.5) //2.5
+Math.abs(-2.5) //2.5
+```
+
+
+
+### Math.ceil() & Math.floor()
+- Rounds a number up
+```JS
+Math.ceil(2.5) //3
+Math.ceil(2) //2
+Math.ceil(2.1) //3
+Math.ceil(2.99999) //3
+
+Math.floor(2.5) //2
+Math.floor(2) //2
+Math.floor(2.1) //2
+Math.floor(2.99999) //2
+```
+
+### Math.max() & Math.min()
+```JS
+Math.max(1,2,3,4,5) //5
+Math.max(1) //1
+
+Math.max(1,2,3,4,5) //1
+Math.max(1) //1
+```
+
+### Math.pow()
+- Return the first argument raised to the second argument
+```JS
+Math.pow(1, 2) //1
+Math.pow(2, 1) //2
+Math.pow(2, 2) //4
+Math.pow(2, 4) //16
+```
+### Math.random()
+- Returns a pseudorandom number between 0.0 and 1.0
+```JS
+Math.random() //0.9318168241227056
+Math.random() //0.35268950194094395
+```
+
+### Math.round()
+- Rounds a number to the nearest integer
+```JS
+Math.round(1.2) //1
+Math.round(1.6) //2
+```
+
+### Math.sqrt()
+- Return the square root of the argument
+```JS
+Math.sqrt(4) //2
+Math.sqrt(16) //4
+Math.sqrt(5) //2.23606797749979
+```
+
+## JSON
+
+### JSON.stringify ()
+```JS
+args = [2, 3]
+key = JSON.stringify(args) // → "[2,3]"
+```
+
+```JS
+
+```
+
+```JS
+
+```
+
+```JS
+
+```
+
+
+

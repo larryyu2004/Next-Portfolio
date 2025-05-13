@@ -12,6 +12,7 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.3.1",
+    "@prisma/client": "^6.7.0",
     "@types/mdx": "^2.0.13",
     "motion": "^12.7.4",
     "next": "15.3.0",
@@ -28,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
+    "prisma": "^6.7.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

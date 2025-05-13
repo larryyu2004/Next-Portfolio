@@ -20,7 +20,7 @@ export default async function Page({ params }: PageProps) {
           <div className="mt-[45px] fixed">
 
             <div className="flex">
-              <div className=" w-3/4 h-screen px-4 mt-6 pb-30 overflow-y-scroll scroll-smooth">
+              <div className="fixed w-3/4 h-screen px-4 mt-6 pb-30 overflow-y-scroll scroll-smooth">
                 <Post />
                 <div className="flex justify-center font-bold"> -- End -- </div>
               </div>
