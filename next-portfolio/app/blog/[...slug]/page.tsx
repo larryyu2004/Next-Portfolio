@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
-import { getMdxFiles } from "../Blog";
+import { buildMarkdownTree, MarkdownTreeNode } from "../Blog";
 import TableOfContent from "./TableOfContent";
 import NavWeb from "@/app/_nav/page";
 import Intro from "../Intro";
 type PageProps = {
-  params: Promise<{ slug: string[] }>;
+  params: { slug: string[] };
 };
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const slugPath = slug?.join("/") || "";
 
   try {
@@ -38,11 +38,19 @@ export default async function Page({ params }: PageProps) {
   }
 }
 
-export async function generateStaticParams() {
-  const posts = getMdxFiles();
+function getAllSlugs(node: MarkdownTreeNode): string[][] {
+  if (node.type === "files") {
+    return node.children.map((file) => file.slug.split("/"));
+  }
+  return Object.values(node.children).flatMap((child) => getAllSlugs(child));
+}
 
-  return posts.map((post) => ({
-    slug: post.slug.split("/"),
+export async function generateStaticParams() {
+  const tree = buildMarkdownTree();
+  const slugs = getAllSlugs(tree);
+
+  return slugs.map((slugArray) => ({
+    slug: slugArray,
   }));
 }
 

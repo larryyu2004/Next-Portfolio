@@ -92,7 +92,6 @@ const NavWeb = () => {
   };
 
   const currentPath = usePathname();
-  console.log(currentPath)
 
   const chooseAnimation = () => {
     switch (dropDownState) {

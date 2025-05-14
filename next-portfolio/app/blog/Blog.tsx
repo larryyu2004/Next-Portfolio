@@ -2,95 +2,137 @@ import React from "react";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
-type MdxFile = {
-  slug: string;
-  title: string;
-  category: string;
-};
 
-export function getMdxFiles(dir = "markdown", basePath = ""): MdxFile[] {
-  const dirPath = path.join(process.cwd(), dir);
-  let entries;
-  try {
-    entries = fs.readdirSync(dirPath, { withFileTypes: true });
-  } catch (err) {
-    console.error(`Error reading directory ${dirPath}:`, err);
-    return [];
-  }
 
-  return entries.flatMap((entry) => {
-    const relativePath = path.join(basePath, entry.name);
-    if (entry.isDirectory()) {
-      return getMdxFiles(path.join(dir, entry.name), relativePath);
+export type MarkdownTreeNode =
+  | {
+      type: "folder";
+      name: string;
+      children: Record<string, MarkdownTreeNode>;
     }
+  | {
+      type: "files";
+      name: string;
+      children: {
+        title: string;
+        slug: string;
+        categories: string[];
+      }[];
+    };
 
-    if (entry.isFile() && entry.name.endsWith(".mdx")) {
-      const slug = relativePath.replace(/\.mdx$/, "");
-      const title = slug.split("/").pop()?.replace(/-/g, " ") ?? slug;
-      const category = path.dirname(relativePath).replace(/-/g, " ");
+const MARKDOWN_DIR = path.join(process.cwd(), "markdown");
 
-      return [
-        {
-          slug,
-          title,
-          category,
-        },
-      ];
-    }
+export function buildMarkdownTree(
+  dir: string = MARKDOWN_DIR,
+  relativePath: string[] = []
+): MarkdownTreeNode {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
 
-    return [];
-  });
-}
-const Blog = () => {
-  const posts = getMdxFiles();
-
-  type Post = {
-    slug: string;
+  const children: Record<string, MarkdownTreeNode> = {};
+  const files: {
     title: string;
-    category: string;
-  };
-  const grouped = new Map<string, Post[]>();
-  for (const post of posts) {
-    const category = post.category || "Uncategorized";
-    if (!grouped.has(category)) {
-      grouped.set(category, []);
+    slug: string;
+    categories: string[];
+  }[] = [];
+
+  for (const entry of entries) {
+    const entryName = entry.name.replace(/\.mdx$/, "");
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      children[entryName] = buildMarkdownTree(fullPath, [...relativePath, entryName]);
+    } else if (entry.isFile() && entry.name.endsWith(".mdx")) {
+      files.push({
+        title: entryName.replace(/-/g, " "),
+        slug: [...relativePath, entryName].join("/"),
+        categories: [...relativePath],
+      });
     }
-    grouped.get(category)?.push(post);
   }
-  return (
-    <div className="fixed ml-[25%] w-1/2 h-screen overflow-y-scroll px-4 mt-6 pb-15">
-      
-      {[...grouped.entries()].map(([category, categoryPosts]) => {
-        const imageName = category.replace(/ /g, "-");
-        const imagePath = `/${imageName}.jpeg`;
 
-        return (
-          <div key={category} className="mb-10 flex flex-col rounded-xl shadow-xl">
-            <img
-              src={imagePath} // Need to use .src when not using Image component
-              alt="Larry's Profile Picture"
-              className="w-[100%] h-[40vh] object-cover rounded-t-xl"
-            />
-            <h1 className="ml-5 mt-2.5 mb-2.5 text-3xl font-semibold ">
-              {category === "." ? "Uncategorized" : category}
-            </h1>
+  // Add files node as a child folder to preserve folder structure
+  if (files.length > 0) {
+    children["files"] = {
+      type: "files",
+      name: "files",
+      children: files,
+    };
+  }
 
-            <div className="p-3 border-t-2 border-gray-200">
-              {categoryPosts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="block rounded-lg border mb-3 hover:border-blue-500 transition-colors"
-                >
-                  <h3 className="text-2xl p-4 font-semibold capitalize">
-                    {post.title}
-                  </h3>
-                </Link>
-              ))}
-            </div>
+  return {
+    type: "folder",
+    name: relativePath[relativePath.length - 1] || "root",
+    children,
+  };
+}
+
+// export default Blog;
+const Blog = () => {
+  const tree = buildMarkdownTree(); // Run at server side or preload
+  console.log(tree)
+  const renderTree = (node: MarkdownTreeNode, path = "") => {
+    if (node.type === "files") {
+      return (
+        <div className=" space-y-2 mb-5">
+          {node.children.map((file) => (
+            <Link
+              key={file.slug}
+              href={`/blog/${file.slug}`}
+              className="block hover:underline border-b-2 border-gray-200 "
+            >
+              <div className="pl-4">
+                {/* Titles */}
+                <h3 className="text-lg font-semibold">{file.title}</h3>
+                <p className="text-sm text-gray-500">{file.slug}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      );
+    }
+
+    if (node.type === "folder" && path.split("/").length === 1) {
+      const categoryImage = `/${node.name.replace(/ /g, "-")}.jpeg`;
+
+      return (
+        <div key={path} className="mb-6 rounded-xl shadow-md overflow-hidden">
+          <img
+            src={categoryImage}
+            alt={node.name}
+            className="w-[100%] h-[40vh] object-cover rounded-t-xl"
+          />
+          {/* First Category */}
+          <h1 className="ml-5 mt-2.5 mb-2.5 text-3xl font-semibold ">{node.name}</h1>
+          <div className="p-2 border-t-2 border-gray-500">
+            {Object.entries(node.children).map(([key, childNode]) => {
+              const childPath = path ? `${path}/${key}` : key;
+              return <div key={childPath}>{renderTree(childNode, childPath)}</div>;
+            })}
           </div>
-        );
-      })}
+        </div>
+      );
+    }
+
+    // Folder
+    return (
+      <div key={path} className="pl-3">
+        {/* subCategory */}
+        <h2 className="text-2xl font-semibold border-b-2 border-gray-400">{node.name}</h2>
+        <div className="">
+          {Object.entries(node.children).map(([key, childNode]) => {
+            const childPath = path ? `${path}/${key}` : key;
+            return <div key={childPath}>{renderTree(childNode, childPath)}</div>;
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="fixed ml-[25%] w-1/2 h-screen overflow-y-scroll px-4 mt-6 pb-15 scroll-smooth">
+      {Object.entries(tree.children).map(([key, childNode]) =>
+        renderTree(childNode, key)
+      )}
     </div>
   );
 };
