@@ -25,7 +25,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <h3 className="text-2xl font-normal mt-2 mb-2">{children}</h3>
     ),
     h4: ({ children }) => (
-      <h3 className="text-xl font-normal mt-1 mb-1">{children}</h3>
+      <h4 className="text-xl font-normal mt-1 mb-1">{children}</h4>
     ),
     p: ({ children }) => (
       <p className="my-2 leading-7 text-gray-800 dark:text-white">{children}</p>
