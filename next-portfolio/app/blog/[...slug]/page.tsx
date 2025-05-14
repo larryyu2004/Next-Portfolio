@@ -2,7 +2,9 @@ import { notFound } from "next/navigation";
 import { buildMarkdownTree, MarkdownTreeNode } from "../Blog";
 import TableOfContent from "./TableOfContent";
 import NavWeb from "@/app/_nav/page";
-import Intro from "../Intro";
+import { BookTextIcon } from "./BookIcon";
+import Link from "next/link";
+
 type PageProps = {
   params: { slug: string[] };
 };
@@ -18,17 +20,25 @@ export default async function Page({ params }: PageProps) {
         <main>
           <NavWeb />
           <div className="mt-[45px] fixed">
-
             <div className="flex">
               <div className="fixed w-3/4 h-screen px-4 mt-6 pb-30 overflow-y-scroll scroll-smooth">
                 <Post />
+
+                
+
+                
+                
+                
+                <Link href={"/blog"} className="flex justify-center items-center hover:underline transition-all duration-300">
+                <BookTextIcon />
                 <div className="flex justify-center font-bold"> -- End -- </div>
+                </Link>
+                
               </div>
+
               <TableOfContent />
             </div>
-            
           </div>
-          
         </main>
       </>
     );
