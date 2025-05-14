@@ -44,7 +44,7 @@ const ProjectCards = () => {
   
   return (
     <>
-      <div>
+      <div className="overflow-y-scroll">
         {projects.map((project, index) => (
             
           <Link href={project.to} key={index} className={`block w-full h-full`}>
