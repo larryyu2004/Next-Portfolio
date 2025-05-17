@@ -1,0 +1,159 @@
+# Frontend Engineering
+
+## Modularity
+
+- node CommonJS (CJS)
+- Ecmasript Module (ESM)
+
+## Package Management
+
+- npm
+- pnpm
+- yarn
+
+## JS Tool Chain
+
+### API Compatibility
+
+#### Polyfill: core-js
+
+- If we run this in node (v.10), it will say 'flatMap is not a function'
+
+```JS
+const result = [1, 2].flatMap((x) => [x, x * 2]);
+console.log(result);
+```
+
+So we can write a function to implement it (but it will waste time).
+
+```JS
+Array.prototype.flatMap = function ...
+
+const result = [1, 2].flatMap((x) => [x, x * 2]);
+console.log(result);
+```
+
+So we can install core-js: `npm i core-js`
+
+```JS
+require("core-js/modules/es.array.flat-map.js");
+
+const result = [1, 2].flatMap((x) => [x, x * 2]);
+console.log(result);
+```
+
+### Syntax Compatibility
+
+- If we run this in ES5, it will geneate an error, because ES5 cannot support `async` and `await`
+
+```JS
+// source.js
+async function test() {
+  return await Promise.resolve(1);
+}
+
+(async () => {
+  const r = await test();
+  console.log(r);
+})();
+```
+
+So we need to install `npm i regenerator`
+
+```JS
+const regenerator = require('regenerator');
+const fs = require('fs');
+const path = require('path');
+
+const sourcePath = path.resolve(__dirname, './source.js');
+const source = fs.readFileSync(sourcePath, 'utf-8');
+
+const result = regenerator.compile(source, {
+  includeRuntime: true,
+});
+
+const targetPath = path.resolve(__dirname, './target.js');
+// Generate a runnable code and paste it to another file
+fs.writeFileSync(targetPath, result.code, 'utf-8');
+console.log('compile success!');
+
+```
+
+- Now it will have a target file without any `async` and `await`
+
+### Language Enhancement
+
+- In some low version of JS, we cannot execute this:
+
+```JS
+const obj = {};
+
+obj?.foo?.bar?.baz; // undefined
+
+const result = [1, 2].flatMap((x) => [x, x * 2]);
+console.log(result);
+
+```
+
+- Install babel `npm i -D @babel/core @babel/cli`
+- Then we install `npm i -D @babel/plugin-transform-optional-channing`
+- Then config babel:
+
+```JS
+// babel.config.js
+module.exports = {
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        targets: {
+          edge: '17',
+          firefox: '60',
+          chrome: '67',
+          safari: '11.1',
+        },
+        useBuiltIns: 'usage',
+        corejs: '3.32.2',
+      },
+    ],
+  ],
+
+};
+
+```
+
+- Here, we already changed the script
+
+```JSON
+"scripts": {
+    "compile": "babel babel/source.js -o babel/target.js"
+}
+```
+
+- Then run `npm run compile`
+- It will generate a new target:
+
+```JS
+"use strict";
+
+require("core-js/modules/es.array.flat-map.js");
+require("core-js/modules/es.array.unscopables.flat-map.js");
+var _obj$foo;
+const obj = {};
+obj === null || obj === void 0 || (_obj$foo = obj.foo) === null || _obj$foo === void 0 || (_obj$foo = _obj$foo.bar) === null || _obj$foo === void 0 || _obj$foo.baz; // undefined
+
+const result = [1, 2].flatMap(x => [x, x * 2]);
+console.log(result);
+
+```
+
+## CSS Tool Chain
+- Lack of Syntax (Loop, Judge, Splice)
+- Lack of Feature (Color Function, Math Function, Customised Function)
+### Precomplier
+- sass
+- less
+- stylus
+### sass
+- Download sass `npm i -g sass`;
+- Convert a.sass to CSS code named a.css using command `sass a.sass a.css`, this step will generate 2 files, a.css and a.css.map, so we can use `sass a.sass a.css --no-source-map` to prevent generating a.css.map.
