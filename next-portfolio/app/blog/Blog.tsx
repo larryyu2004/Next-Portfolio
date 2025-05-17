@@ -94,7 +94,7 @@ const Blog = () => {
       const categoryImage = `/${node.name.replace(/ /g, "-")}.jpeg`;
 
       return (
-        <div key={path} className="mb-6 rounded-xl shadow-md overflow-hidden">
+        <div key={path} className="mb-6 rounded-xl shadow-lg overflow-hidden">
           <img
             src={categoryImage}
             alt={node.name}
