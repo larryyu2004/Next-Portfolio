@@ -33,25 +33,40 @@ export default function NavBlog() {
   }, []);
   return (
     <>
-
-      <nav className="fixed ml-[75%] w-1/4 h-screen overflow-y-scroll pl-4 pb-30">
-
-      <ul className="mt-10">
-        {headings.map((heading) => (
-          <li
-            key={heading.id}
-            className={`${
-              heading.level === 1 ? "font-bold mb-1" : heading.level === 2? "font-semibold pl-5 mb-2": "font-semiblod pl-10 mb-2"
-            } `}
-          >
-            <a href={`#${heading.id}`} className="hover:underline">
-              {heading.text}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-
+      <nav className="fixed right-0 w-1/4 h-screen overflow-y-auto border-l border-gray-300 bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] px-6 py-8 shadow-lg hidden xl:block pb-20">
+        <div className="text-xl font-bold mb-6 border-b-2 border-gray-200 pb-2 text-gray-800">
+          Blog Navigation
+        </div>
+        <ul className="space-y-3 text-sm text-gray-700">
+          {headings.map((heading) => (
+            <li key={heading.id}>
+              <a
+                href={`#${heading.id}`}
+                className={`
+                  block rounded-md px-2 py-1 transition-all duration-200
+                  ${
+                    heading.level === 1
+                      ? "text-2xl font-bold bg-gray-300 hover:bg-gray-400"
+                      : ""
+                  }
+                  ${
+                    heading.level === 2
+                      ? "text-xl pl-4 font-semibold bg-gray-200 hover:bg-gray-300"
+                      : ""
+                  }
+                  ${
+                    heading.level === 3
+                      ? "text-lg pl-8 font-semibold text-gray-600 hover:bg-gray-200"
+                      : ""
+                  }
+                `}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </>
   );
 }
