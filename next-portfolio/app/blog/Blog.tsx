@@ -69,7 +69,6 @@ export function buildMarkdownTree(
 // export default Blog;
 const Blog = () => {
   const tree = buildMarkdownTree(); // Run at server side or preload
-  console.log(tree)
   const renderTree = (node: MarkdownTreeNode, path = "") => {
     if (node.type === "files") {
       return (
