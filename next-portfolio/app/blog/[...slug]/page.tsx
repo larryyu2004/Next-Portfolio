@@ -10,7 +10,7 @@ type PageProps = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = params;
+  const { slug } = await params;
   const slugPath = slug?.join("/") || "";
 
   try {
@@ -24,16 +24,14 @@ export default async function Page({ params }: PageProps) {
               <div className="fixed w-3/4 h-screen px-4 mt-6 pb-30 overflow-y-scroll scroll-smooth">
                 <Post />
 
-                
-
-                
-                
-                
-                <Link href={"/blog"} className="flex justify-center items-center hover:underline transition-all duration-300">
-                <BookTextIcon />
                 <div className="flex justify-center font-bold"> -- End -- </div>
+                <Link
+                  href={"/blog"}
+                  className="flex justify-center items-center hover:underline transition-all duration-300 mt-10"
+                >
+                  <BookTextIcon />
+                  <div className="font-semibold">Back to Blog</div>
                 </Link>
-                
               </div>
 
               <TableOfContent />
