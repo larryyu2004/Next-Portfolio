@@ -1,7 +1,7 @@
 import React from "react";
 import profile_picture from "@/public/profile_picture.jpg";
 import { WaypointsIcon } from "./ConnectIcon";
-import { LinkedinIcon } from "./LinkedInIcon";
+import { LinkedinIcon } from "./LinkedinIcon";
 import { GithubIcon } from "./GithubIcon";
 import { CogIcon } from "./CogIcon";
 const Intro = () => {
