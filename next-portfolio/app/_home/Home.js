@@ -8,7 +8,6 @@ import Projects from './projects';
 
 
 const Home = () => {
-  const dispatch = useDispatch();
 
   const ProjectsdropDownIsVisible = useSelector((state) => state.Projectsdropdown.isVisible);
   const HomedropDownIsVisible = useSelector((state) => state.Homedropdown.isVisible);
