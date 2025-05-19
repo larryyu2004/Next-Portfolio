@@ -1,6 +1,6 @@
 // src/components/About.js
 import React from 'react';
-import { useDispatch } from 'react-redux';
+
 import { useSelector } from 'react-redux';
 import Introduction from './Introduction';
 import Education from './Education'
