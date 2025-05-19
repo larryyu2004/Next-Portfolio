@@ -74,7 +74,7 @@ const Introduction = () => {
                             min-w-[350px] md:min-w-[400px]'>
                <div className='font-bold text-4xl bg-gradient-to-r from-blue-600 to-purple-600
                     dark:from-orange-600 dark:to-yellow-300 text-transparent bg-clip-text'>
-                    Hello, I&aposm
+                    Hello, I &apos m
                 </div>
 
                 <div className='font-bold text-4xl min-h-[40px] bg-gradient-to-r from-blue-600 to-purple-600
