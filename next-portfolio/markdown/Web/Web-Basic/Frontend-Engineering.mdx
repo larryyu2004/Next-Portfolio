@@ -204,6 +204,104 @@ $duration: 400s;
 #### The Architecture of PostCSS
 -  CSS -> Parser -> Plugin 1 -> Plugin 2 -> ... -> Stringifier -> New CSS
 
-#### Plugin: Tailwind CSS
 
+### Webpack
+- `entry: './src/main.js'` is the entry of the project, Webpack will analysis the import for each file and generate AST (Abstract Syntax Tree). Webpack can deal both ESM (`import` -> Browser supports) and CMJ (`reuqire` -> Browser doesn't support).
+- If we enter `webpack serve` in the terminal, it will create a port and packing the file while you are coding (similar to Live Serve).
+```JS
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+
+module.exports = {
+  mode: 'development',
+  entry: './src/main.js',
+  output: {
+    path: path.resolve(__dirname, './dist'),
+    filename: 'js/app-[contenthash:5].js', // Output JavaScript filename with a 5-character content hash
+    assetModuleFilename: 'assets/[hash:5][ext]', // Output filename format for assets
+    chunkFilename: 'js/chunk-[contenthash:5].js', // Filename format for dynamic imported chunks
+    // publicPath: './', // Optional: set base path for all assets
+    clean: true, // Clean the output directory before each build
+  },
+  target: 'web',
+  devtool: 'source-map', // Generate source maps for debugging
+  devServer: {
+    port: 8080, // Development server port
+    // static: './dist', // Optional: serve static files from 'dist' folder
+    proxy: {
+      '/api': {
+        // Proxy requests starting with /api to another server
+        target: 'https://study.duyiedu.com', // Target server to proxy to
+        changeOrigin: true, // Change the origin header to the target URL
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'), // Use '@' as a shortcut to refer to the src directory
+    },
+  },
+  stats: 'errors-only', // Only show errors in the terminal output
+  module: {
+    rules: [
+      {
+        test: /\.(css|less)$/i,
+        use: [
+          MiniCssExtractPlugin.loader, // Extract CSS into separate files
+          'css-loader', // Interpret @import and url()
+          'postcss-loader', // Process CSS with PostCSS
+          'less-loader', // Compile Less to CSS
+        ],
+      },
+      {
+        test: /\.(mp3|mp4)$/, // Handle audio and video files
+        type: 'asset/resource',
+      },
+      {
+        test: /\.(gif|png|webp|svg|jpg|jpeg|bmp)$/, // Handle image files
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 1024, // Inline files smaller than 1KB as Base64
+          },
+        },
+      },
+      {
+        test: /\.js$/, // Transpile JavaScript files
+        exclude: /node_modules/, // Exclude node_modules from transpilation
+        use: 'babel-loader',
+      },
+    ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'public/index.html'), // Template HTML file
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name]-[contenthash:5].css', // Extracted CSS filename with content hash
+    }),
+    new CopyPlugin({
+      // Use the copy plugin to copy static files
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'public'), // Source folder
+          to: './', // Destination folder (root of dist)
+          globOptions: {
+            ignore: ['**/*.html'], // Ignore HTML files when copying
+          },
+        },
+      ],
+    }),
+  ],
+};
+```
+
+#### File Fingerprint
+- In each pack, Webpack will send these JS and CSS files to browser with some fingerprints, browser will push these files into cache. If Webpack updates these files, and send to browser, browser will update these files based on the file fingerprint, checking if they are same -> no updates, use cache; new update, get new file.
+
+### Scaffold
+- vue-cli; vite; cra (React)
+- Install vite `npm create vite@lastest`
 
