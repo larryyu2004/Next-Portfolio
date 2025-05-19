@@ -47,10 +47,10 @@ export default function TableOfContent() {
           <li
             key={heading.id}
             className={`${
-              heading.level === 3 ? "pl-7 mb-3" : "font-bold mb-3"
-            } `}
+              heading.level === 3 ? "text-lg pl-8 font-semibold text-gray-600 hover:bg-gray-200" : "text-xl pl-4 font-bold bg-gray-200 hover:bg-gray-300"
+            } px-2 py-1 block rounded-md mb-3 cursor-pointer`}
           >
-            <a href={`#${heading.id}`} className="hover:underline">
+            <a href={`#${heading.id}`} className="">
               {heading.text}
             </a>
           </li>
