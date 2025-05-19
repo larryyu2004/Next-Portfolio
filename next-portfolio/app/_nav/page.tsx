@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavHome from "./nav-web/NavHome";
 import NavProject from "./nav-web/NavProject";
 import NavBlog from "./nav-web/NavBlog";
