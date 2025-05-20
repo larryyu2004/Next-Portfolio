@@ -39,7 +39,7 @@ export default function TableOfContent() {
         className="fixed z-10 w-[23%] bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] border-b-1 flex  hover:underline transition-all duration-300"
       >
         <SquareChevronLeftIcon />
-        <h1 className="font-bold pt-2 ">Back to Blog</h1>
+        <h1 className="text-xl font-semibold hover:underline pt-2 cursor-pointer">Back to Blog</h1>
       </Link>
 
       <ul className="mt-15">
