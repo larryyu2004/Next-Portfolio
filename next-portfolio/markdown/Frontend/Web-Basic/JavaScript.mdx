@@ -264,7 +264,9 @@ Object.prototype.__proto__ === null              √ (end of chain)
 ```
 
 ### Declare a new function in prototype
+
 - Declare a new function → last() to print the last element of the array.k
+
 ```TS
 interface Array<T> {
     last(): T | -1;
@@ -295,6 +297,42 @@ Person.genericHello() //Hello
 
 - `static` means the method belongs to the class itself, not to instances of the class.
 - You cannot call it from an instance like `const p = new Person();` and `p.genericHello()` → that would cause an error.
+
+### This
+```JS
+class ExplainBindingsComponent extends Component {
+  onClickMe = () => {
+    console.log(this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.onClickMe} type="button">
+        Click Me
+      </button>
+    );
+  }
+}
+
+```
+- When you write a method as an arrow function like this: `onClickMe = () => { ... }`. The arrow functions do not have their own `this`. Instead, they inherit `this` from the context in which they were defined - in this case, the class instance. So `this` inside the arrow function still refers to the `ExplainBindingsComponent` instance, and you do not need to bind it manually in the constructor.
+```JS
+// Compare with regular method (without arrow function):
+class MyComponent extends Component {
+  onClickMe() {
+    console.log(this); // ❌ this will be undefined unless bound
+  }
+
+  constructor(props) {
+    super(props);
+    this.onClickMe = this.onClickMe.bind(this); // ✅ Fixes the binding
+  }
+}
+```
+- So if we use a regular method, you must bind it in the constructor, or it will lose the correct `this` when passed as a callback (e.g., in an event handler)
+#### Summary
+- `onClickMe () {}` needs binding and it can access `this` only if bound.
+- `onClickMe = () => {}` does not need binding and it can access `this` (based on the context)
 
 ## Template Literals
 
@@ -485,7 +523,9 @@ console.log(it.next().value) //2
 ### Adding to an array
 
 ### Array.splice()
+
 - `Array.splice(a, b)` removes `b` elements in the array from index `a` and returns them.
+
 ```JS
 const arr = [1, 2, 3, 4, 5];
 const size = 2;
@@ -495,7 +535,6 @@ res.push(arr.splice(0, 2)); // res = [[1, 2]], arr = [3, 4, 5]
 res.push(arr.splice(0, 2)); // res = [[1, 2], [3, 4]], arr = [5]
 res.push(arr.splice(0, 2)); // res = [[1, 2], [3, 4], [5]], arr = []
 ```
-
 
 #### Add at the end
 
@@ -1198,7 +1237,9 @@ x = '2a'
 ```
 
 ### Nullish Coalescing Operator (??)
+
 - Returns the right-hand side only if the left-hand side is null or undefined.
+
 ```JS
 let name;
 let displayName = name ?? "Anonymous";
@@ -1225,10 +1266,10 @@ Math.abs(2.5) //2.5
 Math.abs(-2.5) //2.5
 ```
 
-
-
 ### Math.ceil() & Math.floor()
+
 - Rounds a number up
+
 ```JS
 Math.ceil(2.5) //3
 Math.ceil(2) //2
@@ -1242,6 +1283,7 @@ Math.floor(2.99999) //2
 ```
 
 ### Math.max() & Math.min()
+
 ```JS
 Math.max(1,2,3,4,5) //5
 Math.max(1) //1
@@ -1251,29 +1293,38 @@ Math.max(1) //1
 ```
 
 ### Math.pow()
+
 - Return the first argument raised to the second argument
+
 ```JS
 Math.pow(1, 2) //1
 Math.pow(2, 1) //2
 Math.pow(2, 2) //4
 Math.pow(2, 4) //16
 ```
+
 ### Math.random()
+
 - Returns a pseudorandom number between 0.0 and 1.0
+
 ```JS
 Math.random() //0.9318168241227056
 Math.random() //0.35268950194094395
 ```
 
 ### Math.round()
+
 - Rounds a number to the nearest integer
+
 ```JS
 Math.round(1.2) //1
 Math.round(1.6) //2
 ```
 
 ### Math.sqrt()
+
 - Return the square root of the argument
+
 ```JS
 Math.sqrt(4) //2
 Math.sqrt(16) //4
@@ -1283,6 +1334,7 @@ Math.sqrt(5) //2.23606797749979
 ## JSON
 
 ### JSON.stringify ()
+
 ```JS
 args = [2, 3]
 key = JSON.stringify(args) // → "[2,3]"
@@ -1299,6 +1351,3 @@ key = JSON.stringify(args) // → "[2,3]"
 ```JS
 
 ```
-
-
-
