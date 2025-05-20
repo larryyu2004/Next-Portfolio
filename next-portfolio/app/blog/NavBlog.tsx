@@ -34,7 +34,7 @@ export default function NavBlog() {
   return (
     <>
       <nav className="fixed right-0 w-1/4 h-screen overflow-y-auto border-l border-gray-300 bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] px-6 py-8 shadow-lg hidden xl:block pb-20">
-        <div className="text-xl font-bold mb-6 border-b-2 border-gray-200 pb-2 text-gray-800">
+        <div className="text-2xl font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-300 tracking-wide">
           Blog Navigation
         </div>
         <ul className="space-y-3 text-sm text-gray-700">
