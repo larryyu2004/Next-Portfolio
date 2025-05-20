@@ -44,16 +44,18 @@ export default function TableOfContent() {
 
       <ul className="mt-15">
         {headings.map((heading) => (
+          <a href={`#${heading.id}`} key={heading.id} className="">
           <li
-            key={heading.id}
+            
             className={`${
               heading.level === 3 ? "text-lg pl-8 font-semibold text-gray-600 hover:bg-gray-200" : "text-xl pl-4 font-bold bg-gray-200 hover:bg-gray-300"
             } px-2 py-1 block rounded-md mb-3 cursor-pointer`}
           >
-            <a href={`#${heading.id}`} className="">
+            
               {heading.text}
-            </a>
+            
           </li>
+          </a>
         ))}
       </ul>
     </nav>
