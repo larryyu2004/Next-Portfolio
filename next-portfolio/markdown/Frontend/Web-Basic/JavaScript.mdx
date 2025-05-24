@@ -52,6 +52,10 @@ wait().then(() => {
 
 ### Generators
 
+- Generators are a special kind of function with the ability to pause itself, and resume later, allowing other code to run in the meantime.
+- All this is done with a single, simple keyword: `yield`. When a generator contains that keyword, the execution is halted.
+- A generator can contain many `yield` keywords, thus halting itself multiple times, and it's identified by the `*function` keyword.
+
 ```JS
 function *calculator(input) {
     var doubleThat = 2 * (yield (input / 2))
@@ -59,7 +63,11 @@ function *calculator(input) {
     return (input * doubleThat * another)
 }
 ```
-- 
+1. We initialize it with `const calc = calculator(10)`.
+2. Then we start the iterator on our generator: `calc.next()`.
+3. This first iteration starts the iterator. The code returns an object `{ done: false, value: 5 }` (because 10/2 === 5).
+4. We can treat `(yield (input / 2))` as a parameter, which will accept a new value. Then we call `calc.next(7)`. The code returns an object `{ done: false, value: 14 }` (7*2 === 14)
+5. We can treat `yield (doubleThat)` as a parameter, which will accept a new value. Then we call `calc.next(100)`. The code returns an object `{ done: true, value: 14000 }` (10*14*100 === 14000)
 
 ### The spread operator
 
@@ -300,6 +308,7 @@ Person.genericHello() //Hello
 - You cannot call it from an instance like `const p = new Person();` and `p.genericHello()` → that would cause an error.
 
 ### This
+
 ```JS
 class ExplainBindingsComponent extends Component {
   onClickMe = () => {
@@ -316,7 +325,9 @@ class ExplainBindingsComponent extends Component {
 }
 
 ```
+
 - When you write a method as an arrow function like this: `onClickMe = () => { ... }`. The arrow functions do not have their own `this`. Instead, they inherit `this` from the context in which they were defined - in this case, the class instance. So `this` inside the arrow function still refers to the `ExplainBindingsComponent` instance, and you do not need to bind it manually in the constructor.
+
 ```JS
 // Compare with regular method (without arrow function):
 class MyComponent extends Component {
@@ -330,8 +341,11 @@ class MyComponent extends Component {
   }
 }
 ```
+
 - So if we use a regular method, you must bind it in the constructor, or it will lose the correct `this` when passed as a callback (e.g., in an event handler)
+
 #### Summary
+
 - `onClickMe () {}` needs binding and it can access `this` only if bound.
 - `onClickMe = () => {}` does not need binding and it can access `this` (based on the context)
 
