@@ -28,7 +28,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <h4 className="text-xl font-normal mt-1 mb-1">{children}</h4>
     ),
     p: ({ children }) => (
-      <p className="my-2 leading-7 text-gray-800 dark:text-white">{children}</p>
+      <p className="my-2 leading-7  ">{children}</p>
     ),
     a: ({ href, children }) => (
       <a href={href} className="text-blue-600 hover:underline">
@@ -48,16 +48,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const language = languageMatch ? languageMatch[1] : null;
 
       return (
-        <div className="relative border border-gray-300 rounded-lg my-4">
+        <div className="relative border border-gray-300 rounded-lg my-4 dark:bg-[rgb(146,146,146)]">
           {language && (
-            <div className="absolute text-lg border-b-2 border-gray-300 min-w-full bg-[rgb(244,244,246)]  px-4 py-1 rounded-t-lg z-10">
+            <div className="absolute text-lg border-b-2 border-gray-300 min-w-full bg-[rgb(244,244,246)] dark:bg-[rgb(32,32,32)] px-4 py-1 rounded-t-lg z-10">
               {language}
             </div>
           )}
 
           <pre
             {...props}
-            className={`rounded overflow-x-auto mt-9 ${className}`}
+            className={`rounded overflow-x-auto mt-9  ${className}`}
           >
             {child}
           </pre>
@@ -76,10 +76,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       }
 
       // For block code, return without custom styles
-      return <code className={className}>{children}</code>;
+      return <code className={`${className} `}>{children}</code>;
     },
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4">
+      <blockquote className="border-l-4 border-gray-300 pl-4 italic my-4">
         {children}
       </blockquote>
     ),
