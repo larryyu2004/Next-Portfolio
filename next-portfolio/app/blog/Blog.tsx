@@ -77,7 +77,7 @@ const Blog = () => {
             <Link
               key={file.slug}
               href={`/blog/${file.slug}`}
-              className="block hover:underline border-b-2 border-gray-200 hover:bg-gray-200 rounded-sm transition-all duration-300"
+              className="block hover:underline border-b-2 border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-sm transition-all duration-300"
             >
               <div className="pl-4">
                 {/* Titles */}

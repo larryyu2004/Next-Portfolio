@@ -17,6 +17,23 @@ html {
   --font-mono: var(--font-geist-mono);
 }
 
+/* globals.css */
+.hljs-comment {
+  color: rgb(141, 188, 108);
+}
+.hljs {
+  background-color: transparent !important;
+}
+
+/* Light theme scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #a4a3a3;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: rgb(14, 14, 16);

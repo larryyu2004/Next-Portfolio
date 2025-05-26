@@ -6,7 +6,7 @@ import { GithubIcon } from "./GithubIcon";
 import { CogIcon } from "./CogIcon";
 const Intro = () => {
   return (
-    <div className="fixed top-20 left-6 w-1/5 p-6 bg-[rgb(244,244,246)]   rounded-xl shadow-lg flex flex-col items-center gap-4 ">
+    <div className="fixed top-20 left-6 w-1/5 p-6 rounded-xl shadow-lg flex flex-col items-center gap-4 ">
       <img
         src={profile_picture.src} // Need to use .src when not using Image component
         alt="Larry's Profile Picture"
@@ -14,7 +14,7 @@ const Intro = () => {
         height={150}
         className="rounded-full border-4 border-gray-300 shadow-md"
       />
-      <div className="text-center mt-4 space-y-1 text-gray-700">
+      <div className="text-center mt-4 space-y-1 ">
         <div className="text-2xl font-bold">Welcome to Larry's Blog</div>
         <div className="text-base font-medium">
           Operating System Optimisation
@@ -22,26 +22,26 @@ const Intro = () => {
         <div className="text-base font-medium">Full Stack Developer</div>
         <div className="text-base font-medium">Memory Optimisation</div>
         <div className="text-base font-medium">Algorithmic Problem-Solving</div>
-        <div className="text-sm font-normal text-gray-600">
+        <div className="text-sm font-normal">
           Adelaide University
         </div>
-        <div className="text-sm font-normal text-gray-600">
+        <div className="text-sm font-normal">
           jiayiyu@myyahoo.com
         </div>
       </div>
       {/* Extra profile sections */}
-      <div className="mt-6 w-full space-y-4 text-gray-700 text-sm">
-        <div className="bg-white p-4 rounded-lg shadow-sm">
+      <div className="mt-6 w-full space-y-4 text-sm ">
+        <div className="bg-white p-4 rounded-lg shadow-sm dark:bg-gray-800 dark:text-white">
           <div className="flex gap-4">
             <CogIcon />
             <div className="font-semibold mb-2 text-xl">Technologies</div>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 ">
             {["C++", "Python", "React", "Next.js", "Prisma", "PostgreSQL"].map(
               (tech) => (
                 <span
                   key={tech}
-                  className="bg-gray-100 px-2 py-1 rounded text-xs font-medium"
+                  className="bg-gray-100 px-2 py-1 rounded text-xs font-medium dark:bg-gray-800 dark:text-white"
                 >
                   {tech}
                 </span>
@@ -50,7 +50,7 @@ const Intro = () => {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm">
+        <div className="bg-white dark:bg-gray-800 dark:text-white p-4 rounded-lg shadow-sm">
           <div className="flex gap-4">
             <WaypointsIcon />
             <div className="font-bold mb-2 text-xl">Connect</div>

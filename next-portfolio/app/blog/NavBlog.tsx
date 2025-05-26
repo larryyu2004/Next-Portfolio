@@ -34,10 +34,10 @@ export default function NavBlog() {
   return (
     <>
       <nav className="fixed right-0 w-1/4 h-screen overflow-y-auto border-l border-gray-300 bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] px-6 py-8 shadow-lg hidden xl:block pb-20">
-        <div className="text-2xl font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-300 tracking-wide">
+        <div className="text-2xl font-semibold mb-6 pb-3 border-b border-gray-300 tracking-wide">
           Blog Navigation
         </div>
-        <ul className="space-y-3 text-sm text-gray-700">
+        <ul className="space-y-3 text-sm">
           {headings.map((heading) => (
             <li key={heading.id}>
               <a
@@ -46,17 +46,17 @@ export default function NavBlog() {
                   block rounded-md px-2 py-1 transition-all duration-200
                   ${
                     heading.level === 1
-                      ? "text-2xl font-bold bg-gray-300 hover:bg-gray-400"
+                      ? "text-2xl font-bold bg-gray-300 dark:bg-gray-700 hover:bg-gray-400"
                       : ""
                   }
                   ${
                     heading.level === 2
-                      ? "text-xl pl-4 font-semibold bg-gray-200 hover:bg-gray-300"
+                      ? "text-xl pl-4 font-semibold bg-gray-200 dark:bg-gray-800 hover:bg-gray-500"
                       : ""
                   }
                   ${
                     heading.level === 3
-                      ? "text-lg pl-8 font-semibold text-gray-600 hover:bg-gray-200"
+                      ? "text-lg pl-8 font-semibold dark:bg-gray-900 hover:bg-gray-600"
                       : ""
                   }
                 `}
