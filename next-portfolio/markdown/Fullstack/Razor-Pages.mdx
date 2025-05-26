@@ -1,0 +1,105 @@
+# Razor Pages
+
+## Connect with Database
+
+### Part1
+
+- Connect SQL Server Database under the `App_Data` directory
+
+```cshtml
+@using WebMatrix.Data
+
+@{
+    ViewBag.Title = "W11/Index";
+}
+
+@{
+    var db = DataBase.Open("FeedbackDB");
+    var st = Request.Form["searchText"];
+    var vd = Request.Form["visitDate"];
+
+    var sql = "SELECT * FROM Customers AS C " +
+                "JOIN Feedback AS F ON C.customerID = F.customerID " +
+                "WHERE name LIKE CONCAT('%', @0, '%') " +
+                "AND(@1 IS NULL OR @1 = '' OR feedbackDate >= @1) " +
+                "ORDER BY F.feedbackDate DESC";
+
+    var custList = db.Query(sql, st, vd);
+}
+
+<h2 class="text-center bg-light p-2 mt-2">W11/Index</h2>
+
+<form method="post" class="row mb-3">
+    <div class="col-3">
+        <input type="text" name="searchText" maxlength="100"
+               placeholder="Customer Name"
+               title="Enter a customer name"
+               class="form-control"
+               value="@st" />
+    </div>
+    <div class="col-3">
+        <input type="date" name="visitDate" title="Select customer visit date"
+               class="form-control" value="@vd" />
+    </div>
+    <div class="col-3">
+        <button type="submit" class="btn btn-outline-info">Search</button>
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var c in custList)
+    {
+        <div class="col-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@c.name</h5>
+                    <p class="card-text">@c.email</p>
+                    <p class="card-text">@c.feedbackDate.ToLongDateString()</p>
+                    <a href="/W11/Details?cid=@c.customerID&fid=@c.feedbackID" class="float-end btn btn-primary">View Feedback</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+```
+
+- When you call `var db = DataBase.Open()`, it will actually navigate to Web.config file and read `<connectionStrings>`
+
+```config
+<!-- Web.config  -->
+<connectionStrings>
+    <add name="FeedbackDB" connectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Feedback.mdf;Integrated Security=True;" providerName="System.Data.SqlClient" />
+</connectionStrings>
+```
+
+- Always add a space at the end of each SQL line segment when using concatenation: `"SELECT * FROM Customers AS C "`
+- First load, `vd` -> NULL; Second load, `vd` -> '';
+
+### Part2
+```cshtml
+@using WebMatrix.Data
+
+@{
+    ViewBag.Title = "W11/Details";
+}
+
+@{
+    var db = Database.Open("FeedbackDB");
+    var custID = Request.QueryString["cid"];
+    var feedID = Request.QueryString["fid"];
+
+    var fSql = "SELECT * FROM Customers AS C " +
+               "JOIN Feedback AS F ON C.customerID = F.customerID " +
+               "WHERE F.feedbackID = @0";
+
+    var catSql = "SELECT * FROM Categories AS C " +
+                 "LEFT JOIN Ratings AS R ON C.categoryID = R.categoryID " +
+                 "WHERE R.feedbackID = @0";
+
+    var fRecord = db.QuerySingle(fSql, feedID);
+    var catList = db.Query(catSql, feedID);
+}
+
+<h2>W11/Details</h2>
+```
+- Use `Request.QueryString` to get these requests from Post Method
