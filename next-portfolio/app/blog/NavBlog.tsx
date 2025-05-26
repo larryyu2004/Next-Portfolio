@@ -46,17 +46,17 @@ export default function NavBlog() {
                   block rounded-md px-2 py-1 transition-all duration-200
                   ${
                     heading.level === 1
-                      ? "text-2xl font-bold bg-gray-300 dark:bg-gray-700 hover:bg-gray-400"
+                      ? "text-2xl font-bold bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600"
                       : ""
                   }
                   ${
                     heading.level === 2
-                      ? "text-xl pl-4 font-semibold bg-gray-200 dark:bg-gray-800 hover:bg-gray-500"
+                      ? "text-xl pl-4 font-semibold bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700"
                       : ""
                   }
                   ${
                     heading.level === 3
-                      ? "text-lg pl-8 font-semibold dark:bg-gray-900 hover:bg-gray-600"
+                      ? "text-lg pl-8 font-semibold dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800"
                       : ""
                   }
                 `}

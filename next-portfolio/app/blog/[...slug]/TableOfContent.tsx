@@ -48,8 +48,8 @@ export default function TableOfContent() {
           <li
             
             className={`${
-              heading.level === 3 ? "text-lg pl-8 font-semibold hover:bg-gray-600" : "text-xl pl-4 font-bold bg-gray-300  dark:bg-gray-700 hover:bg-gray-500"
-            } px-2 py-1 block rounded-md mb-3 cursor-pointer`}
+              heading.level === 3 ? "text-lg pl-8 font-semibold dark:hover:bg-gray-600 hover:bg-gray-300" : "text-xl pl-4 font-bold bg-gray-300  dark:bg-gray-700 dark:hover:bg-gray-500 hover:bg-gray-400"
+            } px-2 py-1 block rounded-md mb-3 cursor-pointer transition-all duration-300`}
           >
             
               {heading.text}
