@@ -29,6 +29,7 @@
 - Remains in the browser history
 
 ### Post
+
 ```HTML
 <!-- save as post-form.html -->
 <!DOCTYPE html>
@@ -46,11 +47,13 @@
 </body>
 </html>
 ```
+
 - When the user submits this form, the browser sends the data in the body of the HTTP request, not in the URL.
 - Hidden from user
 - No length restrictions
 - Not retained in browser history
 - The request looks like this (in simplified form):
+
 ```Text
 POST /submit HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -59,9 +62,35 @@ firstname=John&lastname=Doe
 ```
 
 ### Label and Input
+
 - Use `for` atribute with value `TBFirstName` in the label and and add `id="TBFirstName"` in the input. When we click the label, it will focus on the `input`.
 - If you use `title="Enter your firstname"`, when the mouse hovering on the `<input>`, it will show the message ("Enter your firstname")
+
 ```HTML
 <label for="TBFirstName">First Name:</label><br>
 <input type="text" id="TBFirstName" name="firstname" placeholder="Enter your first" title="Enter your firstname"/>
+```
+
+- When mouse hovering on the input, it will show the content from `title`
+- `required` will force user to fill out it when submitting.
+- `checked` will automatically choose the option after loading in page.
+
+```HTML
+<input
+  type="text"
+  class="form-control col-6"
+  id="familyName"
+  name="familyName"
+  maxlength="100"
+  required
+  placeholder="Family Name"
+  title="Enter your address" />
+
+<input
+  class="form-check-input"
+  type="radio"
+  name="property"
+  id="property-no"
+  checked
+  value="No" />
 ```
