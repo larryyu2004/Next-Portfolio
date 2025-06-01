@@ -262,8 +262,19 @@ const numbers = [1, 2, 3, 4, 5]
 const sum = (a, b, c, d, e) => a + b + c + d + e
 const sum = sum(...numbers)
 ```
+
 ## Promise.prototype.finally()
 
+- When a promise is fulfilled, successfully it calls the then() methods, one after another.
+- If something fails during this, the then() methods are jumped and the catch() method is executed.
+- `finally()` allow you to run some code regardless of the successful or not successful execution of the promise:
+
+```JS
+fetch('file.json')
+.then(data => data.json())
+.catch(error => console.error(error))
+.finally(() => console.log('finished'))
+```
 
 ## Prototype
 
