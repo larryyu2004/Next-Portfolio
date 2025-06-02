@@ -6,7 +6,7 @@
 
 - Connect SQL Server Database under the `App_Data` directory
 
-```cshtml
+```CS
 @using WebMatrix.Data
 
 @{
@@ -65,7 +65,7 @@
 
 - When you call `var db = DataBase.Open()`, it will actually navigate to Web.config file and read `<connectionStrings>`
 
-```config
+```CS
 <!-- Web.config  -->
 <connectionStrings>
     <add name="FeedbackDB" connectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Feedback.mdf;Integrated Security=True;" providerName="System.Data.SqlClient" />
@@ -76,7 +76,8 @@
 - First load, `vd` -> NULL; Second load, `vd` -> '';
 
 ### Part2
-```cshtml
+
+```CS
 @using WebMatrix.Data
 
 @{
@@ -102,4 +103,114 @@
 
 <h2>W11/Details</h2>
 ```
+
 - Use `Request.QueryString` to get these requests from Post Method
+
+## Change Database Record
+
+### Creating Database Record
+
+- `if (IsPost)`, checks if the request method is POST. Only true when the form is submitted.
+- `GetLastInsertId()` returns the new IDENTITY ID which can be used to select the new record!
+
+```CS
+if (IsPost)
+{
+    var inSql = "INSERT INTO Episodes (episodeNo, seasonNo, title) " +
+                "VALUES (@0, @1, @2)";
+
+    var episodeNo = Request.Form["episodeNo"];
+    var seasonNo = Request.Form["seasonNo"];
+    var title = Request.Form["title"];
+
+    db.Execute(inSql, episodeNo, seasonNo, title);
+
+    var newID = db.GetLastInsertId();
+
+    if (newID > 0)
+    {
+        Response.Redirect("/W12/Details?id=" + newID);
+    }
+}
+```
+
+#### Cleaner Version
+
+- `SELECT SCOPE_IDENTITY()`, immediately returns the ID (auto-incremented primary key) of that newly inserted row
+
+```CS
+@{
+    if (IsPost) {
+        // SQL query to insert new episode and return its auto-generated ID
+        var inSql = @"INSERT INTO Episodes (episodeNo, seasonNo, title)
+                      VALUES (@0, @1, @2);
+                      SELECT SCOPE_IDENTITY()";  // Retrieves the last identity value created
+
+        // Execute query with parameters from form submission
+        var iData = db.QueryValue(
+            inSql,
+            Request.Form["episodeNo"],  // First parameter (@0)
+            Request.Form["seasonNo"],   // Second parameter (@1)
+            Request.Form["title"]       // Third parameter (@2)
+        );
+
+        // Redirect to details page if insert succeeded
+        if(iData > 0) {
+            Response.Redirect("/W12/Details?id=" + iData);
+        }
+    }
+}
+
+<form method="post" action="/W12/Create">
+    <!-- Missing in original snippet - should be added for full functionality -->
+    <input type="number" name="seasonNo" required placeholder="Season Number">
+    <input type="number" name="episodeNo" required placeholder="Episode Number">
+    
+    <input type="text" name="title" required placeholder="Title">
+    <button type="submit">Save</button>
+</form>
+```
+
+### Editing & Deleting Database Record
+
+#### Editing
+
+```CS
+@if (IsPost)
+{
+    var uSql = "UPDATE Episodes SET seasonNo = @0, title = @1 WHERE episodeID = @2";
+
+    var uData = db.Execute(uSql,
+        Request.Form["seasonNo"],
+        Request.Form["title"],
+        Request.Form["id"]);
+
+    if (uData == 1)
+    {
+        <div class="alert alert-success">Excellent</div>
+    }
+}
+
+// Always executed to retrieve episode data
+var sql = "SELECT * FROM Episodes WHERE episodeID = @0";
+var data = db.QuerySingle(sql, Request.QueryString["id"]);
+```
+
+#### Deleting
+
+```CS
+@if (IsPost)
+{
+    var dSql = "DELETE FROM Episodes WHERE episodeID = @0";
+    var dData = db.Execute(dSql, Request.Form["delete"]);
+
+    if (dData == 1)
+    {
+        <div class="alert warning">Record Deleted!</div>
+    }
+}
+
+// Always retrieve all episode data
+var sql = "SELECT * FROM Episodes";
+var data = db.Query(sql);
+```
