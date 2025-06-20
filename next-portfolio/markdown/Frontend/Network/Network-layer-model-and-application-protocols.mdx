@@ -1,0 +1,108 @@
+# Network layer model and application protocols
+
+## Hierarchical Model
+
+### Five-Layer Hierarchical Model
+
+- What message formats are relevant to specific applications? -> Application Layer (HTTP, FTP, DNS, SMTP, POP3)
+- How to ensure reliable delivery of messages? -> Transport Layer (TCP, UDP)
+- How to find each other on the Internet? -> Network Layer (IP, Router)
+- How to find each other in a subnet? -> Data Link Layer (MAC, Switch)
+- How can I signal what I have given above? -> Physical Layer (Fiber optic, twisted pair, coaxial cable, hub)
+
+### Data Transmission
+
+```Text
+Send text:
+
+1. Application Layer:
++-----------+
+|   Text    |
++-----------+
+
+2. Transport Layer:
++---+-----------+
+| T |   Text    |
++---+-----------+
+
+3. Network Layer:
++---+---+-----------+
+| N | T |   Text    |
++---+---+-----------+
+
+4. Data Link Layer:
++---+---+---+-----------+---+
+| D | N | T |   Text    | D |
++---+---+---+-----------+---+
+
+5. Physical Layer
+01010010110100101...
+
+Receive test:
+
+1. Physical Layer
+01010010110100101...
+
+2. Data Link Layer:
++---+---+---+-----------+---+
+| D | N | T |   Text    | D |
++---+---+---+-----------+---+
+
+3. Network Layer:
++---+---+-----------+
+| N | T |   Text    |
++---+---+-----------+
+
+4. Transport Layer:
++---+-----------+
+| T |   Text    |
++---+-----------+
+
+5. Application Layer:
++-----------+
+|   Text    |
++-----------+
+```
+
+## Application Layer Protocol
+
+### URL (Uniform Resource Locator)
+#### Used to locate the service of the network
+- http://a.com:80/news/detail?id=1#t1
+1. schema -> http
+2. domain -> a.com
+3. port -> 80
+4. path -> /news/detail
+5. query -> ?id=1
+6. hash -> #t1
+- From which service **(path)** from which program **(port)** in which computer **(domain)** in the network, and indicate the specific details **(path)** of obtaining the service and what kind of protocol communication **(schema)** should be used.
+
+## Note
+- When it is **HTTP** Protocol and the post is **80**, we can dismiss the port.
+- When it is **HTTPS** Protocol and the post is **443**, we can dismiss the port.
+- **schema, domain, path**
+
+<Tip>
+#### `<a herf="https://www.google.com/">` and `<a herf="https://www.google.com">` which one is better?
+#### Answer: `<a herf="https://www.google.com/">` is better
+- `<a herf="https://www.google.com/">` will go to the source root of the google.
+- If we use `<a herf="https://www.google.com">`, browser will find the URL is imcompleted (lack path), browser will help you complete.
+</Tip>
+
+<Key>
+#### Why we can use **Live Server** to access files?
+#### Because it is a **Static Resource Server**
+- Boost Live Server program.
+- Open the browser, access the http://localhost:5500/index.html automatically.
+- 
+</Key>
+
+### HTTP (Hyper Text Transfer Protocol)
+#### The mode of transmitting messages
+```Text
+                    1. Request
+        --------------------------------------> 
+Client                                          Server
+        <--------------------------------------
+                    2. Response
+```
