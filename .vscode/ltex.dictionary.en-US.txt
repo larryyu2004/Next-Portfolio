@@ -1,0 +1,12 @@
+Async
+forEach
+NaN
+getOwnPropertyDescriptors
+TypeError
+IIFE
+IIFEs
+ceil
+pseudorandom
+Nullish
+sqrt
+stringify

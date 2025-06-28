@@ -10,8 +10,7 @@ type PageProps = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = params;
-  const slugPath = slug?.join("/") || "";
+  const slugPath = params.slug?.join("/") || "";
 
   try {
     const { default: Post } = await import(`@/markdown/${slugPath}.mdx`);

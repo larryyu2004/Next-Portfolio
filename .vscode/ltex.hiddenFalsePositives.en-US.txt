@@ -1,0 +1,3 @@
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QgetOwnPropertyDescriptors()\nvalue: the value of the property\nwritable: true the property can be changed\nget: a getter function for the property, called when the property is read\nset: a setter function for the property, called when the property is set to a value\nconfigurable: if false, the property cannot be removed nor any attribute can be changed, except its value\nenumerable: true if the property is enumerable\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qfor...of...\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q@@iterator\\E$"}
