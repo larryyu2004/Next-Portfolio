@@ -100,17 +100,17 @@ const NavWeb = () => {
       case "unloading":
         return "animate-[shrinkHeight_0.3s_ease-in-out_forwards]";
       case "projects_to_home":
-        return "animate-[SixtoFour_0.3s_ease-in-out_forwards]";
+        return "animate-[FourtoFour_0.3s_ease-in-out_forwards]";
       case "home_to_projects":
-        return "animate-[FourtoSix_0.6s_ease-in-out_forwards]";
+        return "animate-[FourtoFour_0.6s_ease-in-out_forwards]";
       case "home_to_blog":
         return "animate-[FourtoFour_0.3s_ease-in-out_forwards]";
       case "projects_to_blog":
-        return "animate-[SixtoFour_0.3s_ease-in-out_forwards]";
+        return "animate-[FourtoFour_0.3s_ease-in-out_forwards]";
       case "blog_to_home":
         return "animate-[FourtoFour_0.3s_ease-in-out_forwards]";
       case "blog_to_projects":
-        return "animate-[FourtoSix_0.6s_ease-in-out_forwards]";
+        return "animate-[FourtoFour_0.6s_ease-in-out_forwards]";
       default:
         return "";
     }
