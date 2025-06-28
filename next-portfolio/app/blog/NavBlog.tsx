@@ -1,5 +1,4 @@
 "use client";
-import { head } from "motion/react-client";
 import React from "react";
 import { useEffect, useState } from "react";
 

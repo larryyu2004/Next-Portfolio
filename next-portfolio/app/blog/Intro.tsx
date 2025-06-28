@@ -15,7 +15,7 @@ const Intro = () => {
         className="rounded-full border-4 border-gray-300 shadow-md"
       />
       <div className="text-center mt-4 space-y-1 ">
-        <div className="text-2xl font-bold">Welcome to Larry's Blog</div>
+        <p className="text-2xl font-bold">Welcome to Larry&apos;s Blog</p>
         <div className="text-base font-medium">
           Operating System Optimisation
         </div>

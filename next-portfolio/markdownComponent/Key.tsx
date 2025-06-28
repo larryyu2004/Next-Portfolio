@@ -4,7 +4,7 @@ import { KeyCircleIcon } from "./Icon/KeyIcon"
 
 function Key({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start border-l-2 border-b-2 border-red-600  bg-red-50 my-4 pb-2 rounded-md dark:border-red-800 dark:bg-red-950 ">
+    <div className="flex items-start border-l-4 border-b-4 border-red-600  bg-red-50 my-4 pb-2 rounded-md dark:border-red-800 dark:bg-red-950 ">
       <div className="text-red-600 dark:text-white">
         <KeyCircleIcon />
       </div>

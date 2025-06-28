@@ -4,7 +4,7 @@ import { KeyCircleIcon } from "./Icon/KeyIcon"
 
 function Tip({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start border-l-4 border-green-600 my-4 rounded bg-green-50">
+    <div className="flex items-start border-l-4 border-b-4 border-green-600 my-4 rounded bg-green-50">
       <div className="text-green-600">
 
         <RouteIcon />
