@@ -10,7 +10,7 @@ type PageProps = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const slugPath = slug?.join("/") || "";
 
   try {
