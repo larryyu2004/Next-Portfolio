@@ -6,11 +6,12 @@ import { BookTextIcon } from "./BookIcon";
 import Link from "next/link";
 
 type PageProps = {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 };
 
 export default async function Page({ params }: PageProps) {
-  const slugPath = params.slug?.join("/") || "";
+  const { slug } = await params;
+  const slugPath = slug?.join("/") || "";
 
   try {
     const { default: Post } = await import(`@/markdown/${slugPath}.mdx`);
