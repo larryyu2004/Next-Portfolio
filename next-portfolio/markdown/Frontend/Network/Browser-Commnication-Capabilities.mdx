@@ -1,0 +1,75 @@
+# Browser Commnication Capabilities
+
+## User Agent
+
+- Two core functions that the browser has
+
+1. The ability to automatically send requests
+2. The ability to automatically parse response
+
+### The ability to automatically send requests
+
+1. The user enters a URL in the address bar and enter 'return' -> The browser will automatically parse the URL and send a get request, and abandon the current page
+2. When user clicks the `<a>` element -> The browser will get the `href` address and send a GET method, and abandon the current page.
+3. When user clicks the submit button **`<button type="submit">...</button>`** -> The browser will get the `<form>` element belongs to the button, get its `action` address and get its `method`. The browser will organise the data in the form to the request body, send the `method` request, and abandon the current page.
+   > This type of submission is becoming less and less common now.
+4. When browser encounters `<link> <img> <script> <video> <audio>` elements -> The browser will get the address of them and send GET method.
+5. When the user clicks Refresh -> The browser will get the address of the current page and the request method of the current page, resend the request, and abandon the current page.
+
+**When a GET request is sent, it is not accompanied by a request body**
+
+- This convention has profoundly affected subsequent front-end and back-end applications of all kinds, and now, almost everyone subconsciously agrees with it, both front-end developers and back-end developers.
+
+- Due to the default behavior of the front-end and back-end programs, gradually caused a variety of differences between GET and POST:
+
+1. Browsers do not send GET requests with a request body attached to them
+2. The amount of information transferred by GET request is limited, suitable for transferring a small amount of data; the amount of information transferred by POST request is not limited, suitable for transferring a large amount of data.
+3. GET request can only pass ASCII data, encounter non-ASCII data need to be encoded; POST request has no limitation.
+4. most of the data passed by GET request is attached to the path parameter, which can completely reproduce the page by sharing the address, but it also exposes the data, if you have sensitive data to pass, you shouldn't use GET request, or at least you shouldn't put it in the path.
+5. POST is not saved in the browser's history.
+6. When the page is refreshed, if the current page was obtained by a POST request, the browser prompts the user to resubmit. If the page is a GET request, there is no prompt.
+
+### The ability to automatically parse response
+
+- The browser can identify the Response Code -> The browser can automatically identify the response code. When some special response codes appear, the browser will automatically complete the processing, such as `301`, `302`.
+- Do different processing according to the response results
+  The browser can automatically analyze the `Content-Type` in the response header and process it differently according to different values, such as:
+
+1. `text/plain`: ordinary plain text, the browser usually displays the response body intact on the page
+2. `text/html`: html document, the browser usually renders the response body as a page
+3. `text/javascript` or `application/javascript`: js code, the browser usually uses the JS execution engine to parse and execute it
+4. `text/css`: css code, the browser will treat it as a style
+5. `image/jpeg`: the browser will treat it as a jpg image
+6. `application/octet-stream`: binary data, which will trigger the browser download function
+7. `attachment`: attachment, which will trigger the download function
+
+- This value is different from other values ​​and should be placed in the `Content-Disposition` header.
+
+## AJAX
+
+> The browser itself has the ability to communicate over the Internet, but in the early days, the browser did not open this capability to JS.
+>
+> Microsoft first opened this capability to JS in the IE browser, allowing JS to send requests in the code without refreshing the page. This technology was officially named AJAX (**A**synchronous **J**avascript **A**nd **X**ML) in 2005
+
+- AJAX refers to sending requests to the server asynchronously in a web application.
+  There are two ways to implement it, `XMLHttpRequest abbreviated as XHR` and `Fetch`
+  The following is a comparison between the two:
+  Functional Points Comparison between XHR and Fetch:
+```text
++------------------------------+--------+---------+
+| Functional Point             | XHR    |  Fetch  |
++------------------------------+--------+---------+
+| Basic request                |   ✅    |   ✅    |
+| Basic response               |   ✅    |   ✅    |
+| Monitor request progress     |   ✅    |   ❌    |
+| Monitor response progress    |   ✅    |   ✅    |
+| Service Worker support       |   ❌    |   ✅    |
+| Cookie control               |   ❌    |   ✅    |
+| Redirect control             |   ❌    |   ✅    |
+| Request cancellation         |   ✅    |   ✅    |
+| Custom referrer              |   ❌    |   ✅    |
+| Stream                       |   ❌    |   ✅    |
+| API style                    | Event  | Promise |
+| Activity behavior            | Stops  | Updates |
++------------------------------+--------+---------+
+```

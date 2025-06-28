@@ -67,17 +67,22 @@ Receive test:
 ## Application Layer Protocol
 
 ### URL (Uniform Resource Locator)
+
 #### Used to locate the service of the network
+
 - http://a.com:80/news/detail?id=1#t1
+
 1. schema -> http
 2. domain -> a.com
 3. port -> 80
 4. path -> /news/detail
 5. query -> ?id=1
 6. hash -> #t1
+
 - From which service **(path)** from which program **(port)** in which computer **(domain)** in the network, and indicate the specific details **(path)** of obtaining the service and what kind of protocol communication **(schema)** should be used.
 
 ## Note
+
 - When it is **HTTP** Protocol and the post is **80**, we can dismiss the port.
 - When it is **HTTPS** Protocol and the post is **443**, we can dismiss the port.
 - **schema, domain, path**
@@ -90,19 +95,124 @@ Receive test:
 </Tip>
 
 <Key>
-#### Why we can use **Live Server** to access files?
-#### Because it is a **Static Resource Server**
-- Boost Live Server program.
-- Open the browser, access the http://localhost:5500/index.html automatically.
-- 
+  #### Why we can use **Live Server (Extension)** to access files? #### Because
+  it is a **Static Resource Server** - Boost Live Server program. - Open the
+  browser, access the http://localhost:5500/index.html automatically.
 </Key>
 
 ### HTTP (Hyper Text Transfer Protocol)
+
 #### The mode of transmitting messages
+
 ```Text
-                    1. Request
-        --------------------------------------> 
-Client                                          Server
-        <--------------------------------------
-                    2. Response
+                    1. Request (Request Line + Request Host + Request Body)
+        ------------------------------------------------------------------------------>
+Client                                                                                   Server
+        <------------------------------------------------------------------------------
+                    2. Response (Response Line + Response Host + Response Body)
 ```
+
+#### The format of transmitting messages
+
+- The HTTP message format is a plain text format, which is divided into three part:
+
+1. Request Line
+2. Request Host
+3. Request Body
+
+#### Example
+
+1. Download an extension 'REST Client'
+2. Create a new file 'xxx.http'
+3. Write request text and send request
+
+```HTTP
+GET / HTTP/1.1
+Host: www.google.com
+```
+
+#### Explaination (Request Line)
+
+- `GET` means the client want to get sth while `POST` means the client wants to submit sth
+- There are some common request methods:
+
+1. `GET`: obtain;
+2. `POST`: submit;
+3. `PUT`: modify;
+4. `DELETE`: delete;
+
+- If client wants to get some static resource, we commently use `GET`;
+
+```HTTP
+GET /api/moives?page=2&size=10 HTTP/1.1
+```
+
+#### Explaination (Request Host)
+
+```HTTP
+Host: www.google.com
+```
+
+### Explaination (Request Body)
+
+- Define Content Type (Tell the server how to deal with the format of the message)
+- For example, if our Request Body is `loginId:admin, loginPwd:123456`, the Request Body can be sent to different format.
+
+```HTTP
+Content-Type: application/x-www-form-urlencoded
+loginId=admin&loginPwd=123123
+```
+
+```HTTP
+Content-Type: application/json
+{ "loginId": "admin", "loginPwd": "123123" }
+```
+
+```HTTP
+Content-Type: multipart/form-data; boundary=aaa
+
+--aaa
+Content-Disposition: form-data; name="loginId"
+
+admin
+--aaa
+Content-Disposition: form-data; name="loginPwd"
+
+123456
+--aaa
+Content-Disposition: form-data; name="avatar"; filename="small.jpg"
+Content-Type: image/jpeg
+
+<binary image data here>
+--aaa--
+```
+
+### Response Code
+
+1. **1xx** -> The server received the request and needs the requester to continue the operation
+2. **2xx** -> Success, the operation was successfully received and processed
+3. **3xx** -> Redirection, further operations are required to complete the request 
+4. **4xx** -> Client error, the request contains syntax errors or cannot complete the request Server error.
+5. **5xx** -> The server encountered an error while processing the request
+
+### Common Response Code
+1. **200** OK -> ALL GOOD
+2. **301** Moved Permanently (I received your request, but the thing you want is not at this address. I have **moved it to a new address forever**. Please request the new address. I put the address in the Location of the response header)
+3. **302** Moved Temporarily (I received your request, but the item you want is no longer at this address. I have **temporarily moved** it to a new address. Please request the new address. I have put the address in the Location of the request header.)
+4. **304** Not Modified (I received your request. What you want is the same as before. There is no change, so I won't give you the result. You can use the previous one. What? You didn't cache the previous content. What does it have to do with me?)
+5. **400** Bad Request (The semantics are incorrect and the current request cannot be understood by the server.)
+6. **403** Forbidden (The server refuses to execute)
+7. **404** Not Found
+8. **500** Internal Server Error (Internal server error)
+
+### Response Header
+- `Content-Type` marks the format of the attached response body
+Common values ​​are:
+1. `text/plain`: plain text
+2. `text/html`: html document
+3. `text/javascript` or `application/javascript`: JS code
+4. `text/css`: css code
+5. `image/jpeg`: jpg image
+6. `attachment`: attachment
+7. Other `MIME` types
+
