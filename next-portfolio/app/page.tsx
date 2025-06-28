@@ -1,7 +1,5 @@
 import NavWeb from "./_nav/page";
 import React from "react";
-import Introduction from "./_home/Introduction"
-import Education from "./_home/Education"
 
 export default function Home() {
   const projects = [
