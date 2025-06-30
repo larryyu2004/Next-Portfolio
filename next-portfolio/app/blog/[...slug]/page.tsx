@@ -29,7 +29,7 @@ export default async function Page({ params }: PageProps) {
               <div className="flex justify-center font-bold"> -- End -- </div>
               <Link
                 href={"/blog"}
-                className="fixed flex bottom-4 left-4 right-4 xl:static xl:flex justify-center items-center hover:underline transition-all duration-300 mt-10 md:mb-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg p-3 xl:p-0 xl:bg-transparent xl:dark:bg-transparent shadow-lg xl:shadow-none"
+                className="fixed flex z-20 bottom-4 left-4 right-4 xl:static xl:flex justify-center items-center hover:underline transition-all duration-300 mt-10 md:mb-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg p-3 xl:p-0 xl:bg-transparent xl:dark:bg-transparent shadow-lg xl:shadow-none"
               >
                 <BookTextIcon />
                 <div className="font-semibold">Back to Blog</div>
