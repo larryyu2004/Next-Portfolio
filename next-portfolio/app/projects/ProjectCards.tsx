@@ -34,7 +34,7 @@ const ProjectCards = () => {
       {projects.map((project, index) => (
         <Link href={project.to} key={index} className="block mb-5">
           <div 
-            className="relative w-full h-screen flex items-center justify-center overflow-hidden group cursor-pointer"
+            className="relative w-full h-[90vh] sm:h-screen flex items-center justify-center overflow-hidden group cursor-pointer"
             style={{
               backgroundImage: `url(${project.bgImage})`,
               backgroundSize: 'cover',
@@ -57,7 +57,7 @@ const ProjectCards = () => {
             ></div>
             
             {/* Project title - stays the same size on hover */}
-            <h1 className={`relative z-10 ${project.color} text-transparent bg-clip-text text-6xl md:text-7xl lg:text-8xl font-bold text-center px-8 drop-shadow-2xl transition-all duration-300`}>
+            <h1 className={`relative z-10 ${project.color} text-transparent bg-clip-text text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center px-4 sm:px-8 drop-shadow-2xl transition-all duration-300`}>
               {project.name}
             </h1>
           </div>
