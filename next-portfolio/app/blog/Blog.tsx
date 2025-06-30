@@ -128,7 +128,7 @@ const Blog = () => {
   };
 
   return (
-    <div className="fixed ml-[25%] w-1/2 h-screen overflow-y-scroll px-4 mt-6 pb-15 scroll-smooth">
+    <div className="w-full xl:ml-[25%] xl:w-3/5 xl:h-screen xl:overflow-y-scroll px-2 sm:px-4 mt-4 xl:mt-6 pb-30 scroll-smooth">
       {Object.entries(tree.children).map(([key, childNode]) =>
         renderTree(childNode, key)
       )}

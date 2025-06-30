@@ -5,7 +5,7 @@ import Link from "next/link";
 const NavPhone = () => {
   const [open, setOpen] = useState(false);
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 block md:hidden bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow">
+    <nav className="fixed top-0 left-0 w-full z-50 block md:hidden bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow ">
       <div className="flex items-center justify-between px-4 py-3">
         <Link href="/" className="text-xl font-bold">LYU</Link>
         <button
@@ -19,7 +19,7 @@ const NavPhone = () => {
         </button>
       </div>
       {open && (
-        <div className="flex flex-col items-center space-y-4 pb-4 animate-fade-in">
+        <div className="flex flex-col items-center space-y-4 pb-4 animate-fade-in duration-300">
           <Link href="/" className="text-lg font-semibold" onClick={() => setOpen(false)}>Home</Link>
           <Link href="/projects" className="text-lg font-semibold" onClick={() => setOpen(false)}>Projects</Link>
           <Link href="/blog" className="text-lg font-semibold" onClick={() => setOpen(false)}>Blog</Link>

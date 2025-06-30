@@ -1,24 +1,25 @@
-
 import NavWeb from "../_nav/page";
+import NavPhone from "../_nav/nav-phone/NavPhone";
 import Intro from "./Intro";
 import Blog from "./Blog";
 import NavBlog from "./NavBlog";
 
-
 export default function Page() {
-
   return (
-    <>
-      <main>
-        <NavWeb />
-        <div className={`mt-[45px]`}>
-          <div className="flex">
-            <Intro />
-            <Blog />
-            <NavBlog />
-          </div>
+    <main className="md:fixed h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
+      {/* Responsive Navigation */}
+      <div className="block md:hidden"><NavPhone /></div>
+      <div className="hidden md:block"><NavWeb /></div>
+      <div className="mt-[45px] px-2 sm:px-4 py-8">
+        <div className="flex flex-col xl:flex-row">
+          {/* Left: Intro (profile) */}
+          <div className="w-full xl:w-1/15 xl:sticky xl:top-24"><Intro /></div>
+          {/* Center: Blog */}
+          <div className="w-full"><Blog /></div>
+          {/* Right: NavBlog (table of contents) - only show on xl+ */}
+          <div className="hidden xl:block w-1/5"><NavBlog /></div>
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
