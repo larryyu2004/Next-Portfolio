@@ -24,7 +24,7 @@ export default async function Page({ params }: PageProps) {
         <div className="mt-[60px] px-2 sm:px-4 py-8">
           <div className="flex flex-col xl:flex-row gap-6 ">
             {/* Main content */}
-            <div className="w-full xl:w-4/5 xl:h-screen xl:overflow-y-scroll px-2 sm:px-4 pb-10 scroll-smooth">
+            <div className="w-full xl:w-3/4 xl:h-screen xl:overflow-y-scroll px-2 sm:px-4 pb-10 scroll-smooth">
               <Post />
               <div className="flex justify-center font-bold"> -- End -- </div>
               <Link
@@ -36,7 +36,7 @@ export default async function Page({ params }: PageProps) {
               </Link>
             </div>
             {/* Table of Content - only show on xl+ */}
-            <div className="hidden xl:block"><TableOfContent /></div>
+            <div className="hidden w-1/4 xl:block"><TableOfContent /></div>
           </div>
         </div>
       </main>

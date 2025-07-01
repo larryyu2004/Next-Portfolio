@@ -33,7 +33,7 @@ export default function TableOfContent() {
   }, []);
 
   return (
-    <nav className="fixed w-1/5 h-screen overflow-y-scroll pb-30">
+    <nav className="fixed h-screen overflow-y-scroll pb-30">
       <Link
         href={"/blog"}
         className="fixed z-10 w-[23%] bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] border-b-1 flex  hover:underline transition-all duration-300"
