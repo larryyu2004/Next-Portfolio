@@ -124,7 +124,7 @@ Timing Thread<--+       |   time starts  |   timing in progress   |   timing ove
 
 
 <Key>
-#### **Interview: How to understand the async in JS?**
+#### How to understand the async in JS?**
 
 JS is a single-threaded language, it is because it runs in the main rendering thread, and there is only one main rendering thread. The main rendering thread will do a lot of jobs, such as rendering pages, executing JS code.
 If we use sync, it will block the main rendering thread, so that the following tasks in the message queue cannot be executed. It will waste the time of the main rendering thread and also cannot update the page on time, leading to lag.
@@ -294,7 +294,7 @@ console.log(5);
 9. Check micro-task queue, print 2.
 
 <Key>
-#### **Interview: Can you explain the event loop in JavaScript?**
+#### Can you explain the event loop in JavaScript?**
 The event loop is a message loop, it is how the browser works.
 
 In the source code of Chrome, it will start an infinite loop, and each time the main rendering thread will fetch the first task from the message queue. The other thread will push some tasks to the back of the message queue.

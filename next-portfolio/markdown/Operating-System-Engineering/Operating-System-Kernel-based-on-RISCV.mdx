@@ -1,1 +1,82 @@
-# Operating System Kernel based on RISC-V 
+# Operating System Kernel based on RISC-V
+
+## Basic Information
+
+- XV-6 runs in a hardware environment simulated by **qemu**.
+
+## The Relationship between RISC-V and ARM
+
+### RISC-V
+
+- RISC-V is an **open architecture** based on the **reduced instruction set (RISC)**. Its instruction set is open and can be used and customised freely.
+- RISC-V is designed to be open, and anyone can design and manufacture RISC-V processors based on its specifications.
+
+### ARM
+
+- ARM is a **reduced instruction set architecture** developed by a company, which is widely used in embedded systems, mobile devices and servers. ARM's design is proprietary and requires a license from ARM Limited to use.
+
+#### Openness:
+
+- RISC-V is an open architecture whose specifications are free and open to anyone. This openness makes RISC-V widely popular, especially in academia and emerging market sectors.
+- The ARM architecture is proprietary, and the use of the ARM instruction set requires a corresponding license. This means that the use of ARM usually involves license fees.
+
+#### Application Area:
+
+- RISC-V has potential in various fields, including embedded systems, Internet of Things (IoT), high-performance computing, and artificial intelligence (AI). Due to its openness and flexibility, it has attracted many innovative projects and startups.
+- The ARM architecture has a strong market share in fields such as mobile devices, embedded systems, servers, and data centres. It's ecosystem and maturity make it the first choice in many traditional fields.
+
+## How many pipeline stages does RISC-V have?
+
+- Five pipeline stages
+
+1. **Fetch**: fetch instructions from memory.
+2. **Decode**: decode instructions to determine the operations and operands to be performed.
+3. **Execute**: execute the operations of instructions, which may involve arithmetic and logical operations, memory access, etc.
+4. **Memory**: if the instruction needs to access memory (such as load or store instructions), memory access is performed in this stage.
+5. **Write Back**: write the result of the execution stage calculation back to the register file.
+
+## Will there be a PC reduction in the five-stage pipeline?
+
+- In some special cases, the PC may be reduced:
+
+1. **Branch Instruction Processing**: When the processor encounters a conditional branch instruction, if the condition is not met, it needs to jump to another address for execution. At this time, the PC may be reduced to the target address of the jump.
+2. **Exception and Interrupt Processing**: When the processor detects an exception or interrupt, it needs to save the address of the current instruction (usually save the PC value to a specific register) and then jump to the address of the exception or interrupt handler. In this case, the value of the PC will change.
+
+## How much does the PC normally increase each time?
+
+- Under normal circumstances, the PC will increase by **4 (32-bit system) or 8 (64-bit system)** each time. This is because instructions are usually stored in memory with a fixed length of 4 bytes (32 bits) or 8 bytes (64 bits), and **the increment step of the PC matches the length of the instructions**.
+
+## Memory Management
+
+- XV-6 manages virtual memory through **three-level page tables**. **The kernel stage page table and the user state page table are separated**. That is, when the program is in user state, it uses its own user state page table. When the program falls into kernel state through system calls, the page table will be switched to the kernel state page table.
+- **Each process has one user state page table**, and the page table address is saved on the process pcb (`kenel1/proc.h proc`). **There is only one kernel state page table, which is shared by all processes**. The page table address is saved by each process on `pcb.trapframe.kernel_satp`.
+- The process virtual address space is shown in the figure below. The **trampoline** is quite special. **This memory can be understood as a shared memory**. The trampoline of each process will be **mapped to the same physical memory**. This physical memory stores `kernel/trampoline.S`, which is used to **save/restore registers, switch stacks, switch page tables, etc., when the process enters and exits kernel state.**
+
+```Text
++--------------------+ -> MAXVA
+| Trampoline         |
++--------------------+
+| Trapframe          |
++--------------------+
+|                    |
+|                    |
+|                    |
+|        Heap        |
+|                    |
+|                    |
++--------------------+
+| User Stack         |
++--------------------+
+| User Text and Data |
++--------------------+ -> 0
+```
+
+## Page Table Merging
+
+### Why do we need to merge the page table?
+
+- **Hardware MMU can only parse one page table**. When the program is in kernel state, MMU parses the kernel state page table. If you want to **access the user state page table at this time** (for example, access a pointer passed in by user state), **you can't parse it through the hardware MMU**. You can only parse it through **software** methods, but the **performance of the software method is much lower than that of hardware**. Therefore, **by merging page tables**, a hardware MMU can still be used in this scenario, thereby improving performance.
+
+### Will the two-page tables conflict?
+- **No**. **The kernel state page table adopts the method of directly mapping physical memory**, and the physical address 0 to 0x80000000 is uniformly addressed by the hardware. **This part of the address has no corresponding physical address**, and **this part of the kernel state page table will not be used**. It happens that **the user state page table can be merged to this position** without conflicting with the original kernel state page table data.
+
