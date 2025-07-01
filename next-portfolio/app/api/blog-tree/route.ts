@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
-import build from "next/dist/build";
 
 const MARKDOWN_DIR = path.join(process.cwd(), "markdown");
 
