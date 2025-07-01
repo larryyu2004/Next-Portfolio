@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { NextResponse } from "next/server";
+
 
 const MARKDOWN_DIR = path.join(process.cwd(), "markdown");
 
@@ -12,7 +12,7 @@ export type MarkdownTreeNode =
       children: { title: string; slug: string; categories: string[] }[];
     };
 
-function buildMarkdownTree (
+export function buildMarkdownTree (
     dir: string = MARKDOWN_DIR,
     relativePath: string[] = []
 ): MarkdownTreeNode {
@@ -56,9 +56,4 @@ function buildMarkdownTree (
         name: relativePath[relativePath.length - 1] || "root",
         children,
     }
-}
-
-export async function GET() {
-    const tree = buildMarkdownTree();
-    return NextResponse.json(tree);
 }

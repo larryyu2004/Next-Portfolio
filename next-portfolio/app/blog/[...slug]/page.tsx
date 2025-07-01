@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import type { MarkdownTreeNode } from "../Blog";
-
+import  {buildMarkdownTree, type MarkdownTreeNode } from "@/lib/buildMarkdownTree";
 import TableOfContent from "./TableOfContent";
 import NavWeb from "@/app/_nav/page";
 import NavPhone from "@/app/_nav/nav-phone/NavPhone";
@@ -56,8 +55,7 @@ function getAllSlugs(node: MarkdownTreeNode): string[][] {
 }
 
 export async function generateStaticParams() {
-  const res = await fetch("http://localhost:3000/api/blog-tree");
-  const tree: MarkdownTreeNode = await res.json();
+  const tree = buildMarkdownTree();
   const slugs = getAllSlugs(tree);
 
   return slugs.map((slugArray) => ({

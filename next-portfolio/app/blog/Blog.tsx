@@ -1,7 +1,6 @@
-"use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-
+import { buildMarkdownTree } from "@/lib/buildMarkdownTree";
 
 export type MarkdownTreeNode =
   | {
@@ -20,21 +19,8 @@ export type MarkdownTreeNode =
     };
 
 // export default Blog;
-const Blog = () => {
-  const [tree, setTree] = React.useState<MarkdownTreeNode | null>(null);
-  useEffect(() => {
-    fetch("/api/blog-tree")
-      .then((res) => res.json())
-      .then(setTree)
-  }, [])
-  if (!tree) {
-    return (
-      <div className="w-full xl:ml-[25%] xl:w-3/5 xl:h-screen px-4 py-10 animate-pulse text-center text-gray-500 dark:text-gray-400">
-        <div className="text-2xl font-semibold mb-4">📚 Preparing your blog content...</div>
-        <div className="text-md">Loading categories and articles, please wait...</div>
-      </div>
-    );
-  }
+const Blog = async () => {
+  const tree = buildMarkdownTree();
 
   // Run at server side or preload
   const renderTree = (node: MarkdownTreeNode, path = "") => {
