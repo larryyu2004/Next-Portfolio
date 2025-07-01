@@ -8,31 +8,57 @@ export default function NavBlog() {
   const [headings, setHeadings] = useState<Heading[]>([]);
 
   useEffect(() => {
-    const headingElements = Array.from(
-      document.querySelectorAll("h1, h2, h3")
-    ) as HTMLElement[];
+    const waitForHeadings = () => {
+      const headings = document.querySelectorAll("h1, h2, h3");
+      if (headings.length > 0) {
+        // Headings are in the DOM — proceed
+        const headingElements = Array.from(headings) as HTMLElement[];
 
-    const newHeadings: Heading[] = headingElements.map((heading, index) => {
-      const basedId = heading.innerText
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]/g, "");
+        const newHeadings = headingElements.map((heading, index) => {
+          const basedId = heading.innerText
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^\w-]/g, "");
 
-      const uniqueId = `${basedId}-${index}`;
-      heading.id = uniqueId;
+          const uniqueId = `${basedId}-${index}`;
+          heading.id = uniqueId;
 
-      return {
-        id: uniqueId,
-        text: heading.innerText,
-        level: heading.tagName === "H1" ? 1 : heading.tagName === "H2" ? 2 : 3,
-      };
-    });
-    console.log(newHeadings);
-    setHeadings(newHeadings);
+          return {
+            id: uniqueId,
+            text: heading.innerText,
+            level: heading.tagName === "H1" ? 1 : heading.tagName === "H2" ? 2 : 3,
+          };
+        });
+
+        setHeadings(newHeadings);
+      } else {
+        // Try again in a few ms
+        setTimeout(waitForHeadings, 50);
+      }
+    };
+
+    waitForHeadings();
   }, []);
+
+  if (headings.length === 0) {
+    return (
+      <nav className="fixed right-0 w-1/4 h-screen overflow-y-auto border-l border-gray-300 bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] px-6 py-8 shadow-lg hidden xl:block pb-20">
+        <div className="space-y-4">
+          <div className="h-8 w-3/4 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div className="h-6 w-2/3 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div className="h-6 w-1/2 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div className="h-6 w-1/3 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></div>
+          <p className="text-gray-500 font-bold dark:text-gray-400 text-center mt-4">
+            Loading navigation...
+          </p>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <>
-      <nav className="fixed right-0 w-1/4 h-screen overflow-y-auto border-l border-gray-300 bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] px-6 py-8 shadow-lg hidden xl:block pb-20">
+      <nav className="fixed right-0 w-1/4 h-screen overflow-y-auto border-l border-gray-300 bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] px-6 py-8 shadow-lg hidden xl:block pb-50">
         <div className="text-2xl font-semibold mb-6 pb-3 border-b border-gray-300 tracking-wide">
           Blog Navigation
         </div>

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { buildMarkdownTree, MarkdownTreeNode } from "../Blog";
+import type { MarkdownTreeNode } from "../Blog";
 import TableOfContent from "./TableOfContent";
 import NavWeb from "@/app/_nav/page";
 import NavPhone from "@/app/_nav/nav-phone/NavPhone";
@@ -36,7 +36,7 @@ export default async function Page({ params }: PageProps) {
               </Link>
             </div>
             {/* Table of Content - only show on xl+ */}
-            <div className="hidden w-1/4 xl:block"><TableOfContent /></div>
+            <div className="hidden xl:block"><TableOfContent /></div>
           </div>
         </div>
       </main>
@@ -55,7 +55,9 @@ function getAllSlugs(node: MarkdownTreeNode): string[][] {
 }
 
 export async function generateStaticParams() {
-  const tree = buildMarkdownTree();
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const res = await fetch(`${baseUrl}/api/blog-tree`);
+  const tree: MarkdownTreeNode = await res.json();
   const slugs = getAllSlugs(tree);
 
   return slugs.map((slugArray) => ({

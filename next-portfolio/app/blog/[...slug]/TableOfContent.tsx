@@ -33,7 +33,7 @@ export default function TableOfContent() {
   }, []);
 
   return (
-    <nav className="fixed h-screen overflow-y-scroll pb-30">
+    <nav className="fixed h-screen overflow-y-scroll w-[23%] pb-30">
       <Link
         href={"/blog"}
         className="fixed z-10 w-[23%] bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] border-b-1 flex  hover:underline transition-all duration-300"
@@ -42,7 +42,7 @@ export default function TableOfContent() {
         <h1 className="text-xl font-semibold hover:underline pt-2 cursor-pointer">Back to Blog</h1>
       </Link>
 
-      <ul className="mt-15">
+      <ul className="mt-15 ">
         {headings.map((heading) => (
           <a href={`#${heading.id}`} key={heading.id} className="">
           <li

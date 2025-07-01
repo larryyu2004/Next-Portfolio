@@ -1,6 +1,5 @@
-import React from "react";
-import fs from "fs";
-import path from "path";
+"use client";
+import React, { useEffect } from "react";
 import Link from "next/link";
 
 
@@ -20,55 +19,24 @@ export type MarkdownTreeNode =
       }[];
     };
 
-const MARKDOWN_DIR = path.join(process.cwd(), "markdown");
-
-export function buildMarkdownTree(
-  dir: string = MARKDOWN_DIR,
-  relativePath: string[] = []
-): MarkdownTreeNode {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  const children: Record<string, MarkdownTreeNode> = {};
-  const files: {
-    title: string;
-    slug: string;
-    categories: string[];
-  }[] = [];
-
-  for (const entry of entries) {
-    const entryName = entry.name.replace(/\.mdx$/, "");
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      children[entryName] = buildMarkdownTree(fullPath, [...relativePath, entryName]);
-    } else if (entry.isFile() && entry.name.endsWith(".mdx")) {
-      files.push({
-        title: entryName.replace(/-/g, " "),
-        slug: [...relativePath, entryName].join("/"),
-        categories: [...relativePath],
-      });
-    }
-  }
-
-  // Add files node as a child folder to preserve folder structure
-  if (files.length > 0) {
-    children["files"] = {
-      type: "files",
-      name: "files",
-      children: files,
-    };
-  }
-
-  return {
-    type: "folder",
-    name: relativePath[relativePath.length - 1] || "root",
-    children,
-  };
-}
-
 // export default Blog;
 const Blog = () => {
-  const tree = buildMarkdownTree(); // Run at server side or preload
+  const [tree, setTree] = React.useState<MarkdownTreeNode | null>(null);
+  useEffect(() => {
+    fetch("/api/blog-tree")
+      .then((res) => res.json())
+      .then(setTree)
+  }, [])
+  if (!tree) {
+    return (
+      <div className="w-full xl:ml-[25%] xl:w-3/5 xl:h-screen px-4 py-10 animate-pulse text-center text-gray-500 dark:text-gray-400">
+        <div className="text-2xl font-semibold mb-4">📚 Preparing your blog content...</div>
+        <div className="text-md">Loading categories and articles, please wait...</div>
+      </div>
+    );
+  }
+
+  // Run at server side or preload
   const renderTree = (node: MarkdownTreeNode, path = "") => {
     if (node.type === "files") {
       return (
