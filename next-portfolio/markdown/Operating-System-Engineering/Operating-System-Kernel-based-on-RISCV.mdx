@@ -78,5 +78,31 @@
 - **Hardware MMU can only parse one page table**. When the program is in kernel state, MMU parses the kernel state page table. If you want to **access the user state page table at this time** (for example, access a pointer passed in by user state), **you can't parse it through the hardware MMU**. You can only parse it through **software** methods, but the **performance of the software method is much lower than that of hardware**. Therefore, **by merging page tables**, a hardware MMU can still be used in this scenario, thereby improving performance.
 
 ### Will the two-page tables conflict?
+
 - **No**. **The kernel state page table adopts the method of directly mapping physical memory**, and the physical address 0 to 0x80000000 is uniformly addressed by the hardware. **This part of the address has no corresponding physical address**, and **this part of the kernel state page table will not be used**. It happens that **the user state page table can be merged to this position** without conflicting with the original kernel state page table data.
 
+## Why do we need virtual memory?
+
+1. **Memory Isolation**: Virtual memory allows each running program to have its own independent virtual address space, so that the memory between different programs will not interfere with each other. This provides strong memory isolation, preventing errors or crashes of one program from affecting other programs.
+2. **Larger Address Space**: Virtual memory can combine physical memory and storage space on the hard disk, making each program appear to have a huge address space. This allows large applications to be run without enough physical memory to accommodate all the data.
+3. **Memory Mapping and File Sharing**: Virtual memory allows files to be mapped into the space of the process, so that files can be easily read and written without complex file operations. Multiple processes can also share virtual memory copies of the same file for efficient file sharing.
+4. **Memory Management**: Virtual memory allows the operating system to optimise the allocation and management of physical memory. It can move inactive data pages to the hard disk, thereby freeing up physical memory for use by other programs. In addition, virtual memory also supports memory protection and memory permission control to prevent unauthorised access.
+5. **Swapping and Page Replacement**: Virtual memory enables the operating system to swap inactive memory pages to the hard disk, thereby providing enough space for active programs when physical memory is insufficient. This page replacement strategy helps maintain system stability and performance.
+6. **Simplified Memory Allocation**: Virtual memory allows programs to use a continuous virtual address space without worrying about physical memory fragmentation. This simplifies memory allocation and management and reduces the workload of programmers.
+
+## Why does the sum of all virtual memory exceed physical memory?
+- The operating system uses **page faults** to implement fork, write-time copy, memory lazy allocation strategy and disk swapping mechanisms, providing processes with many "False" virtual memories. These "False" virtual memories may not have corresponding physical memory, or the corresponding physical memory may be swapped to the disk, thus providing a virtual memory amount that far exceeds physical memory from the perspective of the process.
+
+### What is the prerequisite for using disk swapping?
+- **With the page fault mechanism**
+
+## What modules are required for an Operating System?
+1. **Process Management**: The process management module is responsible for allocating and releasing memory to each process, as well as recording the memory usage of each process. This includes creating new processes, terminating processes, and allocating and reclaiming memory space.
+2. **Virtual Memory Management**: The virtual memory management module allows processes to use virtual memory and map virtual addresses to physical addresses. It includes address translation, paging mechanism, page table management, page replacement algorithm, etc.
+3. **Memory allocation and release**: This module is responsible for managing the system memory pool in order to allocate and release memory blocks to processes. Common memory allocation algorithms include first fit, best fit, worst fit, etc.
+4. **Page Replacement**: When physical memory is insufficient, the page replacement module determines which pages should be replaced with disk to make room for other pages. Common page replacement algorithms include LRU, LFU, clock algorithm, etc.
+5. **Memory Protection**: The memory protection module ensures that processes cannot cross the boundary to access the memory of other processes, and prevents unauthorised memory access. This includes setting and checking permission bits.
+6. **Share Memory**: The share memory module allows multiple processes to share the same memory area so that they can easily communicate and share data.
+7. **Memory Mapped File**: The memory-mapped file module allows files to be mapped directly to the address space of the process to achieve efficient file and read and write operations.
+8. **Page Recycling and Garbage Collection**: For memory blocks that are no longer needed in the operating system, recycling and garbage collection are required to return memory resources to the system.
+9. **Memory Monitoring and Performance Optimisation**: The monitoring module is responsible for tracking system memory usage, as well as performance analysis and optimising memory management strategies.
