@@ -106,3 +106,11 @@
 7. **Memory Mapped File**: The memory-mapped file module allows files to be mapped directly to the address space of the process to achieve efficient file and read and write operations.
 8. **Page Recycling and Garbage Collection**: For memory blocks that are no longer needed in the operating system, recycling and garbage collection are required to return memory resources to the system.
 9. **Memory Monitoring and Performance Optimisation**: The monitoring module is responsible for tracking system memory usage, as well as performance analysis and optimising memory management strategies.
+
+## How does XV-6 allocate memory?
+- `malloc`: For user programs to dynamically allocate memory. Works in **user space**.
+- `kalloc`: For the kernel to allocate physical pages of memory. Works in **kernel space**.
+- User-mode program apply for memory through `malloc`, which maintains a memory pool. When `malloc` cannot provide suitable memory, it will call the `sbrk` system call to apply for **new heap memory** from the operating system. Under normal circumstance, the `sbrk` system call will mark it in the page table, provide sufficient virtual memory, and apply for sufficient physical memory through `kalloc` to map it to the new virtual memory, and then return false virtual memories for `malloc` to use. The free memory of physical memory is maintained through a linked list, and `kalloc` obtains physical memory on the free linked list.
+
+## What does the stack look like?
+- XV-6 allocates two pages of memory
