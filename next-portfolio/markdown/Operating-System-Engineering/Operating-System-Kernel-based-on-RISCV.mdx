@@ -91,12 +91,15 @@
 6. **Simplified Memory Allocation**: Virtual memory allows programs to use a continuous virtual address space without worrying about physical memory fragmentation. This simplifies memory allocation and management and reduces the workload of programmers.
 
 ## Why does the sum of all virtual memory exceed physical memory?
+
 - The operating system uses **page faults** to implement fork, write-time copy, memory lazy allocation strategy and disk swapping mechanisms, providing processes with many "False" virtual memories. These "False" virtual memories may not have corresponding physical memory, or the corresponding physical memory may be swapped to the disk, thus providing a virtual memory amount that far exceeds physical memory from the perspective of the process.
 
 ### What is the prerequisite for using disk swapping?
+
 - **With the page fault mechanism**
 
 ## What modules are required for an Operating System?
+
 1. **Process Management**: The process management module is responsible for allocating and releasing memory to each process, as well as recording the memory usage of each process. This includes creating new processes, terminating processes, and allocating and reclaiming memory space.
 2. **Virtual Memory Management**: The virtual memory management module allows processes to use virtual memory and map virtual addresses to physical addresses. It includes address translation, paging mechanism, page table management, page replacement algorithm, etc.
 3. **Memory allocation and release**: This module is responsible for managing the system memory pool in order to allocate and release memory blocks to processes. Common memory allocation algorithms include first fit, best fit, worst fit, etc.
@@ -108,9 +111,25 @@
 9. **Memory Monitoring and Performance Optimisation**: The monitoring module is responsible for tracking system memory usage, as well as performance analysis and optimising memory management strategies.
 
 ## How does XV-6 allocate memory?
+
 - `malloc`: For user programs to dynamically allocate memory. Works in **user space**.
 - `kalloc`: For the kernel to allocate physical pages of memory. Works in **kernel space**.
 - User-mode program apply for memory through `malloc`, which maintains a memory pool. When `malloc` cannot provide suitable memory, it will call the `sbrk` system call to apply for **new heap memory** from the operating system. Under normal circumstance, the `sbrk` system call will mark it in the page table, provide sufficient virtual memory, and apply for sufficient physical memory through `kalloc` to map it to the new virtual memory, and then return false virtual memories for `malloc` to use. The free memory of physical memory is maintained through a linked list, and `kalloc` obtains physical memory on the free linked list.
 
 ## What does the stack look like?
-- XV-6 allocates two pages of memory
+
+- XV-6 allocates two pages of memory for each stack (one page is 4 KB), one page is actually used for the stack, and the other page is used to prevent the stack from overflowing and affecting other memory areas.
+- When a function is called, a stack frame will be generated on the stack. Each stack frame stores information such as the return address, registers, and local variables. The stack frame will be popped when the function returns.
+- In XV-6 the stack size is fixed at 4KB.
+
+## Do multiple threads use this stack?
+- XV-6 does not support multithreading, but in Linux, multiple threads do not share the same stack, and each thread has its own provate thread stack.
+
+## Will this stack be recycled after each thread is released?
+- Generally speaking, when a thread is released, the thread stack will also be recycled, but you can also set up a thread stack pool so that stack memory can be allocated faster when needed. These thread stacks can be resued and may not be recycled.
+
+## If page faults are triggered frequently, will it affect performance?
+- Yes, on Linux, some configuration, can be used to reduce its impact on performance.
+1. **Adjust Swappiness**: Swappiness is a parameter on Linux that controls the extent to which the Linux system tends to use swap space when memory is insufficient. You can reduce the frequent swapping by lowering the Swappiness value, thereby reducing the impact of page faults.
+2. **Turn off unnecessary background services**: Stop or disable unnecessary background services and processes to free up memory resources, thereby reducing the chance of page faults.
+3. **Adjust Page Size**: If the system supports it, you can try to adjust the page size to match the workload requiremnets. This requires a deep understanding of the support of the system and hardware, and needs to be handled with caution. The page size is usually configured through `/proc/sys/vm/page_size` or othre related parameters.
