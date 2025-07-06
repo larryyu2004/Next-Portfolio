@@ -1,24 +1,27 @@
-import NavWeb from "./_nav/page";
 import React from "react";
+import Nav from "./_nav/page";
+import prisma from "@/lib/prisma";
 
-export default function Home() {
-  const projects = [
-    "Operating System Engineering",
-    "My Portfolio", 
-    "Memory Pool",
-    "Leetcode"
-  ];
+export default async function Home() {
+  const projects = await prisma.project.findMany({
+    select: {
+      id: true,
+      name: true,
+      description: true,
+    },
+  });
+
 
   const skills = {
-    "System Programming": ["ASM", "C", "Makefile", "Python", "Git", "Docker", "Linux"],
-    "Web Development": ["React", "Next.js", "Node.js", "HTML", "JavaScript", "TypeScript", "Tailwind CSS", "Bootstrap"],
-    "Backend & Database": ["PostgreSQL", "MSSQL", "Prisma", "ASP.NET"],
-    "Tools & Others": ["Figma", "CMake", "Git"]
+    "Programming Languages": ["ASM", "C", "C++", "C#", "Python", "JavaScript", "TypeScript", "Swift"],
+    "Frontend": ["React", "Next.js", "Tailwind CSS", "Bootstrap"],
+    "Backend & Database": ["Node.js", "PostgreSQL", "MSSQL", "Prisma", "ASP.NET"],
+    "Tools & Others": ["Figma", "CMake", "Git", "Pytest" ,"Makefile", "Docker", "Linux"]
   };
 
   return (
     <main className="fixed h-screen w-full overflow-y-scroll min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
-      <NavWeb />
+      <Nav />
       
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -107,7 +110,7 @@ export default function Home() {
                   <div>
                     <h4 className="font-bold text-gray-700 dark:text-gray-300 mb-3 text-lg">Courses:</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {["Object-Oriented Programming", "Web & Database Computing", "Problem Solving", "Network Fundamental", "Information Technology Fundamental", "Design Thinking", "Systems Requirements and User Experience"].map((course, index) => (
+                      {["Object-Oriented Programming", "Data Driven Web Technology", "Problem Solving", "Network Fundamental", "Information Technology Fundamental", "Design Thinking", "Systems Requirements and User Experience", "System Requirements Studio"].map((course, index) => (
                         <div key={index} className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                           <span className="text-gray-600 dark:text-gray-400">{course}</span>
@@ -141,7 +144,7 @@ export default function Home() {
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
                       <h3 className="font-bold text-gray-800 dark:text-white text-lg group-hover/project:text-purple-600 dark:group-hover/project:text-purple-400 transition-colors duration-300">
-                        {project}
+                        {project.name}
                       </h3>
                     </div>
                   </div>
