@@ -53,6 +53,7 @@ const Blog = async () => {
             src={categoryImage}
             alt={node.name}
             className="w-[100%] h-[40vh] object-cover rounded-t-xl"
+            loading="lazy"
           />
           {/* First Category */}
           <h1 className="ml-5 mt-2.5 mb-2.5 text-3xl font-semibold ">{node.name}</h1>

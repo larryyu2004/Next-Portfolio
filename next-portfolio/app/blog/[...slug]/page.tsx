@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import  {buildMarkdownTree, type MarkdownTreeNode } from "@/lib/buildMarkdownTree";
 import TableOfContent from "./TableOfContent";
-import NavWeb from "@/app/_nav/page";
+import NavWeb from "@/app/_nav/nav-web/page";
 import NavPhone from "@/app/_nav/nav-phone/NavPhone";
 import { BookTextIcon } from "./BookIcon";
 import Link from "next/link";

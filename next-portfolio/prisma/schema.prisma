@@ -1,39 +1,14 @@
+datasource db {
+  url      = env("DATABASE_URL")
+  provider = "postgresql"
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model Category {
-  id     String     @id @default(cuid())
-  name   String     @unique
-  poster String
-  posts  Markdown[]
-}
-
-model Markdown {
-  id             String    @id @default(cuid())
-  title          String
-  slug           String    @unique
-  category       String
-  secondCategory String
-  thirdCategory  String
-  published      Boolean   @default(false)
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  tags           String?
-  images         Image[]
-  Category       Category? @relation(fields: [categoryId], references: [id])
-  categoryId     String?
-}
-
-model Image {
-  id         String   @id @default(cuid())
-  url        String
-  caption    String?
-  markdownId String
-  markdown   Markdown @relation(fields: [markdownId], references: [id], onDelete: Cascade)
+model Project {
+  id          Int    @id @default(autoincrement()) 
+  name        String @unique
+  description String @unique
 }
