@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const projects = await prisma.project.findMany({
+  const projects = await prisma.projects.findMany({
     select: {
       id: true,
       name: true,

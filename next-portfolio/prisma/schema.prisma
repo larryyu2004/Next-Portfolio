@@ -7,7 +7,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Project {
+model Projects {
   id          Int    @id @default(autoincrement()) 
   name        String @unique
   description String @unique
