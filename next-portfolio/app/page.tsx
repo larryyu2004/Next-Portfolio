@@ -1,6 +1,7 @@
 import React from "react";
 import Nav from "./_nav/page";
 import prisma from "@/lib/prisma";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -10,16 +11,27 @@ export default async function Home() {
       id: true,
       name: true,
       description: true,
+      startTime: true,
+      endTime: true,
+      githubUrl: true,
     },
   });
 
+  const Technologies = await prisma.technology.findMany ({
+    select: {
+      name: true,
+      category: true,
+    }
+  })
 
-  const skills = {
-    "Programming Languages": ["ASM", "C", "C++", "C#", "Python", "JavaScript", "TypeScript", "Swift"],
-    "Frontend": ["React", "Next.js", "Tailwind CSS", "Bootstrap"],
-    "Backend & Database": ["Node.js", "PostgreSQL", "MSSQL", "Prisma", "ASP.NET"],
-    "Tools & Others": ["Figma", "CMake", "Git", "Pytest" ,"Makefile", "Docker", "Linux"]
-  };
+  const skills: { [key: string]: string[] } = {};
+  Technologies.forEach(({ name, category }) => {
+    const key = category || "Others"; // Default to "Others" if no category is provided
+    if (!skills[key]) {
+      skills[key] = [];
+    }
+    skills[key].push(name);
+  });
 
   return (
     <main className="fixed h-screen w-full overflow-y-scroll min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
@@ -141,7 +153,10 @@ export default async function Home() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {projects.map((project, index) => (
-                  <div key={index} 
+                  <Link key={index} 
+                    href={`${project.githubUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                        className="group/project p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl border border-purple-200 dark:border-purple-700 hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer">
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
@@ -149,7 +164,7 @@ export default async function Home() {
                         {project.name}
                       </h3>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -171,15 +186,15 @@ export default async function Home() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {Object.entries(skills).map(([category, skillList], categoryIndex) => (
-                  <div key={category} className="space-y-4 animate-fade-in-up" style={{animationDelay: `${categoryIndex * 100}ms`}}>
+                  <div key={category} className="space-y-4 animate-fade-in-up" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
                     <h3 className="text-xl font-bold text-gray-800 dark:text-white border-b-2 border-orange-500 pb-2">
                       {category}
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {skillList.map((skill, index) => (
-                        <span key={index} 
-                              className="px-4 py-2 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 text-orange-800 dark:text-orange-200 rounded-full text-sm font-medium border border-orange-200 dark:border-orange-700 hover:shadow-md transform hover:scale-105 transition-all duration-300 cursor-pointer">
-                          {skill}
+                      {skillList.map((name, index) => (
+                        <span key={index}
+                          className="px-4 py-2 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 text-orange-800 dark:text-orange-200 rounded-full text-sm font-medium border border-orange-200 dark:border-orange-700 hover:shadow-md transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                          {name}
                         </span>
                       ))}
                     </div>
@@ -191,8 +206,6 @@ export default async function Home() {
 
         </div>
       </div>
-
-
     </main>
   );
 }

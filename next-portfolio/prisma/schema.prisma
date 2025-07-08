@@ -1,14 +1,37 @@
-datasource db {
-  url      = env("DATABASE_URL")
-  provider = "postgresql"
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model Projects {
-  id          Int    @id @default(autoincrement()) 
-  name        String @unique
-  description String @unique
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String  @unique
+  startTime   String?
+  endTime     String? // allow "Present" or ISO string
+  githubUrl   String?
+
+  technologies ProjectTechnology[]
+}
+
+model Technology {
+  id       Int    @id @default(autoincrement())
+  name     String @unique
+  category String?
+
+  projects ProjectTechnology[]
+}
+
+model ProjectTechnology {
+  projectId    Int
+  technologyId Int
+
+  project    Projects   @relation(fields: [projectId], references: [id])
+  technology Technology @relation(fields: [technologyId], references: [id])
+
+  @@id([projectId, technologyId])
 }
