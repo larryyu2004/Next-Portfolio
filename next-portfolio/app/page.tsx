@@ -3,8 +3,6 @@ import Nav from "./_nav/page";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
-// npm i @vercel/speed-insights
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const dynamic = "force-dynamic";
 
