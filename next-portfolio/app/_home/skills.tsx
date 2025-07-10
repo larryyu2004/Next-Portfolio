@@ -1,7 +1,7 @@
 import React from "react";
 import prisma from "@/lib/prisma";
 
-export const forceDynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const Skills = async () => {
