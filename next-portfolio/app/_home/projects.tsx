@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 export const forceDynamic = "force-dynamic";
+export const revalidate = 0;
 
 const ProjectOverview = async () => {
   const projects = await prisma.projects.findMany({
