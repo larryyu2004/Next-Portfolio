@@ -27,9 +27,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     h4: ({ children }) => (
       <h4 className="text-xl font-normal mt-1 mb-1">{children}</h4>
     ),
-    p: ({ children }) => (
-      <p className="my-2 leading-7  ">{children}</p>
-    ),
+    p: ({ children }) => <p className="my-2 leading-7  ">{children}</p>,
     a: ({ href, children }) => (
       <a href={href} className="text-blue-600 hover:underline">
         {children}
@@ -57,8 +55,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
           <pre
             {...props}
-            className={`rounded overflow-x-auto mt-9  ${className}`}
-          >
+            className={`rounded overflow-x-auto mt-9  ${className}`}>
             {child}
           </pre>
         </div>
@@ -90,6 +87,28 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         style={{ width: "100%", height: "auto" }}
         {...(props as ImageProps)}
       />
+    ),
+    table: ({ children }) => (
+      <table className="w-full border-collapse my-4">{children}</table>
+    ),
+    thead: ({ children }) => (
+      <thead className="bg-gray-100 dark:bg-gray-700">{children}</thead>
+    ),
+    tbody: ({ children }) => <tbody>{children}</tbody>,
+    tr: ({ children }) => (
+      <tr className="border-t border-gray-300 dark:border-gray-600">
+        {children}
+      </tr>
+    ),
+    th: ({ children }) => (
+      <th className="text-left p-2 font-semibold bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+        {children}
+      </th>
+    ),
+    td: ({ children }) => (
+      <td className="p-2 border border-gray-300 dark:border-gray-600">
+        {children}
+      </td>
     ),
 
     Tip,
