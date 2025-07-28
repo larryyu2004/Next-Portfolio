@@ -1,8 +1,6 @@
 # JavaScript
 
-## ES6
-
-### Arrow Functions
+## Arrow Functions
 
 ```JS
 const foo = function foo() {
@@ -26,7 +24,69 @@ const dosomething = (foo = 1, bar = 'hey') => {
 }
 ```
 
-### Promises
+### Callback function
+
+- A callback is a function passed to another function.
+
+```JS
+function filter(arr, cb) {
+  const newArr = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (cb(arr[i])) {
+      newArr.push(arr[i]);
+    }
+  }
+  return newArr;
+}
+
+function fn(a) {
+  return a.age < 18;
+}
+
+const personArr = [
+  { name: "Tom", age: 12 },
+  { name: "Jerry", age: 20 },
+  { name: "Bob", age: 15 },
+];
+
+const result = filter(personArr, fn);
+console.log(result);
+// Output: [{ name: "Tom", age: 12 }, { name: "Bob", age: 15 }]
+```
+
+### Higher-Order Functions (HOFs)
+
+A Higher-Order Function is a function that:
+
+1. Takes another function as an argument, or
+2. Returns a function as its result.
+
+```JS
+function multiplyBy(factor) {
+  return function (num) {
+    return num * factor;
+  };
+}
+
+const double = multiplyBy(2);
+console.log(double(5)); // 10
+```
+```JS
+function outer () {
+  let num = 0;
+  return () => {
+    num++;
+    console.log(num);
+  }
+}
+
+const newFn = outer();
+newFn(); // 1
+newFn(); // 2
+newFn(); // 3
+```
+
+## Promises
 
 ```JS
 setTimeout(function() {
@@ -1001,9 +1061,43 @@ Promise.race([first, second]).then((result) => {
 });
 ```
 
-## Loops and Scope
+## Scope
 
 - 🔥 Problem Recap (Using var):
+
+### Global Variables & Window Object
+
+- In browsers, the `window` object is the global scope. Here's how it relates to variables and functions:
+
+### `window` and Global Variables
+
+Assigning directly to `window` creates a global variable:
+
+```js
+window.a = 10;
+console.log(a); // 10
+console.log(window.a); // 10
+```
+
+### var Declarations
+
+- Using var at the global level also creates a window property
+
+```JS
+var b = 20;
+console.log(window.b); // 20
+```
+
+- But `let` and `const` do not attach to window.
+- In JavaScript, `var` is **function-scoped**, not block-scoped:
+
+```js
+function fn2() {
+  var d = 10;
+}
+fn2();
+console.log(d); // ❌ ReferenceError: d is not defined
+```
 
 ```JS
 const operations = [];
@@ -1038,6 +1132,44 @@ for (const operation of operations) {
 let is block-scoped, so each iteration of the loop gets a fresh new copy of i.
 */
 ```
+
+### var and Variable Hoisting
+
+- Variables declared with `var` are **hoisted**—meaning their declaration is moved to the top of their scope **before** code runs.
+
+```JS
+console.log(a); // undefined
+var a = 10;
+```
+
+- This does not throw an error, because JavaScript treats it like:
+
+```JS
+var a;
+console.log(a); // undefined
+a = 10;
+```
+
+### Function Declaration & Hoisting
+
+```JS
+fn(); // ✅ Works — hoisted
+function fn() {
+  alert("I am Fn");
+}
+```
+
+but
+
+```JS
+fn2(); // ❌ TypeError: fn2 is not a function
+var fn2 = function () {
+  alert("I am Fn");
+};
+```
+
+- Only `var fn2` is hoisted (as undefined)
+- Cannot be used before the assignment
 
 ## Strict Mode
 
