@@ -71,6 +71,7 @@ function multiplyBy(factor) {
 const double = multiplyBy(2);
 console.log(double(5)); // 10
 ```
+
 ```JS
 function outer () {
   let num = 0;
@@ -85,6 +86,122 @@ newFn(); // 1
 newFn(); // 2
 newFn(); // 3
 ```
+
+## This
+
+### 'This' on 5 ways
+
+- Function Call → `this` is `window` (or `undefined` in strict mode)
+
+```JS
+function fn() {
+  console.log(this); // window
+}
+fn();
+```
+
+- Method Call → this is the object
+
+```JS
+const obj = {
+  name: "Monkey",
+  fn() {
+    console.log(this); // obj
+  },
+};
+obj.fn();
+```
+
+- Constructor Call → this is the new object
+
+```JS
+function Person(name) {
+  this.name = name;
+}
+const p = new Person("Monkey");
+console.log(p.name); // "Monkey"
+```
+
+- Arrow Function → this comes from outer scope
+
+```JS
+const obj = {
+  name: "Monkey",
+  fn: () => {
+    console.log(this); // outer scope (likely window)
+  },
+};
+obj.fn();
+```
+
+### call() & apply()
+
+```JS
+function fn2(a, b) {
+  console.log("a =", a, "b =", b, "this =", this);
+}
+
+const obj = { name: "Monkey" };
+
+fn2.call(obj, "hello", true);       // a=hello b=true this=obj
+fn2.apply(obj, ["hello", true]);    // same result, a=hello b=true this=obj
+```
+
+| Method  | `this` Binding      | Arguments Format        |
+| ------- | ------------------- | ----------------------- |
+| `call`  | Set by 1st argument | **Passed individually** |
+| `apply` | Set by 1st argument | **Passed as an array**  |
+
+### Bind Overview
+
+- `bind()` Returns new function with bound `this`.
+
+```JS
+function fn(a, b, c) {
+  console.log("this =", this);
+  console.log(a, b, c);
+}
+
+const obj = { name: "Monkey" };
+
+const newFn = fn.bind(obj, 10, 20, 30);
+newFn(); // `this` is `obj`, a=10, b=20, c=30
+```
+
+```JS
+class ExplainBindingsComponent extends Component {
+  onClickMe = () => {
+    console.log(this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.onClickMe} type="button">
+        Click Me
+      </button>
+    );
+  }
+}
+
+```
+
+- When you write a method as an arrow function like this: `onClickMe = () => { ... }`. The arrow functions do not have their own `this`. Instead, they inherit `this` from the context in which they were defined - in this case, the class instance. So `this` inside the arrow function still refers to the `ExplainBindingsComponent` instance, and you do not need to bind it manually in the constructor.
+
+```JS
+// Compare with regular method (without arrow function):
+class MyComponent extends Component {
+  onClickMe() {
+    console.log(this); // ❌ this will be undefined unless bound
+  }
+
+  constructor(props) {
+    super(props);
+    this.onClickMe = this.onClickMe.bind(this); // ✅ Fixes the binding
+  }
+}
+```
+
+- So if we use a regular method, you must bind it in the constructor, or it will lose the correct `this` when passed as a callback (e.g., in an event handler)
 
 ## Promises
 
@@ -130,7 +247,7 @@ function *calculator(input) {
 4. We can treat `(yield (input / 2))` as a parameter, which will accept a new value. Then we call `calc.next(7)`. The code returns an object `{ done: false, value: 14 }` (7\*2 === 14)
 5. We can treat `yield (doubleThat)` as a parameter, which will accept a new value. Then we call `calc.next(100)`. The code returns an object `{ done: true, value: 14000 }` (10*14*100 === 14000)
 
-### The spread operator
+## The Spread Operator
 
 ```JS
 const a = [1, 2, 3];
@@ -168,14 +285,37 @@ const a = [1,2,3,4,5]
 [first, second, , , fifth] = a
 ```
 
-### For-of loop
+### Arguments: The Legacy Way
+
+- Every regular function in JavaScript gets a hidden `arguments` object:
 
 ```JS
-// ['a', 'b', 'c'].entries() returns an iterator of [index, value] pairs
-for (const [i, v] of ['a', 'b', 'c'].entries()) {
-  console.log(i, v);
+function fn() {
+  console.log(arguments[0]); // Access arguments by index
+  for (let v of arguments) {
+    console.log(v);
+  }
 }
+fn(10, 20, 30);
 ```
+
+- ✅ Works without defining parameters
+- ❌ Not a real array → can’t use .forEach() or .map()
+- ❌ Doesn’t work in arrow functions
+
+### Rest Parameters: Modern & Better
+
+- Use the ... syntax to collect multiple arguments into a real array
+
+```JS
+function sum(...numbers) {
+  return numbers.reduce((a, b) => a + b, 0);
+}
+console.log(sum(1, 2, 3)); // 6
+```
+
+- ✅ You can name the variable (e.g. ...nums)
+- ✅ It’s a real array → supports all array methods
 
 ## ES2016
 
@@ -404,43 +544,6 @@ Person.genericHello() //Hello
 
 - `static` means the method belongs to the class itself, not to instances of the class.
 - You cannot call it from an instance like `const p = new Person();` and `p.genericHello()` → that would cause an error.
-
-### This
-
-```JS
-class ExplainBindingsComponent extends Component {
-  onClickMe = () => {
-    console.log(this);
-  }
-
-  render() {
-    return (
-      <button onClick={this.onClickMe} type="button">
-        Click Me
-      </button>
-    );
-  }
-}
-
-```
-
-- When you write a method as an arrow function like this: `onClickMe = () => { ... }`. The arrow functions do not have their own `this`. Instead, they inherit `this` from the context in which they were defined - in this case, the class instance. So `this` inside the arrow function still refers to the `ExplainBindingsComponent` instance, and you do not need to bind it manually in the constructor.
-
-```JS
-// Compare with regular method (without arrow function):
-class MyComponent extends Component {
-  onClickMe() {
-    console.log(this); // ❌ this will be undefined unless bound
-  }
-
-  constructor(props) {
-    super(props);
-    this.onClickMe = this.onClickMe.bind(this); // ✅ Fixes the binding
-  }
-}
-```
-
-- So if we use a regular method, you must bind it in the constructor, or it will lose the correct `this` when passed as a callback (e.g., in an event handler)
 
 #### Summary
 
@@ -1518,21 +1621,246 @@ Math.sqrt(5) //2.23606797749979
 
 ## JSON
 
-### JSON.stringify ()
+**📝 JSON Format Rules**
+
+- JSON Object: {}
+- JSON Array: []
+
+1. Keys (property names) must use double quotes
+2. String values also must use double quotes
+
+### JSON.stringify(obj)
+
+- Converts a JavaScript object into a JSON string.
 
 ```JS
-args = [2, 3]
-key = JSON.stringify(args) // → "[2,3]"
+const obj = { name: "Sun Wukong", age: 18 };
+const str = JSON.stringify(obj);
+console.log(str); // '{"name":"Sun Wukong","age":18}'
+```
+
+### JSON.parse(str)
+
+- Parses a JSON string and returns a JavaScript object.
+
+```JS
+const obj2 = JSON.parse(str);
+console.log(obj2); // { name: "Sun Wukong", age: 18 }
 ```
 
 ```JS
+const str2 = '{"name":"Pigsy","age":28}';
+const str3 = '{}';
+const str4 = '["hello", true, []]';
 
+console.log(JSON.parse(str2)); // { name: 'Pigsy', age: 28 }
+console.log(JSON.parse(str3)); // {}
+console.log(JSON.parse(str4)); // ['hello', true, []]
 ```
+
+## DOM
+
+### Prototype Chain
+
+- HTMLDocument -> Document -> Node -> EventTarget -> Object -> null
+-
+
+### Element Selection Methods
+
+| Method                          | Description                                      |
+| ------------------------------- | ------------------------------------------------ |
+| `getElementById(id)`            | Returns the element with the given `id`          |
+| `getElementsByClassName(class)` | Returns a live collection of elements by `class` |
+| `getElementsByTagName(tag)`     | Returns a live collection by tag name            |
+| `getElementsByName(name)`       | Returns a live collection by `name` attribute    |
+| `querySelector(selector)`       | Returns the **first** matching element           |
+| `querySelectorAll(selector)`    | Returns **all** matching elements (static list)  |
+| `document.createElement()`      | create a new DOM node                            |
+
+### Element Navigation Properties
+
+| Property                         | Description                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------------ |
+| `element.children`               | Returns a live HTMLCollection of **child elements** (not including text nodes or comments) |
+| `element.firstElementChild`      | Returns the **first child element**                                                        |
+| `element.lastElementChild`       | Returns the **last child element**                                                         |
+| `element.nextElementSibling`     | Returns the **next sibling element**                                                       |
+| `element.previousElementSibling` | Returns the **previous sibling element**                                                   |
+| `element.parentNode`             | Returns the **parent node** of the current element                                         |
+| `element.tagName`                | Returns the tag name of the element (uppercase)                                            |
+
+### Attribute Methods
+
+| Operation | Method                                  | Description                               |
+| --------- | --------------------------------------- | ----------------------------------------- |
+| Read      | `element.getAttribute(attrName)`        | Gets the value of the specified attribute |
+| Update    | `element.setAttribute(attrName, value)` | Sets or updates the specified attribute   |
+| Delete    | `element.removeAttribute(attrName)`     | Removes the specified attribute           |
+
+### Inserting, Replacing, and Removing Elements
+
+#### Inserting
+
+- `appendChild()`, append as last child
 
 ```JS
-
+const li = document.createElement("li");
+list.appendChild(li);
 ```
+
+- `insertAdjacentHTML()`, insert HTML at specific position
 
 ```JS
-
+// beforebegin
+// afterbegin
+// beforeend
+// afterend
+list.insertAdjacentHTML("beforeend", "<li id='xxx'>xxx</li>");
 ```
+
+#### Replace & Remove
+
+- `replaceWith(sth);`, Replace element
+- `remove(sth);`, Remove element
+
+### Cloning Elements
+
+```JS
+const copy = element.cloneNode(deep);
+```
+
+- deep = `false` → copies only the current element (no children)
+- deep = `true` → copies the element and all child nodes
+
+### Common classList Methods
+
+| Method               | Description                                                                   |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `add(...classes)`    | Adds one or more class names to the element.                                  |
+| `remove(...classes)` | Removes one or more class names from the element.                             |
+| `toggle(class)`      | Adds the class if it doesn’t exist; removes it if it does.                    |
+| `replace(old, new)`  | Replaces the old class with the new class.                                    |
+| `contains(class)`    | Returns `true` if the class exists on the element; otherwise returns `false`. |
+
+### Bubbling, Target, and Preventing Default Behavior
+
+- Events in the DOM **bubble up** from the innermost target element to its ancestors.
+- Example: Clicking an inner `<div>` triggers its click handler, and also the handlers of its parent `<div>`s—unless bubbling is stopped.
+
+```JS
+element.addEventListener("click", (event) => {
+  event.stopPropagation(); // Stops bubbling here
+});
+```
+
+| Property / Method         | Description                                                         |
+| ------------------------- | ------------------------------------------------------------------- |
+| `event.target`            | The actual element that triggered the event.                        |
+| `event.currentTarget`     | The element that the event listener is bound to.                    |
+| `event.stopPropagation()` | Stops the event from bubbling up to parent elements.                |
+| `event.preventDefault()`  | Cancels the event's default action (e.g., prevent link navigation). |
+
+### Event: Three Phases
+
+| `event.eventPhase` | Phase           | Description                                                                |
+| ------------------ | --------------- | -------------------------------------------------------------------------- |
+| `1`                | Capturing Phase | The event travels from the outermost ancestor _down_ to the target element |
+| `2`                | Target Phase    | The event reaches the actual element that was interacted with              |
+| `3`                | Bubbling Phase  | The event bubbles _up_ from the target to the top-level ancestor           |
+
+```HTML
+<div id="box1">
+  <div id="box2">
+    <div id="box3"></div>
+  </div>
+</div>
+
+<script>
+const box1 = document.getElementById("box1");
+const box2 = document.getElementById("box2");
+const box3 = document.getElementById("box3");
+
+box1.addEventListener("click", event => {
+  alert("1" + event.eventPhase);
+});
+
+box2.addEventListener("click", event => {
+  alert("2" + event.eventPhase);
+});
+
+box3.addEventListener("click", event => {
+  alert("3" + event.eventPhase);
+});
+</script>
+
+<!-- box3 triggers first with eventPhase === 2 (Target)
+Then box2 triggers with eventPhase === 3 (Bubbling)
+Then box1 triggers with eventPhase === 3 (Bubbling) -->
+```
+
+```plaintext
+3 2
+2 3
+1 3
+```
+
+#### Capturing Phase
+
+- `sth.addEventListener("click", handler, true);`
+  This changes the order:
+
+```plaintext
+1 1
+2 1
+3 2
+```
+
+## BOM
+
+### Navigator
+
+- The `navigator` object contains info about the browser.
+
+```JS
+const userAgent = navigator.userAgent;
+let browser;
+
+if (userAgent.includes("Firefox")) {
+  browser = "Mozilla Firefox";
+} else if (userAgent.includes("SamsungBrowser")) {
+  browser = "Samsung Internet";
+} else if (userAgent.includes("OPR") || userAgent.includes("Opera")) {
+  browser = "Opera";
+} else if (userAgent.includes("Trident")) {
+  browser = "Internet Explorer";
+} else if (userAgent.includes("Edg")) {
+  browser = "Microsoft Edge (Chromium)";
+} else if (userAgent.includes("Chrome")) {
+  browser = "Google Chrome";
+} else if (userAgent.includes("Safari")) {
+  browser = "Safari";
+} else {
+  browser = "Unknown";
+}
+
+alert(`You are using: ${browser}`);
+```
+
+### Location
+
+| Expression              | Description                                 |
+| ----------------------- | ------------------------------------------- |
+| `location.href`         | Get or set the full URL                     |
+| `location.assign(url)`  | Navigate to a new page (can go back)        |
+| `location.replace(url)` | Navigate and replace current page (no back) |
+| `location.reload()`     | Reload the current page                     |
+| `location.reload(true)` | Reload and force re-fetch from the server   |
+
+### History
+
+| Method              | Description                              |
+| ------------------- | ---------------------------------------- |
+| `history.back()`    | Goes back to the previous page           |
+| `history.forward()` | Goes forward to the next page            |
+| `history.go(n)`     | Moves forward/backward `n` pages         |
+| `history.length`    | Returns the number of entries in history |
