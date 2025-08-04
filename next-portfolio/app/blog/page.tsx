@@ -5,7 +5,7 @@ import NavBlog from "./NavBlog";
 
 export default function Page() {
   return (
-    <main className="md:fixed h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
+    <main className="fixed h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-zinc-800">
       {/* Responsive Navigation */}
       <Nav />
       <div className="mt-[45px] px-2 sm:px-4 py-8">
