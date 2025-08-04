@@ -36,7 +36,7 @@ export default function TableOfContent() {
     <nav className="fixed h-screen overflow-y-scroll w-[23%] pb-30">
       <Link
         href={"/blog"}
-        className="fixed z-10 w-[23%] bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] border-b-1 flex  hover:underline transition-all duration-300"
+        className="fixed z-10 w-[23%] bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] border-b-1 flex rounded-xl hover:underline transition-all duration-300"
       >
         <SquareChevronLeftIcon />
         <h1 className="text-xl font-semibold hover:underline pt-2 cursor-pointer">Back to Blog</h1>
