@@ -46,7 +46,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const language = languageMatch ? languageMatch[1] : null;
 
       return (
-        <div className="relative border border-gray-300 rounded-lg my-4 dark:bg-[rgb(146,146,146)]">
+        <div className="relative border border-gray-300 rounded-lg my-4 dark:bg-[rgb(217,217,217)]">
           {language && (
             <div className="absolute text-lg border-b-2 border-gray-300 min-w-full bg-[rgb(244,244,246)] dark:bg-[rgb(32,32,32)] px-4 py-1 rounded-t-lg z-10">
               {language}
