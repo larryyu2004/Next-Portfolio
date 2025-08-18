@@ -245,7 +245,7 @@ function *calculator(input) {
 2. Then we start the iterator on our generator: `calc.next()`.
 3. This first iteration starts the iterator. The code returns an object `{ done: false, value: 5 }` (because 10/2 === 5).
 4. We can treat `(yield (input / 2))` as a parameter, which will accept a new value. Then we call `calc.next(7)`. The code returns an object `{ done: false, value: 14 }` (7\*2 === 14)
-5. We can treat `yield (doubleThat)` as a parameter, which will accept a new value. Then we call `calc.next(100)`. The code returns an object `{ done: true, value: 14000 }` (10*14*100 === 14000)
+5. We can treat `yield (doubleThat)` as a parameter, which will accept a new value. Then we call `calc.next(100)`. The code returns an object `{ done: true, value: 14000 }` (10\*14\*100 === 14000)
 
 ## The Spread Operator
 

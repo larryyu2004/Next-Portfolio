@@ -654,3 +654,235 @@ repeat {
 
 The above code will return "x = 3", even though there was never a situation when x was less than 3.
 
+
+## Classes
+Basic class definition:
+```swift
+class MyClass {
+}
+```
+
+### Initializers
+Basic initializer and using `self`:
+```swift
+class MyClass {
+  var name: String
+  
+  init() {
+    name = "Stewart"
+  }
+}
+
+class MyClass {
+  var name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+}
+```
+
+Setting constants in initializers:
+```swift
+class MyClass {
+  let name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+}
+```
+
+### Convenience Initializers
+Overloading initializers:
+```swift
+class MyClass {
+  let name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+
+  convenience init() {
+    self.init(name: "Anonymous")
+  }
+}
+```
+
+### Deinitializers
+Clean-up before destruction:
+```swift
+class MyClass {
+  let name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+
+  deinit {
+    Store.saveName(name)
+  }
+}
+```
+
+### Structs
+Value types with auto-generated initializers:
+```swift
+struct MyStruct {
+  var name: String
+}
+
+// Usage
+var myStruct = MyStruct(name: "Stewart")
+```
+
+### Inheritance
+Basic inheritance and overriding:
+```swift
+class MySuperClass {}
+class MyClass: MySuperClass {}
+
+// Method overriding
+class MySuperClass {
+  func getName() -> String {
+    return "Stewart"
+  }  
+}
+
+class MySubClass: MySuperClass {
+  override func getName() -> String {
+    return "Jo"
+  }  
+}
+
+// Property overriding
+class MySuperClass {
+  var name: String {
+    get { return "Stewart" }
+  }  
+}
+
+class MySubClass: MySuperClass {
+  override var name: String {
+    get { return "Jo" }
+  }  
+}
+```
+
+Preventing overriding with `final`:
+```swift
+class MySuperClass {
+  final var name: String {
+    get { return "Stewart" }
+  }  
+}
+
+final class MyFinalClass {
+  var name: String {
+    get { return "Stewart" }
+  }  
+}
+```
+
+### Protocols
+Protocol definition and implementation:
+```swift
+protocol MyProtocol {
+  func method1()
+  func method2()
+}
+
+class MyClass: MyProtocol {
+  func method1() {}
+  func method2() {}
+}
+```
+
+Protocols with properties:
+```swift
+protocol MyProtocol {
+  var name: String { get }
+}
+
+struct MyStruct: MyProtocol {
+  var name: String
+}
+
+struct CustomStruct: MyProtocol {
+  var fullname: String
+  var name: String {
+    return fullname
+  }
+}
+```
+
+Protocols with initializers:
+```swift
+protocol MyProtocol {
+  init(name: String)
+}
+
+class Person: MyProtocol {
+  var name: String
+  required init(name: String) {
+    self.name = name
+  }
+}
+```
+
+### Optionality
+Optional properties and unwrapping:
+```swift
+struct Person {
+  var name: String?
+}
+
+// Usage
+var person1 = Person(name: "Jo")
+var person2 = Person()
+
+// Printing with unwrapping
+print("\(person1.name!)")  // Force unwrap (risky)
+print("\(person1.name)")   // Prints "Optional("Jo")"
+
+// Optional chaining
+var person: Person? = Person()
+print("\(person?.name)")   // Safe access
+```
+
+### Delegation
+Delegate pattern implementation:
+```swift
+protocol DelegateExample {
+  func updateUser(user: User)
+}
+
+class UserView: DelegateExample {
+  var model = Model()
+  
+  init() {
+    model.delegate = self
+  }
+
+  func updateUser(user: User) {
+    // Handle update
+  }
+}
+
+class Model {
+  var delegate: DelegateExample?
+  
+  func saveData(newUser: User) {
+    // Processing...
+    delegate?.updateUser(newUser)  // Optional chaining
+  }
+}
+```
+
+Key concepts:
+1. Classes use reference semantics, structs use value semantics
+2. `convenience init` must call designated initializers
+3. `deinit` can't take parameters
+4. Protocol requirements use `required` for initializers
+5. Optionals (`?`) allow nil values, while force-unwrapping (`!`) risks crashes
+6. Delegates combine protocols and optional properties for flexible architecture
