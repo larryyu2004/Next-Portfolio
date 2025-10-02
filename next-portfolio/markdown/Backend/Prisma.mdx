@@ -131,3 +131,28 @@ await prisma.project.delete({
   where: { id: 1 }
 });
 ```
+
+## Prisma Query Operations
+
+### Comparison Operators
+
+- equals: `where: { age: { equals: 25 } }`
+- greater than or equal to: `where: { age: { gte: 18 } }`
+- greater than: `where: { age: { gt: 18 } }`
+- less than or equal to: `where: { age: { lte: 65 } }`
+- less than: `where: { age: { lt: 65 } }`
+
+### Set / List Operators
+
+- in (value is in a list): `where: { status: { in: ["PENDING", "APPROVED"] } }`
+- notIn (value is NOT in list): `where: { status: { notIn: ["BLOCKED", "DELETED"] } }`
+
+### String Operators
+
+- contains (substring match): `where: { name: { contains: "John" } }`
+- startsWith: `where: { email: { startsWith: "admin@" } }`
+- endsWith: `where: { email: { endsWith: ".com" } }`
+
+### Boolean & Negation
+
+- not (negates a condition): `where: { isActive: { not: true } }`
