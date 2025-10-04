@@ -1,0 +1,43 @@
+# Golang
+
+## Basic
+
+### Import Package
+
+```go
+package main
+```
+
+### Import
+
+```go
+import "fmt"
+import "time"
+```
+
+or
+
+```go
+import (
+	"fmt"
+	"time"
+)
+```
+
+### main function
+
+```go
+func main () { // The { must be on the same line of the function (google style)
+	// This is single line comment
+
+	/*
+	this is
+	a multiline
+	comment!
+	*/
+
+	time.Sleep(1 * time.Second) // The ; is optional (like JS and TS)
+	fmt.Println("Hello World")
+
+}
+```
