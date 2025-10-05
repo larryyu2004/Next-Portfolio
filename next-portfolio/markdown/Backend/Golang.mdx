@@ -41,3 +41,30 @@ func main () { // The { must be on the same line of the function (google style)
 
 }
 ```
+
+### Declear variables
+
+```go
+func main () {
+	// 1. Declear a variable, default value is 0
+	var a int
+	fmt.Println("a =", a) // b = 2
+	fmt.Printf("type of a = %T\n", a) // type of a = int
+
+	// 2. Declear a variable, initialise the value
+	var b int = 2
+	fmt.Println("b =", b) // b = 2
+	fmt.Printf("type of b = %T\n", b) // type of b = int
+
+	// 3. Omit the data type
+	var c = 3
+	fmt.Println("c =", c) // c = 3
+	fmt.Printf("type of c = %T\n", c) // type of c = int
+
+	// 4. Omit var, auto match
+	// := can only be used in the function block
+	d := 3
+	fmt.Println("d =", d) // d = 3
+	fmt.Printf("type of d = %T\n", d) // type of d = int
+}
+```
