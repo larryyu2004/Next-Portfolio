@@ -80,6 +80,7 @@ func main () {
 ```
 
 ### const
+
 ```go
 const (
 	// Adding a 'iota' in the const(), iota will increase 1 by each line. iota in the first line is 0
@@ -104,5 +105,84 @@ func main () {
 	fmt.Println("BEIJING =", BEIJING)
 	fmt.Println("SHANGHAI =", SHANGHAI)
 	fmt.Println("SHENZHEN =", SHENZHEN)
+}
+```
+
+### function
+
+```go
+
+func foo1 (a string, b int) int {
+	fmt.Println("a =", a)
+	fmt.Println("a =", b)
+
+	c := 100
+
+	return c
+}
+
+// return multiple variables
+func foo2 (a int, b int) (int, int) {
+	fmt.Println("a =", a)
+	fmt.Println("a =", b)
+
+	return a, b
+}
+
+// return multiple variables with name
+func foo3 (a int, b int) (r1 int, r2 int) {
+	// if we return r1 and r2 right now
+	// r1 = 0
+	// r2 = 0
+	r1 = a
+	r2 = b
+
+	return
+}
+
+// if r1 and r2 have some type
+func foo4 (a int, b int) (r1 , r2 int) {
+	// ...
+	return
+}
+
+
+func main () {
+	c := foo1("abc", 55)
+	fmt.Println("c =", c)
+
+	res1, res2 := foo2(1, 2)
+	fmt.Println("res1 =", res1)
+	fmt.Println("res2 =", res2)
+
+	res1, res2 = foo3(1000, 2000)
+	fmt.Println("res1 =", res1)
+	fmt.Println("res2 =", res2)
+}
+```
+
+### import
+
+```go
+// 5-init/lib1/lib1.go
+// 5-init/lib2/lib2.go
+package main
+
+import (
+	// with `_`, only call the init() in the lib1
+	_ "5-init/lib1" 
+
+	// mylib2 "5-init/lib2" 
+	// . "5-init/lib2"
+	"5-init/lib2" 
+	
+)
+
+func main () {
+	//lib1.Lib1Test()
+
+	// mylib2.Lib2Test()
+	// Lib2Test()
+	lib2.Lib2Test() 
 }
 ```
