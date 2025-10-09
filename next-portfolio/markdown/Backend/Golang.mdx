@@ -170,12 +170,12 @@ package main
 
 import (
 	// with `_`, only call the init() in the lib1
-	_ "5-init/lib1" 
+	_ "5-init/lib1"
 
-	// mylib2 "5-init/lib2" 
+	// mylib2 "5-init/lib2"
 	// . "5-init/lib2"
-	"5-init/lib2" 
-	
+	"5-init/lib2"
+
 )
 
 func main () {
@@ -183,6 +183,89 @@ func main () {
 
 	// mylib2.Lib2Test()
 	// Lib2Test()
-	lib2.Lib2Test() 
+	lib2.Lib2Test()
+}
+```
+
+### pointer
+
+```go
+func wrong_swap(a int, b int) {
+	var temp int
+	temp = a
+	a = b
+	b = temp
+}
+
+func true_swap(pa *int, pb *int) {
+	var temp int
+	temp = *pa
+	*pa = *pb
+	*pb = temp
+}
+
+func main() {
+	var a int = 10
+	var b int = 20
+	wrong_swap(a, b)
+	fmt.Println("a =", a, " b =", b) // a = 10  b = 20
+
+	true_swap(&a, &b)
+	fmt.Println("a =", a, " b =", b) // a = 20  b = 10
+
+	x := 10
+	p := &x                 // p now stores the address of x
+	fmt.Println("x =", x)   // 10
+	fmt.Println("&x =", &x) // 0x14000122008 (address in memory)
+	fmt.Println("p =", p)   // 0x14000122008
+}
+```
+
+### defer
+
+- `defer` is a key words which will be executed after calling the function
+- The function with the `defer` will be pushed into a **stack**.
+
+```go
+func main () {
+	defer fmt.Println("print finished1")
+	defer fmt.Println("print finished2")
+
+	fmt.Println("print 1")
+	fmt.Println("print 2")
+	/*
+	print 1
+	print 2
+	print finished2
+	print finished1
+	*/
+}
+```
+
+In this example:
+
+1. Invoke returnAndDefer()
+2. deferFunc() is pushed into a stack
+3. Invoke returnFunc() -> "returnFunc called"
+4. Pop deferFunc(), invoke deferFunc() -> "deferFunc called"
+
+```go
+func returnFunc() int {
+	fmt.Println("returnFunc called")
+	return 0
+}
+
+func deferFunc() int {
+	fmt.Println("deferFunc called")
+	return 0
+}
+
+func returnAndDefer() int {
+	defer deferFunc()
+	return returnFunc()
+}
+
+func main() {
+	returnAndDefer()
 }
 ```
