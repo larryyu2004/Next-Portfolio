@@ -42,16 +42,16 @@ func main () { // The { must be on the same line of the function (google style)
 }
 ```
 
-### Declear variables
+### declare variables
 
 ```go
 func main () {
-	// 1. Declear a variable, default value is 0
+	// 1. declare a variable, default value is 0
 	var a int
 	fmt.Println("a =", a) // b = 2
 	fmt.Printf("type of a = %T\n", a) // type of a = int
 
-	// 2. Declear a variable, initialise the value
+	// 2. declare a variable, initialise the value
 	var b int = 2
 	fmt.Println("b =", b) // b = 2
 	fmt.Printf("type of b = %T\n", b) // type of b = int
@@ -67,7 +67,7 @@ func main () {
 	fmt.Println("d =", d) // d = 3
 	fmt.Printf("type of d = %T\n", d) // type of d = int
 
-	// Declear multiple variables
+	// declare multiple variables
 	var xx, yy int = 100, 200
 	fmt.Println("xx =", xx, "yy =", yy)
 
@@ -330,18 +330,18 @@ func main() {
 ### Slice Declaration
 ```go
 func main() {
-	// Declear slice1 is an array, default values are 1, 2, 3; length = 3
+	// declare slice1 is an array, default values are 1, 2, 3; length = 3
 	slice1 := []int{1, 2, 3}
 
-	// Declear slice2 is an array, but no space is allocated for slice2
+	// declare slice2 is an array, but no space is allocated for slice2
 	var slice2 []int
 	// Allocate 3 * 8 bytes, default value: 0
 	slice2 = make([]int, 3)
 
-	// Declear slice3 is an array, allocate 3 * 8 bytes, default value: 0
+	// declare slice3 is an array, allocate 3 * 8 bytes, default value: 0
 	var slice3 []int = make([]int, 3)
 
-	// Declear slice4 is an array, allocate 3 * 8 bytes, default value: 0
+	// declare slice4 is an array, allocate 3 * 8 bytes, default value: 0
 	slice4 := make([]int, 3)
 
 	fmt.Printf("len = %d, slice = %v\n", len(slice1), slice1) // len = 3, slice = [1 2 3]
@@ -382,4 +382,91 @@ func main() {
 	copy(slice2, numbers)
 	fmt.Println(slice2)
 }
+```
+
+### map
+
+```go
+func main() {
+	// Declare myMap1 is a map type, key is string, value is string
+	var myMap1 map[string]string
+	myMap1 = make(map[string]string, 10)
+	myMap1["one"] = "java"
+	myMap1["two"] = "c++"
+	myMap1["three"] = "python"
+	fmt.Println(myMap1)
+
+	// Declare myMap2
+	myMap2 := make(map[int]string, 10)
+	myMap2[1] = "java"
+	myMap2[2] = "c++"
+	myMap2[3] = "python"
+	fmt.Println(myMap2)
+
+	// Declare myMap3
+	myMap3 := map[string]string{
+		"one":   "java",
+		"two":   "c++",
+		"three": "python",
+	}
+	fmt.Println(myMap3)
+
+	// Delete key-value
+	delete(myMap3, "one")
+}
+```
+
+### struct
+```go
+type Book struct {
+	title string
+	auth  string
+}
+
+func changeBook(book *Book) {
+	book.auth = "Jason" //  Go automatically dereferences struct pointers when accessing fields.
+	// Go does not automatically dereference pointers when assigning or reading basic types.
+}
+
+func main() {
+	var book1 Book
+	book1.title = "golang"
+	book1.auth = "Larry"
+	fmt.Println(book1) // {golang Larry}
+
+	changeBook(&book1)
+	fmt.Println(book1) // {golang Larry}
+}
+
+```
+
+### class
+```go
+type Hero struct {
+	Name  string
+	Ad    int
+	Level int
+}
+
+func (h Hero) show() {
+	fmt.Println("Name =", h.Name)
+}
+
+func (h Hero) getName() string {
+	return h.Name
+}
+
+func (h *Hero) setName(newName string) {
+	h.Name = newName
+}
+
+func main() {
+	hero := Hero{"Larry", 10, 100}
+	hero.show()
+
+	// Go automatically converts to (&hero).setName("Jason")
+	hero.setName("Jason")
+	hero.show()
+}
+
 ```
