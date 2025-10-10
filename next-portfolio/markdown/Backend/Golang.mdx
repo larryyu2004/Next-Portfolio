@@ -1,6 +1,6 @@
 # Golang
 
-## Basic
+## Syntax
 
 ### Import Package
 
@@ -267,5 +267,119 @@ func returnAndDefer() int {
 
 func main() {
 	returnAndDefer()
+}
+```
+
+### Array
+#### Static Array (fixed size)
+```go
+func printArray(myArray [4]int) {
+	for index, value := range myArray {
+		fmt.Println("index = ", index, ", value = ", value)
+	}
+
+	// Static array: Won't change the value of the myArray3 in the main()
+	myArray[0] = 100 
+}
+
+func main() {
+	var myArray1 [10]int
+	myArray2 := [10]int{1, 2, 3, 4}
+	myArray3 := [4]int{11, 22, 33, 44}
+
+	for i := 0; i < len(myArray1); i++ {
+		fmt.Println(myArray1[i])
+	}
+
+	for index, value := range myArray2 {
+		fmt.Println("index = ", index, ", value = ", value)
+	}
+
+	printArray(myArray3)
+
+	fmt.Printf("myArray3 types = %T\n", myArray3) // myArray3 types = [4]int
+}
+
+```
+
+#### Dynamic Array
+```go
+// Actually passed in a pointer
+func printArray(myArray []int) {
+	for _, value := range myArray {
+		fmt.Println("value =", value)
+	}
+	
+	// Dynamic Array: Will change the value of the myArray in the main()
+	myArray[0] = 100
+}
+
+func main() {
+	// dynamic array
+	// Actually a pointer points to the array
+	myArray := []int{1, 2, 3, 4}
+	printArray(myArray)
+
+	for _, value := range myArray {
+		fmt.Println("value =", value)
+	}
+}
+
+```
+
+### Slice Declaration
+```go
+func main() {
+	// Declear slice1 is an array, default values are 1, 2, 3; length = 3
+	slice1 := []int{1, 2, 3}
+
+	// Declear slice2 is an array, but no space is allocated for slice2
+	var slice2 []int
+	// Allocate 3 * 8 bytes, default value: 0
+	slice2 = make([]int, 3)
+
+	// Declear slice3 is an array, allocate 3 * 8 bytes, default value: 0
+	var slice3 []int = make([]int, 3)
+
+	// Declear slice4 is an array, allocate 3 * 8 bytes, default value: 0
+	slice4 := make([]int, 3)
+
+	fmt.Printf("len = %d, slice = %v\n", len(slice1), slice1) // len = 3, slice = [1 2 3]
+	fmt.Printf("len = %d, slice = %v\n", len(slice2), slice2) // len = 3, slice = [0 0 0]
+	fmt.Printf("len = %d, slice = %v\n", len(slice3), slice3) // len = 3, slice = [0 0 0]
+	fmt.Printf("len = %d, slice = %v\n", len(slice4), slice4) // len = 3, slice = [0 0 0]
+}
+```
+
+### Slice Methods
+```go
+func main() {
+	// 5 is the capacity of the array
+	var numbers = make([]int, 3, 5)
+
+	fmt.Printf("len = %d, cap = %d, slice = %v\n", len(numbers), cap(numbers), numbers) // len = 3, cap = 5, slice = [0 0 0]
+
+	// Append a new element to the array, len(numbers) = 4, [0 0 0 1], cap(numbers) = 5
+	numbers = append(numbers, 1)
+	fmt.Printf("len = %d, cap = %d, slice = %v\n", len(numbers), cap(numbers), numbers)
+
+	// Append a new element to the array, len(numbers) = 5, [0 0 0 1 2], cap(numbers) = 5
+	numbers = append(numbers, 2)
+	fmt.Printf("len = %d, cap = %d, slice = %v\n", len(numbers), cap(numbers), numbers)
+
+	// Append a new element to the array, len(numbers) = 6, [0 0 0 1 2 3], cap(numbers) = 5 * 2 = 10
+	numbers = append(numbers, 3)
+	fmt.Printf("len = %d, cap = %d, slice = %v\n", len(numbers), cap(numbers), numbers)
+
+	// [0:2)
+	slice1 := numbers[0:2] // here, the pointers of slice1 and numbers points the same array
+	fmt.Println(slice1) // [0 0]
+	// change the slice1[0] will also change numbers[0]
+	slice1[0] = 100
+
+	// copy
+	slice2 := make([]int, 3) // [0 0 0]
+	copy(slice2, numbers)
+	fmt.Println(slice2)
 }
 ```
