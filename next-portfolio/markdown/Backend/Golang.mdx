@@ -767,3 +767,46 @@ func main() {
 	fmt.Printf("%v\n", myMovie)
 }
 ```
+
+## Goroutine
+
+### Background
+
+1. Multi-core, scheduled by the operation system scheduler. (cpu1, cpu2, cpu3, cpu4...).
+2. kernel threads, handled by the operation system scheduler. (M1, M2, M3).
+3. Each kernel thread has a processor (P1, P2, P3).
+4. Each p has a local queue, stores goroutines.
+5. Goroutine has a global queue, stores goroutines.
+
+### Mechanism
+
+- Work Stealing
+
+1. P1 is handling Goroutine1 (G1)
+2. P1 has a local queue and it stores G2 and G3
+3. P1 is free and nothing in the local queue
+4. P1's local queue steals P1's local queue's G3
+
+- Hand Off
+
+1. P1 is handling Goroutine1 (G1)
+2. P1 has a local queue and it stores G2
+3. But G1 is blocking the P1
+4. It will invoke another kernel thread (M3) and move the P0 and it's local queue to the M3
+5. M1 now binds with G1
+6. G1 will sleep or destroyed.
+
+- GOMAXPROCESS limits the number of processes
+1. Number of CPU cores / 2
+
+- Seize
+1. co-routine1 binds with a cpu, only when the cpu release the co-routine1, co-routine2 can now bind with the cpu
+2. go-routine1 binds with a cpu, after max 10ms, go-routine2 will seize the cpu
+
+- Global Goroutine Queue
+1. Similar to the work stealing
+2. P1 now is handling the G1
+3. P1's local queue has no goroutine
+4. P2's local queue has no goroutine as well
+5. P2's local queue will firstly look the P1's local queue
+6. If no goroutine, steals from the Global Goroutine Queue
