@@ -629,3 +629,141 @@ func main() {
 	w.WriteBook()
 }
 ```
+
+### reflect
+
+```go
+import (
+	"fmt"
+	"reflect"
+)
+
+func reflectNum(arg interface{}) {
+	fmt.Println("type :", reflect.TypeOf(arg))
+	fmt.Println("type :", reflect.ValueOf(arg))
+}
+
+
+type User struct {
+	Id   int
+	Name string
+	Age  int
+}
+
+func (user User) Call() {
+	fmt.Println("user is called ..")
+	fmt.Printf("%v\n", user)
+}
+
+func main() {
+	var num float64 = 1.23445
+	reflectNum(num)
+
+	user := User{1, "Larry", 21}
+	DoFiledAndMethod(user)
+}
+
+func DoFiledAndMethod(input interface{}) {
+	// Get the type of the input
+	inputType := reflect.TypeOf(input)
+	fmt.Println("inputType is :", inputType.Name())
+
+	// Get the value of input
+	inputValue := reflect.ValueOf(input)
+	fmt.Println("inputValue is :", inputValue)
+
+	// Get field from the type
+	for i := 0; i < inputType.NumField(); i++ {
+		field := inputType.Field(i)
+		value := inputValue.Field(i).Interface()
+		fmt.Printf("%s: %v = %v\n", field.Name, field.Type, value)
+	}
+
+	// Get the methods of type
+	for i := 0; i < inputType.NumMethod(); i++ {
+		m := inputType.Method(i)
+		fmt.Printf("%s: %v\n", m.Name, m.Type)
+	}
+}
+/*
+type : float64
+type : 1.23445
+inputType is : User
+inputValue is : {1 Larry 21}
+Id: int = 1
+Name: string = Larry
+Age: int = 21
+Call: func(main.User)
+*/
+```
+
+### Tag
+
+```go
+import (
+	"fmt"
+	"reflect"
+)
+
+type resume struct {
+	Name string `info:"name" doc:"my name"`
+	Sex  int    `info:"sex"`
+}
+
+func findTag (str interface{}) {
+	t := reflect.TypeOf(str).Elem()
+
+	for i := 0; i < t.NumField(); i++ {
+		taginfo := t.Field(i).Tag.Get("info")
+		tagdoc := t.Field(i).Tag.Get("doc")
+		fmt.Println("info: ", taginfo, " tagdoc: ", tagdoc)
+		/*
+		info:  name  tagdoc:  my name
+		info:  sex  tagdoc:
+		*/
+	}
+}
+
+func main() {
+	var resume resume
+
+	findTag(&resume)
+}
+```
+
+### json
+
+```go
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Movie struct {
+	Title string   `json:"title"`
+	Year  int      `json:"year"`
+	Price int      `json:"rmb"`
+	Actor []string `json:"actors"`
+}
+
+func main() {
+	movie := Movie{"moive", 2001, 21, []string{"Larry", "Jason"}}
+
+	// struct -> json
+	jsonStr, err := json.Marshal(movie)
+	if(err != nil) {
+		fmt.Println("json marshal error", err)
+		return
+	}
+	fmt.Printf("jsonStr = %s\n", jsonStr)
+
+	// json -> struct
+	myMovie := Movie{}
+	err = json.Unmarshal(jsonStr, &myMovie)
+	if(err != nil) {
+		fmt.Println("json unmarshal error", err)
+		return
+	}
+	fmt.Printf("%v\n", myMovie)
+}
+```
