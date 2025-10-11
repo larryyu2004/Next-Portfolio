@@ -271,7 +271,9 @@ func main() {
 ```
 
 ### Array
+
 #### Static Array (fixed size)
+
 ```go
 func printArray(myArray [4]int) {
 	for index, value := range myArray {
@@ -279,7 +281,7 @@ func printArray(myArray [4]int) {
 	}
 
 	// Static array: Won't change the value of the myArray3 in the main()
-	myArray[0] = 100 
+	myArray[0] = 100
 }
 
 func main() {
@@ -303,13 +305,14 @@ func main() {
 ```
 
 #### Dynamic Array
+
 ```go
 // Actually passed in a pointer
 func printArray(myArray []int) {
 	for _, value := range myArray {
 		fmt.Println("value =", value)
 	}
-	
+
 	// Dynamic Array: Will change the value of the myArray in the main()
 	myArray[0] = 100
 }
@@ -328,6 +331,7 @@ func main() {
 ```
 
 ### Slice Declaration
+
 ```go
 func main() {
 	// declare slice1 is an array, default values are 1, 2, 3; length = 3
@@ -352,6 +356,7 @@ func main() {
 ```
 
 ### Slice Methods
+
 ```go
 func main() {
 	// 5 is the capacity of the array
@@ -417,6 +422,7 @@ func main() {
 ```
 
 ### struct
+
 ```go
 type Book struct {
 	title string
@@ -441,6 +447,7 @@ func main() {
 ```
 
 ### class
+
 ```go
 type Hero struct {
 	Name  string
@@ -469,4 +476,156 @@ func main() {
 	hero.show()
 }
 
+```
+
+### Inheritance
+
+```go
+type Human struct {
+	name string
+	sex  string
+}
+
+func (human *Human) Eat() {
+	fmt.Println("Human.eat()...")
+}
+
+func (human *Human) Walk() {
+	fmt.Println("Human.walk()...")
+}
+
+type SuperMan struct {
+	Human
+
+	level int
+}
+
+func (superman *SuperMan) Eat() {
+	fmt.Println("SuperMan.Eat()...")
+}
+
+func (superman *SuperMan) Fly() {
+	fmt.Println("SuperMan.Fly()...")
+}
+
+func main() {
+	h := Human{"Larry", "female"}
+	h.Eat()
+	h.Walk()
+
+	s := SuperMan{Human{"Jason", "male"}, 12}
+	s.Walk()
+	s.Eat()
+	s.Fly()
+}
+```
+
+### interface
+
+```go
+// interface is actually a pointer
+type AnimalIF interface {
+	Sleep()
+	GetColor() string
+	GetType() string
+}
+
+type Cat struct {
+	color string
+}
+
+func (cat *Cat) Sleep() {
+	fmt.Println("Cat is sleeping")
+}
+
+func (cat *Cat) GetColor() string {
+	return cat.color
+}
+
+func (cat *Cat) GetType() string {
+	return "Cat"
+}
+
+// interface as a type
+func showAnimial(animal AnimalIF) {
+	animal.Sleep()
+	fmt.Println("color = ", animal.GetColor())
+	fmt.Println("kind = ", animal.GetType())
+}
+
+func main() {
+	var animal AnimalIF
+	animal = &Cat{"Green"}
+	animal.Sleep()
+
+	showAnimial(&Cat{"Red"})
+}
+```
+
+### type assertion
+
+```go
+// interface{} in Golang is like any type in TS
+func myFunc(arg interface{}) {
+	fmt.Println("myFunc is called...")
+	fmt.Println(arg)
+
+	// type assertion
+	value, ok := arg.(string)
+	if !ok {
+		fmt.Println("arg is not string")
+	} else {
+		fmt.Println("arg is string type, value = ", value)
+		fmt.Printf("value type is %T\n", value)
+	}
+}
+
+type Book struct {
+	auth string
+}
+
+func main() {
+	book := Book{"Golang"}
+
+	myFunc(book)
+	myFunc("Hello")
+}
+```
+
+```go
+type Reader interface {
+	ReadBook()
+}
+
+type Writer interface {
+	WriteBook()
+}
+
+type Book struct {
+}
+
+func (this *Book) ReadBook() {
+	fmt.Println("Read a Book")
+}
+func (this *Book) WriteBook() {
+	fmt.Println("Write a Book")
+}
+
+func main() {
+	b := &Book{}
+
+	var r Reader
+
+	r = b
+
+	r.ReadBook()
+
+	var w Writer
+	// r contains a pointer to a Book (*Book) as its concrete value.
+	// The compiler checks whether that concrete type (*Book) implements Writer.
+	// It does! Because *Book has WriteBook() defined.
+	w = r.(Writer)
+
+	w.WriteBook()
+}
 ```
