@@ -780,14 +780,14 @@ func main() {
 
 ### Mechanism
 
-- Work Stealing
+- **Work Stealing**
 
 1. P1 is handling Goroutine1 (G1)
 2. P1 has a local queue and it stores G2 and G3
 3. P1 is free and nothing in the local queue
 4. P1's local queue steals P1's local queue's G3
 
-- Hand Off
+- **Hand Off**
 
 1. P1 is handling Goroutine1 (G1)
 2. P1 has a local queue and it stores G2
@@ -796,17 +796,98 @@ func main() {
 5. M1 now binds with G1
 6. G1 will sleep or destroyed.
 
-- GOMAXPROCESS limits the number of processes
+- **GOMAXPROCESS limits the number of processes**
 1. Number of CPU cores / 2
 
-- Seize
+- **Seize**
 1. co-routine1 binds with a cpu, only when the cpu release the co-routine1, co-routine2 can now bind with the cpu
 2. go-routine1 binds with a cpu, after max 10ms, go-routine2 will seize the cpu
 
-- Global Goroutine Queue
+- **Global Goroutine Queue**
 1. Similar to the work stealing
 2. P1 now is handling the G1
 3. P1's local queue has no goroutine
 4. P2's local queue has no goroutine as well
 5. P2's local queue will firstly look the P1's local queue
 6. If no goroutine, steals from the Global Goroutine Queue
+
+### Code
+```go
+import (
+	"fmt"
+	"time"
+)
+
+func newTask() {
+	i := 0
+	for {
+		i++
+		fmt.Printf("new Goroutine : i = %d\n", i)
+		time.Sleep(1 * time.Second)
+	}
+}
+
+// main () is a main goroutine
+// If main () returns, all the goroutine created by the main() will be destoryed.
+func main() {
+	// Create a new goroutine
+	go newTask()
+	
+	i := 0
+	for {
+		i++
+		fmt.Printf("main Goroutine : i = %d\n", i)
+		time.Sleep(1 * time.Second)
+	}
+	
+}
+```
+
+```go
+import (
+	"fmt"
+	"runtime"
+	"time"
+)
+
+func main() {
+
+	// Anonymous function
+	go func() {
+		defer fmt.Println("A.defer")
+		func() {
+			defer fmt.Println("B.defer")
+			// Exit current goroutine
+			runtime.Goexit()
+			fmt.Println("B")
+		}()
+		fmt.Println("A")
+	}()
+	// endless loop
+	for {
+		time.Sleep(1 * time.Second)
+	}
+}
+/*
+B.defer
+A.defer
+*/
+```
+
+```go
+```
+
+```go
+```
+
+```go
+```
+
+```go
+```
+
+```go
+```
+
+```go
+```
