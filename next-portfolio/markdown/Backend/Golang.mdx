@@ -874,10 +874,95 @@ A.defer
 */
 ```
 
-```go
-```
+## Channel
+- Communicate between two go-routine
 
 ```go
+func main () {
+	c := make(chan int)
+
+	go func () {
+		defer fmt.Println("goroutine finished")
+
+		fmt.Println("goroutine is running")
+
+		c <- 225
+	}()
+	
+	/*
+		if num hasn't received the value, main() goroutine will be blocked until receiving
+		so main() goroutine will wait after the sub goroutine sends the value to the channel
+
+		same, if main() goroutine is waiting the value, sub goroutine will continue executing
+		until sub goroutine send the value to the channel
+	*/
+
+	num := <-c
+
+	fmt.Println("num =", num)
+	fmt.Println("main goroutine finished ")
+}
+```
+
+### Unbuffered Channels
+1. In step 1, both goroutines reach the channel, but neither begins sending or receiving.
+
+2. In step 2, the left goroutine extends its hand into the channel, simulating a send. At this point, it is locked in the channel until the swap completes.
+
+3. In step 3, the right goroutine extends its hand into the channel, simulating a receive. This goroutine is also locked in the channel until the swap completes.
+
+4. In steps 4 and 5, the swap occurs, and finally, in step 6, both goroutines remove their hands from the channel, simulating the locked goroutines being released. Both goroutines can now proceed with other tasks.
+
+### Buffered Channels
+1. In step 1, the right goroutine is receiving a value from the channel.
+
+2. In step 2, the right goroutine independently completes receiving the value, while the left goroutine is sending a new value to the channel.
+
+3. In step 3, the left goroutine is still sending a new value to the channel, while the right goroutine is receiving another value from the channel. These two operations are neither synchronized nor block each other.
+
+4. Finally, in step 4, all sends and receives are complete, and the channel still has several values ​​in it, with room for more.
+
+- When the channel is full, writing data to it will block. When the channel is empty, retrieving data from it will also block.
+
+```go
+func main() {
+	// buffered channel
+	c := make(chan int, 3)
+
+	fmt.Println("len(c) = ", len(c), ", cap(c)", cap(c))
+
+	go func() {
+		defer fmt.Println("sub goroutine finished")
+
+		for i := 0; i < 4; i++ {
+			c <- i
+			fmt.Println("sub goroutine is running, element sent=", i, "len(c)=", len(c), ", cap(c)=", cap(c))
+		}
+	}()
+
+	time.Sleep(2 * time.Second)
+
+	for i := 0; i < 4; i++ {
+		num := <-c
+		fmt.Println("num =", num)
+	}
+	time.Sleep(time.Second)
+	
+	fmt.Println("main finished")
+}
+
+/*
+sub goroutine is running, element sent= 0 len(c)= 1 , cap(c)= 3
+sub goroutine is running, element sent= 1 len(c)= 2 , cap(c)= 3
+sub goroutine is running, element sent= 2 len(c)= 3 , cap(c)= 3
+num = 0
+num = 1
+num = 2
+num = 3
+sub goroutine is running, element sent= 3 len(c)= 2 , cap(c)= 3
+sub goroutine finished
+main finished
+*/
 ```
 
 ```go
