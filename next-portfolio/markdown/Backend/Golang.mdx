@@ -784,26 +784,29 @@ func main() {
 
 1. P1 is handling Goroutine1 (G1)
 2. P1 has a local queue and it stores G2 and G3
-3. P1 is free and nothing in the local queue
-4. P1's local queue steals P1's local queue's G3
+3. P2 is free and nothing in the local queue
+4. P2's local queue steals P1's local queue's G3
 
 - **Hand Off**
 
 1. P1 is handling Goroutine1 (G1)
 2. P1 has a local queue and it stores G2
 3. But G1 is blocking the P1
-4. It will invoke another kernel thread (M3) and move the P0 and it's local queue to the M3
+4. It will invoke another kernel thread (M3) and move the P1 and it's local queue to the M3
 5. M1 now binds with G1
 6. G1 will sleep or destroyed.
 
 - **GOMAXPROCESS limits the number of processes**
+
 1. Number of CPU cores / 2
 
 - **Seize**
+
 1. co-routine1 binds with a cpu, only when the cpu release the co-routine1, co-routine2 can now bind with the cpu
 2. go-routine1 binds with a cpu, after max 10ms, go-routine2 will seize the cpu
 
 - **Global Goroutine Queue**
+
 1. Similar to the work stealing
 2. P1 now is handling the G1
 3. P1's local queue has no goroutine
@@ -812,6 +815,7 @@ func main() {
 6. If no goroutine, steals from the Global Goroutine Queue
 
 ### Code
+
 ```go
 import (
 	"fmt"
@@ -832,14 +836,14 @@ func newTask() {
 func main() {
 	// Create a new goroutine
 	go newTask()
-	
+
 	i := 0
 	for {
 		i++
 		fmt.Printf("main Goroutine : i = %d\n", i)
 		time.Sleep(1 * time.Second)
 	}
-	
+
 }
 ```
 
@@ -875,6 +879,7 @@ A.defer
 ```
 
 ## Channel
+
 - Communicate between two go-routine
 
 ```go
@@ -888,7 +893,7 @@ func main () {
 
 		c <- 225
 	}()
-	
+
 	/*
 		if num hasn't received the value, main() goroutine will be blocked until receiving
 		so main() goroutine will wait after the sub goroutine sends the value to the channel
@@ -905,6 +910,7 @@ func main () {
 ```
 
 ### Unbuffered Channels
+
 1. In step 1, both goroutines reach the channel, but neither begins sending or receiving.
 
 2. In step 2, the left goroutine extends its hand into the channel, simulating a send. At this point, it is locked in the channel until the swap completes.
@@ -914,6 +920,7 @@ func main () {
 4. In steps 4 and 5, the swap occurs, and finally, in step 6, both goroutines remove their hands from the channel, simulating the locked goroutines being released. Both goroutines can now proceed with other tasks.
 
 ### Buffered Channels
+
 1. In step 1, the right goroutine is receiving a value from the channel.
 
 2. In step 2, the right goroutine independently completes receiving the value, while the left goroutine is sending a new value to the channel.
@@ -947,7 +954,7 @@ func main() {
 		fmt.Println("num =", num)
 	}
 	time.Sleep(time.Second)
-	
+
 	fmt.Println("main finished")
 }
 
@@ -965,14 +972,125 @@ main finished
 */
 ```
 
+### Close Channels
+
+- Unlike files, channels don't need to be closed frequently. You should only close a channel when you truly have no more data to send, or when you explicitly want to terminate a range loop.
+- After closing a channel, you can no longer send data to it (causing a panic error and causing receive operations to immediately return zero).
+- After closing a channel, you can continue to receive data from it.
+- For nil channels, both sending and receiving are blocked.
+
 ```go
+func main() {
+	c := make(chan int)
+
+	go func() {
+		for i := 0; i < 5; i++ {
+			c <- i
+		}
+
+		// close key word can close a channel
+		close(c)
+	}()
+
+	for {
+		// ok == true -> channel didnt close
+		if data, ok := <-c; ok {
+			fmt.Println(data)
+		} else {
+			break
+		}
+	}
+
+	fmt.Println("Main Finished..")
+}
+```
+
+### Range & Channel
+
+```go
+func main() {
+	c := make(chan int)
+
+	go func() {
+		for i := 0; i < 5; i++ {
+			c <- i
+		}
+
+		// close key word can close a channel
+		close(c)
+	}()
+
+	for data := range c {
+		fmt.Println(data)
+	}
+
+	fmt.Println("Main Finished..")
+}
+```
+
+### Select & Channel
+
+```go
+package main
+
+import "fmt"
+
+func fibonacii(c, quit chan int) {
+	x, y := 1, 1
+
+	for {
+		select {
+		// channel c is writable
+		case c <- x:
+			x = y
+			y = x + y
+
+		case <-quit:
+			fmt.Println("quit")
+			return
+		}
+		
+	}
+}
+
+func main() {
+	c := make(chan int)
+	quit := make(chan int)
+
+	go func() {
+		for i := 0; i < 6; i++ {
+			fmt.Println(<-c)
+		}
+
+		quit <- 0
+	}()
+
+	fibonacii(c, quit)
+
+}
+
 ```
 
 ```go
+
 ```
 
 ```go
+
 ```
 
 ```go
+
+```
+
+```go
+
+```
+
+```go
+
+```
+
+```go
+
 ```
