@@ -63,6 +63,53 @@ public class Move : MonoBehaviour
 
 ```
 
+### Vector
+```CSharp
+using Unity.Burst.Intrinsics;
+using UnityEngine;
+
+public class NewMonoBehaviourScript : MonoBehaviour
+{
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        Vector3 v = new Vector3(1, 1, 0.5f);
+        v = Vector3.zero;
+        v = Vector3.right;
+
+        Vector3 v2 = Vector3.forward;
+
+        // Calculate the angle between two vectors
+        Debug.Log(Vector3.Angle(v, v2));
+
+        // Calculate the distance between two vectors
+        Debug.Log(Vector3.Distance(v, v2));
+
+        // Vector dot product
+        Debug.Log(Vector3.Dot(v, v2));
+
+        // Vector cross product
+        Debug.Log(Vector3.Cross(v, v2));
+
+        // Vector Lerp
+        Debug.Log(Vector3.Lerp(Vector3.zero, Vector3.one, 0.8f));
+
+        // Vector Magnitude
+        Debug.Log(v.magnitude);
+
+        // Normalised
+        Debug.Log(v.normalized);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}
+
+```
+
 
 
 
