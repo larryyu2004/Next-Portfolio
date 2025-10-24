@@ -1,5 +1,35 @@
 # Unity
 
 ## Component
+
 - An object is a combination of components.
+
 1. A cube may have these components: Transform, Cube (Mesh Filter), Mesh Renderer, Box Collider, Move (Script), Rigidbody
+
+### Volume Component
+
+- **Tonemapping** in Unity’s Volume system converts high-dynamic-range (HDR) lighting into something your screen can display. It prevents blown-out highlights and crushed shadows, and gives your scene a more filmic or realistic look depending on the selected mode (like Neutral or ACES).
+
+- **Color Adjustments** in Unity’s Volume system let you tweak the overall look of your scene’s colors after rendering
+
+- **Bloom** makes bright areas in your scene glow by spreading light beyond object edges. It mimics how real cameras and human eyes react to intense brightness, making lights feel soft, cinematic, and more dynamic.
+
+- **Vignette** darkens the edges of the screen to draw attention toward the center, helping guide the player’s focus and adding a subtle cinematic feel.
+
+### Camera Component
+
+#### Randering
+
+- **Anti-aliasing** in the Camera’s Rendering settings controls how smooth the edges of objects look. It reduces the jagged “stair-step” look on diagonal lines. Higher-quality anti-aliasing makes edges smoother but can use more performance.
+
+## PC_RPAsset
+
+### Quality Component
+
+- **Anti-aliasing (MSAA)** will override the **Anti-aliasing** in the camera component if we choose 3D URP
+
+## PC_Renderer
+
+### Screen Space Ambient Occlusion Component
+
+- **Screen Space Ambient Occlusion (SSAO)** adds soft shadows in creases, corners, and where objects are close together. It gives depth and realism by darkening those tiny areas where light would naturally have trouble reaching.
