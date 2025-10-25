@@ -33,3 +33,40 @@
 ### Screen Space Ambient Occlusion Component
 
 - **Screen Space Ambient Occlusion (SSAO)** adds soft shadows in creases, corners, and where objects are close together. It gives depth and realism by darkening those tiny areas where light would naturally have trouble reaching.
+
+## Player Movement
+
+**Handles:**
+
+- Player movement using Rigidbody
+- Detecting and interacting with counters
+- Sending walking state to animations
+
+**Key Components**
+
+- GameInput → reads movement + interact input
+- Rigidbody → smooth physics-based movement
+- Raycast → checks counters in front of player
+- selectedCounter → the currently targeted counter
+
+**Update Flow**
+
+- `Update()` → Handle interaction only
+- `FixedUpdate()` → Handle movement only (physics)
+
+**Movement**
+
+- Uses Rigidbody.MovePosition ✅
+- Slerp rotates player smoothly toward movement direction
+- Sets `linearVelocity` & `angularVelocity` to zero to stop physics sliding
+
+**Interaction**
+
+- Raycast forward up to 2m
+- If it hits a BaseCounter → select it
+- Input event calls selectedCounter.Interact()
+
+**Animation Support**
+
+- IsWalking public read-only property
+  → Used by Animator to switch animations
