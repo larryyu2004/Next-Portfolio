@@ -1,4 +1,6 @@
 # Singleton-Mode
 
 ## Introduction
-- Used to connect with a database
+- **Intro:** You only want one object of a certain class to ever exist in your app.
+
+For example, you might want only one database connection, only one configuration manager, or only one logger to be created.
