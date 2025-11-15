@@ -80,5 +80,28 @@
 ## Design UI
 
 ## Managers
-- Game Manager
-- Voice Manager
+
+- In Unity projects, Managers are super handy for organizing game-wide systems. They usually take care of specific tasks such as handling **audio**, controlling the **game state** (start/pause/game over), managing **UI flow**, and more.
+Because these systems need to be accessed from anywhere, managers are often implemented using the Singleton pattern.
+
+- Because these systems need to be accessed from anywhere, managers are often implemented using the **Singleton pattern**.
+
+```CSharp
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance { get; private set; }
+    void Awake()
+    {
+        Instance = this;
+    }
+}
+```
+This sets up a basic singleton:
+- Instance gives you global access to the manager.
+- `Awake()` ensures the instance is assigned as soon as the object is created.
+
+### Game Manager
+
+-
+
+### Voice Manager
