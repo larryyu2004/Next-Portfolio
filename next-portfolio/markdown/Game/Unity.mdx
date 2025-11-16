@@ -82,7 +82,7 @@
 ## Managers
 
 - In Unity projects, Managers are super handy for organizing game-wide systems. They usually take care of specific tasks such as handling **audio**, controlling the **game state** (start/pause/game over), managing **UI flow**, and more.
-Because these systems need to be accessed from anywhere, managers are often implemented using the Singleton pattern.
+  Because these systems need to be accessed from anywhere, managers are often implemented using the Singleton pattern.
 
 - Because these systems need to be accessed from anywhere, managers are often implemented using the **Singleton pattern**.
 
@@ -96,12 +96,64 @@ public class GameManager : MonoBehaviour
     }
 }
 ```
+
 This sets up a basic singleton:
+
 - Instance gives you global access to the manager.
 - `Awake()` ensures the instance is assigned as soon as the object is created.
 
 ### Game Manager
 
--
+#### States
+
+- In the Game Manager, we can define the game moves through some states
+
+```CSharp
+private enum State
+{
+    WaitingToStart,
+    CountDownToStart,
+    GamePlaying,
+    GameOver,
+}
+```
+
+- And uses three timers to control the game flow.
+- Every frame, we decrease the timer based on the current state.
+
+```CSharp
+void Update()
+{
+    switch (state)
+    {
+        case State.WaitingToStart:
+            waitingToStartTimer -= Time.deltaTime;
+            if (waitingToStartTimer <= 0)
+            {
+                TurnToCountDownToStart();
+            }
+            break;
+        case State.CountDownToStart:
+            countDownToStartTimer -= Time.deltaTime;
+            if (countDownToStartTimer <= 0)
+            {
+                TurnToGamePlaying();
+            }
+            break;
+        case State.GamePlaying:
+            gamePlayingTimer -= Time.deltaTime;
+            if (gamePlayingTimer <= 0)
+            {
+                TurnToGameOver();
+            }
+            break;
+        case State.GameOver:
+            break;
+        default:
+            break;
+
+    }
+}
+```
 
 ### Voice Manager
