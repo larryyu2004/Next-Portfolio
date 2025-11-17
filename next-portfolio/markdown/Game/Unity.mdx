@@ -156,4 +156,21 @@ void Update()
 }
 ```
 
+#### Changing States (and Notifying UI)
+- Whenever the game enters a new state, I fire an event so the UI can update itself.
+```CSharp
+public event EventHandler OnStateChanged;
+```
+Each transition looks like this:
+```CSharp
+private void TurnToGamePlaying()
+{
+    state = State.GamePlaying;
+    EnablePlayer();
+    OnStateChanged?.Invoke(this, EventArgs.Empty);
+}
+```
+- This means UI scripts don’t constantly check the state — they simply subscribe and react.
+
+
 ### Voice Manager
