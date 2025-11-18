@@ -172,5 +172,31 @@ private void TurnToGamePlaying()
 ```
 - This means UI scripts don’t constantly check the state — they simply subscribe and react.
 
+#### Pause & Resume System
+- The pause system listens for a pause action from a GameInput script:
+```CSharp
+GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
+```
+When triggered:
+```CSharp
+public void ToggleGame()
+{
+    isGamePause = !isGamePause;
+
+    if (isGamePause)
+    {
+        Time.timeScale = 0; 
+        OnGamePaused?.Invoke(this, EventArgs.Empty);
+    }
+    else
+    {
+        Time.timeScale = 1;
+        OnGameResume?.Invoke(this, EventArgs.Empty);
+    }
+}
+```
+- `Time.timeScale = 0` is the classic Unity trick to pause the entire game.
+- And just like the state system, pause/resume also triggers events for UI updates.
+
 
 ### Voice Manager
