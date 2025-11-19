@@ -200,3 +200,29 @@ public void ToggleGame()
 
 
 ### Voice Manager
+- Singleton Mode
+
+#### Register Voices
+- The SoundManager uses a ScriptableObject that holds groups of related sounds:
+```CSharp
+    [SerializeField] private AudioClipRefsSO audioClipRefsSO;
+```
+```CSharp
+// AudioClipRefsSO.cs
+using UnityEngine;
+
+[CreateAssetMenu()]
+public class AudioClipRefsSO : ScriptableObject
+{
+    public AudioClip[] chop;
+    public AudioClip[] deliveryFail;
+    public AudioClip[] deliverySuccess;
+    public AudioClip[] footstep;
+    public AudioClip[] objectDrop;
+    public AudioClip[] objectPickup;
+    public AudioClip[] stoveSizzle;
+    public AudioClip[] trash;
+    public AudioClip[] warning;
+}
+
+```
