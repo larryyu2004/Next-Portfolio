@@ -157,11 +157,15 @@ void Update()
 ```
 
 #### Changing States (and Notifying UI)
+
 - Whenever the game enters a new state, I fire an event so the UI can update itself.
+
 ```CSharp
 public event EventHandler OnStateChanged;
 ```
+
 Each transition looks like this:
+
 ```CSharp
 private void TurnToGamePlaying()
 {
@@ -170,14 +174,19 @@ private void TurnToGamePlaying()
     OnStateChanged?.Invoke(this, EventArgs.Empty);
 }
 ```
+
 - This means UI scripts don’t constantly check the state — they simply subscribe and react.
 
 #### Pause & Resume System
+
 - The pause system listens for a pause action from a GameInput script:
+
 ```CSharp
 GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
 ```
+
 When triggered:
+
 ```CSharp
 public void ToggleGame()
 {
@@ -185,7 +194,7 @@ public void ToggleGame()
 
     if (isGamePause)
     {
-        Time.timeScale = 0; 
+        Time.timeScale = 0;
         OnGamePaused?.Invoke(this, EventArgs.Empty);
     }
     else
@@ -195,18 +204,22 @@ public void ToggleGame()
     }
 }
 ```
+
 - `Time.timeScale = 0` is the classic Unity trick to pause the entire game.
 - And just like the state system, pause/resume also triggers events for UI updates.
 
-
 ### Voice Manager
+
 - Singleton Mode
 
 #### Register Voices
+
 - The SoundManager uses a ScriptableObject that holds groups of related sounds:
+
 ```CSharp
     [SerializeField] private AudioClipRefsSO audioClipRefsSO;
 ```
+
 ```CSharp
 // AudioClipRefsSO.cs
 using UnityEngine;
@@ -226,3 +239,15 @@ public class AudioClipRefsSO : ScriptableObject
 }
 
 ```
+
+#### Subscribing to Gameplay Events
+- The best part: the SoundManager doesn’t constantly check anything. Instead, it just listens to events from different systems.
+```CSharp
+OrderManager.Instance.OnRecipeSuccessed += OrderManager_OnRecipeSuccessed;
+OrderManager.Instance.OnRecipeFailed += OrderManager_OnRecipeFailed;
+CuttingCounter.OnCut += CuttingCounter_OnCut;
+KitchenObjectHolder.OnDrop += KitchenObjectHolder_OnDrop;
+KitchenObjectHolder.OnPickup += KitchenObjectHolder_OnPickup;
+TrashCounter.OnObjectTrashed += TrashCounter_OnObjectTrashed;
+```
+- Whenever the game detects something happening, it notifies the SoundManager.
