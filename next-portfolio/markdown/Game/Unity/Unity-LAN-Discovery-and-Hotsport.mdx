@@ -1,0 +1,12 @@
+# Unity LAN Discovery and Hotsport Support
+
+## NetworkDiscovery.cs
+
+This file handles broadcasting (host) and listening (client) using raw UDP sockets.
+
+### Core responsibilities
+- Host repeatedly broadcasts its IP address on the LAN (UDP broadcast)
+- Client listens for these broadcasts and extracts the host’s IP
+- Supports common iOS/Android hotspot subnets
+- Runs safely on background threads
+- Returns results to Unity’s main thread
