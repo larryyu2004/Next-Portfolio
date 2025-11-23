@@ -1,10 +1,82 @@
 # Unity LAN Discovery and Hotsport Support
 
+## Plugins
+
+### iOS get IP
+
+- This C/C++ code is the implementation side of the bridge. While the C# code was just the "request," this code performs the actual heavy lifting of talking to the iOS operating system to retrieve network information.
+
+```C
+// Contains tools to convert computer-readable IP addresses (binary) into human-readable strings (e.g., "192.168.1.5").
+#include <arpa/inet.h>
+// Contains the getifaddrs function (Get Interface Addresses).
+#include <ifaddrs.h>
+#include <string.h>
+#include <stdlib.h>
+
+// C# calls external function
+// C++ compilers usually "mangle" function names (e.g., changing GetIOSLocalIPAddress to _Z20GetIOSLocalIPAddressv to support function overloading).
+// extern "C" tells the compiler: "Compile this function using C style naming, not C++." This ensures the function name stays exactly GetIOSLocalIPAddress, allowing Unity (C#) to find it.
+extern "C" {
+    char* GetIOSLocalIPAddress() {
+        struct ifaddrs *interfaces = NULL;
+        struct ifaddrs *temp_addr = NULL;
+        char* ipAddress = NULL;
+
+        // Ask iOS Kernel to give a linked list of every single network interface on this device
+        // Includes Wi-Fi, Cellular (4G/5G), Loopback (localhost), Bluetooth tethering, etc.
+        // Stores the result in the interfaces pointer.
+        int success = getifaddrs(&interfaces);
+        if (success == 0) {
+            temp_addr = interfaces;
+            while(temp_addr != NULL) {
+
+                // AF_INET stands for Address Family: Internet (IPv4).
+                if(temp_addr->ifa_addr->sa_family == AF_INET) {
+
+                    // en0: This is the hardware ID for the Wi-Fi card on almost all iOS devices.
+                    // bridge0: This is sometimes used if the phone is acting as a Hotspot or in certain shared-network configurations.
+                    // strcmp: String Compare. It checks if the interface name matches "en0".
+                    if(strcmp(temp_addr->ifa_name, "en0") == 0 ||
+                       strcmp(temp_addr->ifa_name, "bridge0") == 0)
+                    {
+                        // malloc: Allocates memory on the Heap. We need to do this so the data survives after the function finishes running.
+                        ipAddress = (char*)malloc(INET_ADDRSTRLEN);
+                        if (ipAddress) {
+                            // It takes the raw binary data (sin_addr).
+                            // It converts it to a human-readable string (like "192.168.0.1").
+                            // It saves it into ipAddress.
+                            inet_ntop(AF_INET, &((struct sockaddr_in*)temp_addr->ifa_addr)->sin_addr, ipAddress, INET_ADDRSTRLEN);
+                        }
+                        break; // Quit the function after finding the IP Address
+                    }
+                }
+                temp_addr = temp_addr->ifa_next;
+            }
+        }
+
+        // Release list of interfaces using freeifaddrs
+        if (interfaces != NULL) {
+            freeifaddrs(interfaces);
+        }
+
+        // If the loop finishes and ipAddress is still NULL, it means the device isn't connected to Wi-Fi
+        if (ipAddress == NULL) {
+            ipAddress = (char*)malloc(sizeof(char) * 16); // 15 chars + null terminator
+            strcpy(ipAddress, "0.0.0.0");
+        }
+
+        return ipAddress;
+    }
+}
+```
+
 ## NetworkDiscovery.cs
 
 This file handles broadcasting (host) and listening (client) using raw UDP sockets.
 
 ### Core responsibilities
+
 - Host repeatedly broadcasts its IP address on the LAN (UDP broadcast)
 - Client listens for these broadcasts and extracts the host’s IP
 - Supports common iOS/Android hotspot subnets
