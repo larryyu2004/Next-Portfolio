@@ -1,5 +1,101 @@
 # Unity LAN Discovery and Hotsport Support
 
+## GetIPAddress.cs
+
+- This script is designed to reliably get your device’s local IPv4 address, which is required for LAN multiplayer, Unity Transport, and your custom discovery system.
+- Because iOS behaves differently from macOS/Windows, the script has two separate logic paths:
+
+1. Path A -> Running on a real iPhone/iPad
+2. Path B -> Running in Unity Editor (Mac/PC) or Android
+
+```CSharp
+using UnityEngine;
+using System.Runtime.InteropServices;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
+using System.Net;
+
+public class GetIPAddress : MonoBehaviour
+{
+    // Only include the code inside this block if we are building for an actual iOS device
+    // UNITY_IOS: Ensures this code exists when building for iPhone/iPad.
+    // UNITY_EDITOR: Ensures this code is removed when you press "Play" in the Unity Editor on your Mac or PC.
+    #if UNITY_IOS && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern string GetIOSLocalIPAddress();
+    #endif
+
+    public static string GetLocalIPAddress()
+    {
+        // Path A: Real iPhone
+        #if UNITY_IOS && !UNITY_EDITOR
+        string ipAddress = GetIOSLocalIPAddress();
+        Debug.Log("iOS Native IP Found: " + ipAddress);
+        return ipAddress;
+
+        // Path B: Mac Unity Editor
+        #else
+        string localIP = "Error: No Valid IP Found";
+        try
+        {
+            // Loop through all network adapters
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                // If the cable is unplugged or Wi-Fi is off, ignore it.
+                // Ignore "Loopback" (127.0.0.1). That is an internal address for the computer to talk to itself, not to other players.
+                // Ignore VPNs. These often have strange IP addresses that won't work for a local Wi-Fi game.
+                // Since you are on a Mac, you might have Parallels, Docker, or VMware installed. These create "Virtual" adapters.
+                // This line tries to ignore them so you don't accidentally grab a Docker IP instead of your real Wi-Fi IP.
+                if (ni.OperationalStatus != OperationalStatus.Up ||
+                    ni.NetworkInterfaceType == NetworkInterfaceType.Loopback ||
+                    ni.NetworkInterfaceType == NetworkInterfaceType.Tunnel ||
+                    ni.Description.ToLower().Contains("virtual"))
+                {
+                    continue;
+                }
+
+                // Extract the IPv4 address
+                foreach (UnicastIPAddressInformation ipInfo in ni.GetIPProperties().UnicastAddresses)
+                {
+                    IPAddress address = ipInfo.Address;
+
+                    // Must be IPv4 (InterNetwork)
+                    // Must not be loopback
+                    if (address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(address))
+                    {
+                        localIP = address.ToString();
+                        Debug.Log($"Found Local IP on interface {ni.Name}: {localIP}");
+                        return localIP;
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"IP Address Retrieval Error: {e.Message}");
+            localIP = "Error: Retrieval Failed";
+        }
+
+        Debug.LogError("Failed to find a valid local IPv4 address via C# NetworkInterface iteration.");
+        return localIP;
+
+        #endif
+    }
+}
+```
+
+## NetworkDiscovery.cs
+
+This file handles broadcasting (host) and listening (client) using raw UDP sockets.
+
+### Core responsibilities
+
+- Host repeatedly broadcasts its IP address on the LAN (UDP broadcast)
+- Client listens for these broadcasts and extracts the host’s IP
+- Supports common iOS/Android hotspot subnets
+- Runs safely on background threads
+- Returns results to Unity’s main thread
+
 ## Plugins
 
 ### iOS get IP
@@ -70,15 +166,3 @@ extern "C" {
     }
 }
 ```
-
-## NetworkDiscovery.cs
-
-This file handles broadcasting (host) and listening (client) using raw UDP sockets.
-
-### Core responsibilities
-
-- Host repeatedly broadcasts its IP address on the LAN (UDP broadcast)
-- Client listens for these broadcasts and extracts the host’s IP
-- Supports common iOS/Android hotspot subnets
-- Runs safely on background threads
-- Returns results to Unity’s main thread
