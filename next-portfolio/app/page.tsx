@@ -1,7 +1,8 @@
 import React from "react";
 import Nav from "./_nav/page";
 import dynamic from "next/dynamic";
-const Profile = dynamic(() => import("./_home/profile"));
+import Profile from "./_home/profile";
+
 const Education = dynamic(() => import("./_home/education"));
 const Project = dynamic(() => import("./_home/projects"));
 const Skills = dynamic(() => import("./_home/skills"));

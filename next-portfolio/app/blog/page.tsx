@@ -8,14 +8,14 @@ export default function Page() {
     <main className=" h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-zinc-800">
       {/* Responsive Navigation */}
       <Nav />
-      <div className="xl:fixed mt-[25px] px-2 sm:px-4 py-8 ">
-        <div className="flex flex-col xl:flex-row">
+      <div className="xl:fixed mt-[25px] px-2 sm:px-4 py-8 w-full">
+        <div className="flex flex-col xl:flex-row gap-6 max-w-[1920px] mx-auto">
           {/* Left: Intro (profile) */}
-          <div className="w-full xl:w-1/15 xl:sticky ">
+          <div className="w-full xl:w-1/5 xl:sticky xl:top-20 h-fit">
             <Intro />
           </div>
           {/* Center: Blog */}
-          <div className="w-full xl:w-4/5">
+          <div className="w-full xl:w-3/5">
             <Blog />
           </div>
           {/* Right: NavBlog (table of contents) - only show on xl+ */}

@@ -34,56 +34,28 @@ const NavWeb = () => {
   >(null);
 
   useEffect(() => {
-    if (preActiveNav === null && activeNav !== null && dropDownState === null) {
+    if (activeNav === null) return;
+
+    if (preActiveNav === null && activeNav !== null) {
       setDropDownState("loading");
-      setTimeout(() => {}, 300);
-    }
-  }, [preActiveNav, activeNav, dropDownState]);
-
-  useEffect(() => {
-    if (preActiveNav === "home" && activeNav === "projects") {
+    } else if (preActiveNav === "home" && activeNav === "projects") {
       setDropDownState("home_to_projects");
-      setTimeout(() => {}, 600);
-    }
-  }, [preActiveNav, activeNav]);
-
-  useEffect(() => {
-    if (preActiveNav === "home" && activeNav === "blog") {
+    } else if (preActiveNav === "home" && activeNav === "blog") {
       setDropDownState("home_to_blog");
-      setTimeout(() => {}, 300);
-    }
-  }, [preActiveNav, activeNav]);
-
-  useEffect(() => {
-    if (preActiveNav === "projects" && activeNav === "home") {
+    } else if (preActiveNav === "projects" && activeNav === "home") {
       setDropDownState("projects_to_home");
-      setTimeout(() => {}, 300);
-    }
-  }, [preActiveNav, activeNav]);
-
-  useEffect(() => {
-    if (preActiveNav === "projects" && activeNav === "blog") {
+    } else if (preActiveNav === "projects" && activeNav === "blog") {
       setDropDownState("projects_to_blog");
-      setTimeout(() => {}, 300);
-    }
-  }, [preActiveNav, activeNav]);
-
-  useEffect(() => {
-    if (preActiveNav === "blog" && activeNav === "home") {
+    } else if (preActiveNav === "blog" && activeNav === "home") {
       setDropDownState("blog_to_home");
-      setTimeout(() => {}, 300);
-    }
-  }, [preActiveNav, activeNav]);
-
-  useEffect(() => {
-    if (preActiveNav === "blog" && activeNav === "projects") {
+    } else if (preActiveNav === "blog" && activeNav === "projects") {
       setDropDownState("blog_to_projects");
-      setTimeout(() => {}, 600);
     }
   }, [preActiveNav, activeNav]);
 
   const handleMouseLeave = () => {
     setDropDownState("unloading");
+    // Wait for animation to finish before resetting state
     setTimeout(() => {
       setActiveNav(null);
       setPreActiveNav(null);
