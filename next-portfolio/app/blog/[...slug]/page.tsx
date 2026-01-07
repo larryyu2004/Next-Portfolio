@@ -21,6 +21,7 @@ export default async function Page({ params }: PageProps) {
     return (
       <main className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-zinc-800 overflow-hidden">
         {/* Responsive Navigation */}
+        
         <div className="block md:hidden">
           <NavPhone />
         </div>

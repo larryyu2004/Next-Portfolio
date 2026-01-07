@@ -99,9 +99,10 @@ const Blog = async () => {
     // 2. Render Top-Level Categories (Main Folders)
     if (node.type === "folder" && path.split("/").length === 1) {
       const categoryImage = `/${node.name.replace(/ /g, "-")}.jpeg`;
+      const categoryId = node.name.toLowerCase().replace(/\s+/g, "-");
 
       return (
-        <div key={path} className="mb-12">
+        <div key={path} id={categoryId} className="mb-12 scroll-mt-24">
           {/* Category Banner Card */}
           <div className="group relative rounded-2xl overflow-hidden shadow-xl mb-6">
             <div className="relative w-full h-72">

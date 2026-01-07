@@ -52,55 +52,6 @@ html {
     }
   }
 
-  @keyframes extendHeight {
-    0% {
-      max-height: 0;
-    }
-    100% {
-      max-height: 500px;
-    }
-  }
-  /* Four -> 244 */
-  /* Six -> 324 */
-  /* Plus One -> +40 */
-  @keyframes FourtoSix {
-    0% {
-      min-height: 244px;
-    }
-    100% {
-      max-height: 500px;
-    }
-  }
-
-  @keyframes FourtoFour {
-    0% {
-      min-height: 244px;
-    }
-    100% {
-      min-height: 244px;
-    }
-  }
-
-  @keyframes SixtoFour {
-    0% {
-      min-height: 324px;
-    }
-    100% {
-      min-height: 244px;
-    }
-  }
-
-  @keyframes shrinkHeight {
-    0% {
-      max-height: 500px;
-      opacity: 1;
-    }
-    100% {
-      max-height: 0;
-      opacity: 0.5;
-    }
-  }
-
   @keyframes fadeIn {
     0% {
       opacity: 0;
@@ -159,14 +110,6 @@ html {
 
   .animate-wiggle {
     animation: wiggle 0.5s ease-in-out infinite;
-  }
-
-  .animate-extend-height {
-    animation: extendHeight 0.5s ease-in-out forwards;
-  }
-
-  .animate-shrink-height {
-    animation: shrinkHeight 0.5s ease-in-out forwards;
   }
 
   .animate-fade-in {
