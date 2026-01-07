@@ -2,8 +2,11 @@ import Nav from "../_nav/page";
 import Intro from "./Intro";
 import Blog from "./Blog";
 import NavBlog from "./NavBlog";
+import { buildMarkdownTree } from "@/lib/buildMarkdownTree";
 
 export default function Page() {
+  const tree = buildMarkdownTree();
+  
   return (
     <main className=" h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-zinc-800">
       {/* Responsive Navigation */}
@@ -16,11 +19,11 @@ export default function Page() {
           </div>
           {/* Center: Blog */}
           <div className="w-full xl:w-3/5">
-            <Blog />
+            <Blog tree={tree} />
           </div>
           {/* Right: NavBlog (table of contents) - only show on xl+ */}
           <div className="hidden xl:block w-1/5">
-            <NavBlog />
+            <NavBlog tree={tree} />
           </div>
         </div>
       </div>

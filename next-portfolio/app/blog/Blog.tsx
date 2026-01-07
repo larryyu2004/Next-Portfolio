@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { buildMarkdownTree } from "@/lib/buildMarkdownTree";
+import { Accordion, AccordionTrigger, AccordionContent, AccordionChevron } from "./TopicAccordion";
 
 export type MarkdownTreeNode =
   | {
@@ -19,7 +19,7 @@ export type MarkdownTreeNode =
       }[];
     };
 
-const ChevronRight = () => (
+const ChevronRight = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
@@ -30,6 +30,7 @@ const ChevronRight = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    className={className}
   >
     <polyline points="9 18 15 12 9 6" />
   </svg>
@@ -52,9 +53,7 @@ const FolderIcon = () => (
   </svg>
 );
 
-const Blog = async () => {
-  const tree = buildMarkdownTree();
-
+const Blog = ({ tree }: { tree: MarkdownTreeNode }) => {
   const renderTree = (node: MarkdownTreeNode, path = "") => {
     // 1. Render Files (Leaf Nodes)
     if (node.type === "files") {
@@ -103,36 +102,48 @@ const Blog = async () => {
 
       return (
         <div key={path} id={categoryId} className="mb-12 scroll-mt-24">
-          {/* Category Banner Card */}
-          <div className="group relative rounded-2xl overflow-hidden shadow-xl mb-6">
-            <div className="relative w-full h-72">
-               <Image
-                src={categoryImage}
-                alt={node.name}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
-                priority={true}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity" />
-              <div className="absolute bottom-0 left-0 p-8">
-                 <h1 className="text-4xl font-extrabold text-white tracking-tight drop-shadow-lg">
-                    {node.name}
-                 </h1>
-                 <p className="text-gray-200 mt-2 text-sm font-medium uppercase tracking-widest opacity-90">
-                    Collection
-                 </p>
+          <Accordion defaultOpen={false}>
+            <AccordionTrigger>
+              {/* Category Banner Card */}
+              <div className="group relative rounded-2xl overflow-hidden shadow-xl mb-6 cursor-pointer">
+                <div className="relative w-full h-100">
+                  <Image
+                    src={categoryImage}
+                    alt={node.name}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
+                    priority={true}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity" />
+                  <div className="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end">
+                    <div>
+                      <h1 className="text-4xl font-extrabold text-white tracking-tight drop-shadow-lg">
+                        {node.name}
+                      </h1>
+                      <p className="text-gray-200 mt-2 text-sm font-medium uppercase tracking-widest opacity-90">
+                        Collection
+                      </p>
+                    </div>
+                    {/* Dropdown Indicator */}
+                    <div className="p-2 rounded-full bg-white/20 backdrop-blur-md text-white">
+                      <AccordionChevron className="w-6 h-6" />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Render Children */}
-          <div className="space-y-6">
-            {Object.entries(node.children).map(([key, childNode]) => {
-              const childPath = path ? `${path}/${key}` : key;
-              return <div key={childPath}>{renderTree(childNode, childPath)}</div>;
-            })}
-          </div>
+            </AccordionTrigger>
+            
+            <AccordionContent>
+              {/* Render Children */}
+              <div className="space-y-6">
+                {Object.entries(node.children).map(([key, childNode]) => {
+                  const childPath = path ? `${path}/${key}` : key;
+                  return <div key={childPath}>{renderTree(childNode, childPath)}</div>;
+                })}
+              </div>
+            </AccordionContent>
+          </Accordion>
         </div>
       );
     }
@@ -140,19 +151,28 @@ const Blog = async () => {
     // 3. Render Sub-Categories (Inner Folders)
     return (
       <div key={path} className="pl-2 mt-8">
-        <div className="flex items-center gap-3 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700/50">
-          <FolderIcon />
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
-            {node.name}
-          </h2>
-        </div>
-        
-        <div className="pl-4 border-l-2 border-gray-100 dark:border-gray-800 ml-2.5">
-          {Object.entries(node.children).map(([key, childNode]) => {
-            const childPath = path ? `${path}/${key}` : key;
-            return <div key={childPath}>{renderTree(childNode, childPath)}</div>;
-          })}
-        </div>
+        <Accordion defaultOpen={false}>
+          <AccordionTrigger>
+             <div className="flex items-center gap-3 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-slate-800/50 rounded-lg p-2 transition-colors">
+              <FolderIcon />
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-tight flex-1">
+                {node.name}
+              </h2>
+               <div className="text-gray-400">
+                  <AccordionChevron />
+               </div>
+            </div>
+          </AccordionTrigger>
+          
+          <AccordionContent>
+            <div className="pl-4 border-l-2 border-gray-100 dark:border-gray-800 ml-2.5">
+              {Object.entries(node.children).map(([key, childNode]) => {
+                const childPath = path ? `${path}/${key}` : key;
+                return <div key={childPath}>{renderTree(childNode, childPath)}</div>;
+              })}
+            </div>
+          </AccordionContent>
+        </Accordion>
       </div>
     );
   };
