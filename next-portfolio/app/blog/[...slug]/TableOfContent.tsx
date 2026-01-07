@@ -33,29 +33,41 @@ export default function TableOfContent() {
   }, []);
 
   return (
-    <nav className="fixed h-screen overflow-y-scroll w-[23%] pb-30">
-      <Link
-        href={"/blog"}
-        className="fixed z-10 w-[23%] bg-[rgb(244,244,246)] dark:bg-[rgb(9,9,10)] border-b-1 flex rounded-xl hover:underline transition-all duration-300"
-      >
-        <SquareChevronLeftIcon />
-        <h1 className="text-xl font-semibold hover:underline pt-2 cursor-pointer">Back to Blog</h1>
-      </Link>
+    <nav className="w-full bg-white dark:bg-slate-900/80 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700/60 p-5 sticky top-24 max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar">
+      {/* Header / Back Link */}
+      <div className="mb-6 pb-4 border-b border-gray-100 dark:border-slate-700/60">
+        <Link
+          href={"/blog"}
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
+        >
+          <div className="transform group-hover:-translate-x-1 transition-transform duration-200">
+             <SquareChevronLeftIcon />
+          </div>
+          <span className="font-semibold text-sm">Back to Blog</span>
+        </Link>
+      </div>
 
-      <ul className="mt-15 ">
+      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 pl-1">
+        Table of Contents
+      </div>
+
+      <ul className="space-y-1">
         {headings.map((heading) => (
-          <a href={`#${heading.id}`} key={heading.id} className="">
-          <li
-            
-            className={`${
-              heading.level === 3 ? "text-lg pl-8 font-semibold dark:hover:bg-gray-600 hover:bg-gray-300" : "text-xl pl-4 font-bold bg-gray-300  dark:bg-gray-700 dark:hover:bg-gray-500 hover:bg-gray-400"
-            } px-2 py-1 block rounded-md mb-3 cursor-pointer transition-all duration-300`}
-          >
-            
+          <li key={heading.id}>
+            <a
+              href={`#${heading.id}`}
+              className={`
+                block text-sm transition-all duration-200 border-l-2 py-1.5
+                ${
+                  heading.level === 2
+                    ? "font-medium text-gray-700 dark:text-gray-300 border-transparent hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 pl-3"
+                    : "text-gray-500 dark:text-gray-500 border-transparent hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 pl-3 ml-3 text-xs"
+                }
+              `}
+            >
               {heading.text}
-            
+            </a>
           </li>
-          </a>
         ))}
       </ul>
     </nav>
