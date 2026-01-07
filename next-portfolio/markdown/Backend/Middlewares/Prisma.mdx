@@ -1,0 +1,158 @@
+# Prisma ORM
+
+## 🚀 1. Setup
+
+- First, install Prisma CLI and client:
+
+```bash
+npm install prisma --save-dev
+npm install @prisma/client
+npx prisma init
+```
+
+- prisma/schema.prisma: where you define models
+- .env: where you store your database URL
+
+## 🧱 2. Define Models
+
+- In prisma/schema.prisma:
+
+```Prisma
+model Project {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  createdAt   DateTime @default(now())
+}
+```
+
+- Then generate the client: `npx prisma generate`
+
+## 📖 3. Basic Queries
+
+- Import the Prisma Client:
+
+```TS
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+```
+
+### 🔍 SELECT all:
+
+```TS
+const projects = await prisma.project.findMany();
+```
+
+#### 🔍 SELECT with filter (WHERE):
+
+```TS
+const results = await prisma.project.findMany({
+  where: {
+    name: 'Portfolio'
+  }
+});
+```
+
+### 🎯 SELECT specific fields:
+
+```TS
+const results = await prisma.project.findMany({
+  select: {
+    name: true,
+    description: true
+  }
+});
+```
+
+## 🔗 JOIN (Relations)
+
+If you have:
+
+```Prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  posts Post[]
+}
+
+model Post {
+  id      Int    @id @default(autoincrement())
+  title   String
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
+}
+```
+
+You can do:
+
+```TS
+await prisma.user.findMany({
+  include: {
+    posts: true
+  }
+});
+```
+
+## 📊 GROUP BY and AGGREGATES
+
+```TS
+await prisma.project.groupBy({
+  by: ['name'],
+  _count: {
+    id: true
+  },
+  orderBy: {
+    _count: {
+      id: 'desc'
+    }
+  }
+});
+```
+
+## 📌 ORDER BY
+
+```TS
+await prisma.project.findMany({
+  orderBy: {
+    createdAt: 'desc'
+  }
+});
+```
+
+## 🧼 Update & Delete
+
+```TS
+await prisma.project.update({
+  where: { id: 1 },
+  data: { name: 'Updated Project' }
+});
+
+await prisma.project.delete({
+  where: { id: 1 }
+});
+```
+
+## Prisma Query Operations
+
+### Comparison Operators
+
+- equals: `where: { age: { equals: 25 } }`
+- greater than or equal to: `where: { age: { gte: 18 } }`
+- greater than: `where: { age: { gt: 18 } }`
+- less than or equal to: `where: { age: { lte: 65 } }`
+- less than: `where: { age: { lt: 65 } }`
+
+### Set / List Operators
+
+- in (value is in a list): `where: { status: { in: ["PENDING", "APPROVED"] } }`
+- notIn (value is NOT in list): `where: { status: { notIn: ["BLOCKED", "DELETED"] } }`
+
+### String Operators
+
+- contains (substring match): `where: { name: { contains: "John" } }`
+- startsWith: `where: { email: { startsWith: "admin@" } }`
+- endsWith: `where: { email: { endsWith: ".com" } }`
+
+### Boolean & Negation
+
+- not (negates a condition): `where: { isActive: { not: true } }`

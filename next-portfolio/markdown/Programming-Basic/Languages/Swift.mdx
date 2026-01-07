@@ -1,0 +1,888 @@
+# Swift
+
+## iOS Development
+
+Four main issues:
+
+- **Swift**: A unique and powerful language, but it has its own learning curve.
+- **Xcode**: Apple's IDE is powerful and flexible, and therefore it is also complex and hard to learn.
+- **iOS** Library: As with all OO frameworks, learning to use the libraries is essential and complicated.
+- **Design**: With iOS you are not simply designing something that looks good, but you are designing something that must meet with Apple's standards.
+
+We'll tackle all four over the length of the course, but the focus right now is on Swift as a general-purpose programming language.
+
+## Swift
+
+This presumes that you have prior experience in Java, C# or C++. In addition, it should be noted that as a new language Swift has seen extensive changes in the last few years. The information provided here is intended for Swift 3+, and may not work in Swift 1 or 2.
+
+## Variables
+
+Swift uses strict and strong typing, and is type safe. Some of the most common data types are:
+
+- **Bool**: a standard boolean. Values can be true or false.
+- **Character**: a single Unicode character.
+- **Int**: Signed integer, size by default varies per platform: Int32 on 32 bit, Int64 on 64 bit. Int8 is the equivalent to a Byte in Java.
+- **Uint**: Unsigned (non-negative) integer, and like Int the size varies by platform. Uint8 is the equivalent to a Byte in C#.
+- **Double** and **Float**: Standard floating point variables, 64 bit for Double, 32 bit for Float. Double is generally preferred.
+- **String**: String works as expected. Note that String is a value type – it passes a value when copied, not a pointer.
+
+### Declaration
+
+Variables use the "var" keyword and the format:
+
+Format:
+var [name]: [type] = [value]
+
+For example:
+
+```swift
+var number: Int = 5
+```
+
+If the value is provided, the type can be declared implicitly based on the value type. For example:
+
+```swift
+var number = 5
+var name = "Stewart"
+```
+
+However, the type is essential if no value is provided, or if there is a risk of multiple data types holding the same value.
+
+```swift
+var number: Int
+var name: String
+```
+
+To make a variable **read-only**, use "let"
+
+```swift
+let number = 5
+```
+
+### Access
+
+Variables can be:
+
+- public
+- private
+- internal (default)
+
+```swift
+public var x: Int = 60
+private var y: Int = 60
+var z: Int = 60 // Internal
+```
+
+### Casting
+
+Casting is simple, and both strings and numeric values can be used.
+
+- String(value)
+- Double(value)
+- Int(value)
+
+When casting to an int, Swift will always round down. Therefore, if the intent is to have more control, it is recommended that you round before casting. For example:
+
+```swift
+Int(floor(value))
+Int(ceil(value))
+Int(round(value))
+```
+
+floor(value) will round down, ceil(value) will round up, and for normal rounding use round(value).
+
+### Operations
+
+Swift uses the standard set of operators:
+
+| Operator | Description         |
+| -------- | ------------------- |
+| =        | Assignment          |
+| ==       | Comparison          |
+| +        | Addition            |
+| -        | Subtraction         |
+| \*       | Multiplication      |
+| /        | Division            |
+| %        | Modulus (remainder) |
+
+The common increment and decrement operators, ++ and --, are deliberately not included in Swift. Instead you need to use the += and -= shortcuts, as per:
+
+```swift
+x += 1
+y -= 1
+```
+
+### Properties
+
+Properties function as per C#. They provide an easy get/set method, allowing a property to be altered like a standard variable.
+
+The basic format is:
+
+```swift
+var name: type {
+  get {
+    statements
+  }
+  set(name) {
+    statements
+  }
+}
+```
+
+When applied, the code becomes:
+
+```swift
+var seconds = 180
+
+var minutes: int {
+  get {
+    return seconds / 60
+  }
+  set {
+    seconds = newValue * 60
+  }
+}
+
+minutes = 10
+// Seconds now equals 600
+```
+
+Drop the "set", and you have a read only computed property.
+
+```swift
+var seconds = 180
+
+var minutes: int {
+  get {
+    return seconds / 60
+  }
+}
+```
+
+## Console Output
+
+Outputting to the console is a lot like Python - you just use a simple print() command.
+
+```swift
+print("Hello world")
+```
+
+You can concatenate within the string using "+".
+
+```swift
+var str = "Stewart"
+print("Hello " + str)
+```
+
+Can include variables within the string using the format `\(<variable>)`. The variable will be replaced with its content.
+
+```swift
+var num = 2
+print("Hello \(num)")
+```
+
+## Conditionals
+
+Overall, conditionals are similar to C, C++, Java, C# and many other languages, as are the conditional operators: ==, &&, ||, !, >, >=
+
+```swift
+if (a == b && !c) {
+}
+else if (a == b) {
+}
+else {
+}
+```
+
+### Ternary Conditionals
+
+Ternary conditionals are quick conditionals in three parts:
+
+```swift
+condition ? true : false
+```
+
+For example, the following code will print "5".
+
+```swift
+var y = 2
+var x = (y == 2 ? 5 : 0)
+print(x)
+```
+
+Because y is equal to two, it passes the condition (y == 2), and therefore the "true" result is outputted: 5. If y was equal to 3 it would fail the condition, and therefore 0 would be the result.
+
+### Switch
+
+Switch/Case is similar to what we find in other languages such as Java, but it does not "fall through" by default. The format is similar to other languages:
+
+```swift
+var y = 0
+
+switch y {
+  case 0:
+    print("None")
+  case 1:
+    print("One")
+  default:
+    print("Some")
+}
+```
+
+In this situation, as y is equal to 0 it meets the condition of the first case statement, and therefore prints "None" to the console. However, because switch in Swift does not fall through, it ends there. Had we used similar code in Java it would have printed "None", but then gone on to print "One" and "Some" as well.
+
+Another nice touch is that Swift supports multiple values in case conditions.
+
+```swift
+var y = 3
+
+switch y {
+  case 0:
+    print("None")
+  case 1,2,3:
+    print("Some")
+  default:
+    print("Many")
+}
+```
+
+As y is equal to 3, it meets the second case which covers the values 1, 2 and 3. Therefore it will output "Some" to the console.
+
+If you do wish to fall through, you can use the "fallthrough" statement.
+
+```swift
+var y = 3
+
+switch y {
+  case 0:
+    print("None")
+  case 1,2,3:
+    print("Some or ")
+    fallthrough
+  default:
+    print("Many")
+}
+```
+
+Because of the fallthrough, Swift will output "Some or" because it has met the condition of the second case statement, and then continue on to output "Many".
+
+### Assertions
+
+Assertions are used in debugging. They cause the program to terminate if the assertion fails, so they allow us to stop execution if an undesirable situation arises in the code. For example:
+
+```swift
+var y = 3
+
+assert(y > 5)
+```
+
+Clearly, y is not greater than 5, so it will fail the assertion and the program will end. To make it a bit more useful we can output a message saying what happened:
+
+```swift
+assert(y > 5, "failed")
+```
+
+(Technically, the message "failed" isn't very useful, so a more descriptive message would be better).
+
+A more complex formulation uses assertionFailure().
+
+```swift
+if (y <= 5) {
+}
+else {
+  assertionFailure("failed")
+}
+```
+
+Here we've already defined the condition, and thus assertionFailure simply capitalises on that.
+
+assert and assertionFailure do not affect release builds, and only cause the program to terminate in debug builds.
+
+## Collections
+
+There are three main types of collections which we're looking at: arrays, sets and dictionaries.
+
+### Arrays
+
+Arrays in Swift are similar the List or ArrayList in C# and Java - they are not fixed size, so they do not match the arrays in those other languages.
+
+There are a few options to declare an array.
+
+```swift
+var listOfNumbers: [Int] = []
+```
+
+Here we are declaring that we are creating an empty array "[]" to contain integers "[Int]" called "listOfNumbers".
+
+Alternatively, if we assign values when we are declaring the array, we don't need to specify the type at all:
+
+```swift
+var listOfNumbers = [1, 5, 7, 2]
+```
+
+Arrays elements are referenced by the index number. As per normal, the index starts at 0.
+
+```swift
+var listOfNumbers = [1, 5, 7, 2]
+var listValue = listOfNumbers[1]
+```
+
+The value with the index of 1 is the second value in the list, and thus listValue is equal to 5. Similarly, changing the value at the specified index is simple, too:
+
+```swift
+listOfNumbers[1] = 2
+```
+
+There is also a fairly nice trick for changing multiple values in one move:
+
+```swift
+listOfNumbers[0..3] = [2, 4, 1]
+```
+
+`<array>.count` will return the number of elements in the array.
+
+```swift
+var listOfNumbers = [1, 5, 7, 2]
+var listLength = listOfNumbers.count
+```
+
+Using .count we can check to see if an array is empty:
+
+```swift
+if (listOfNumbers.count == 0) {
+}
+```
+
+However, Swift also provides isEmpty as an alternative:
+
+```swift
+if (listOfNumbers.isEmpty) {
+}
+```
+
+We can append a new item to the end of the array (in this case the number 6):
+
+```swift
+listOfNumbers.append(6)
+```
+
+We can also insert an item into the array at a specified position (in the example, the code will add the value 9 at index 2):
+
+```swift
+listOfNumbers.insert(9, atIndex: 2)
+```
+
+(We'll return to the "atIndex" label later). Removing an item from the array also uses a function in which you specify the index:
+
+```swift
+listOfNumbers.remove(at: 1)
+```
+
+There are two more interesting aspects of arrays in Swift worth raising. The first concerns what happens when we copy an array:
+
+```swift
+var listOfNumbers = [1, 5, 7, 2]
+var otherListOfNumbers = listOfNumbers
+```
+
+Even though arrays in Swift look more like Lists, the copy by value, not by reference. Thus we now have two separate arrays. They both have the same content, but changing one will not affect the other.
+
+The other relates to adding arrays together. Combining two arrays is easy:
+
+```swift
+var listOfNumbers = [1, 5, 7]
+var otherListOfNumbers = [2, 6, 4]
+
+var newList = listOfNumbers + otherListOfNumbers
+```
+
+The result is that newList now contains the values 1, 5, 7, 2, 6 & 4.
+
+### Sets
+
+Sets are similar to lists, but cannot have duplicate items. Set values must be hashable - by default, all basic data types (String, Int, etc) are hashable, but this is something to keep in mind if you end up designing your own classes for use in a set.
+
+Declaration is similar to a standard var:
+
+```swift
+var animalSet = Set<String>()
+```
+
+But even when adding initial data at the same time, you cannot implicitly declare a set as the data appears to be the same as what you would find in an array.
+
+```swift
+var animals: Set<String> = ["Cat", "Dog", "Aye-Aye"]
+```
+
+That said, you can implicitly declare the content of the set:
+
+```swift
+var animals: Set = ["Cat", "Dog", "Aye-Aye"]
+```
+
+Inserting and removing from a set are as expected, and you can check to see if a set contains a given value.
+
+```swift
+animals.insert("Horse")
+animals.remove("Dog")
+if (animals.contains("Aye-Aye")) {
+}
+```
+
+### Dictionaries
+
+A dictionary typically uses a string as an index, rather than an integer. It needs a key (the index) and content (the value) for each item in the dictionary.
+
+Declaration is similar to declaring an array, but you are stating both the type of key (in this case a String) and the type of content (an Int, but it could be anything).
+
+```swift
+var animals = [String: Int]()
+```
+
+Implicit declarations are also possible - if you provide the keys and content, Swift can work out the details.
+
+```swift
+var animals = ["Cat": 1, "Dog": 6, "Aye-Aye": 72]
+```
+
+Adding a new entry is as simple as assigning a value to the new key:
+
+```swift
+animals["Horse"] = 5
+```
+
+However, removing an entry is a bit trickier. You have two choices. The first is that you can set the content to "nil"; the second is that you can use the removeValue function.
+
+```swift
+animals["cat"] = nil
+animals.removeValue(forKey: "Cat")
+```
+
+That second option has the added bonus that it returns the content that was there before you removed it. This can prove useful.
+
+```swift
+var removedCount = animals.removeValue(forKey: "Cat")
+```
+
+## Functions
+
+Functions in Swift (the same concept as method in Java) are a bit unusual, but they offer some nice features. The basic function definition is not entirely unlike Java, although the order is a bit different.
+
+```swift
+func hello() -> String {
+  return "Hello world"
+}
+print(hello())
+```
+
+In the above example I haven't declared it to be public or private, but if I did I would add that before "func". "func" is the keyword indicating that we are defining a function. The name of the function follows ("hello") and any parameters - in this case none, indicated by the empty brackets "()". The return type is a String, and it is indicated by the arrow symbol "->". As with other languages that use a c-type syntax, we use braces to denote the function block, and in this case we're returning a String using the "return" statement. We use the function in the print statement, and predictably the output will be "Hello world".
+
+So far, this looking pretty ordinary, given the slightly different syntax for people using C# and/or Java. The main differences start to appear when we look at parameters.
+
+```swift
+func hello(person: String) -> String {
+  return "Hello " + person
+}
+print(hello(person: "Stewart"))
+```
+
+The parameter in the function definition looks normal - we're simply declaring the name and the type, in the same way that we would declare these as a var. However, there are two significant differences. The first is that the resulting variable - "person" - is final and can't be changed. So you can't have in your function a line such as "person = greeting + person" - you would need to make a new local variable and assign the contents of person to it. The second, though, is that the name is both a normal variable name and a label. When you look at the function call, hello(person: "Stewart"), you see that label appear. When you call functions in Swift you need to include the labels for the parameters, not just the values to assign.
+
+That said, the label does not have to match the parameter name. In the code that follows, the parameter is called "person" but the label is "to".
+
+```swift
+func hello(to person: String) -> String {
+  return "Hello " + person
+}
+```
+
+The advantage here is that we get a sort of self-documentation in the code. Now when we use the hello function we write:
+
+```swift
+hello(to: "Stewart")
+```
+
+You will see this all of the time in Swift, where labels are used to help make the code easier to follow.
+
+The use of labels creates an interesting difference between Swift and Java/C#. In the latter two languages, you cannot have two methods with the same name and the same parameter type. Thus one class cannot have two methods called "set" with a single string as the parameter, as there is no means by which Java or C# could tell them apart. Swift, on the other hand, distinguishes between them via the labels. Thus the following approach is not just viable, but common:
+
+```swift
+func set(name title: String) -> String {
+  return "The name is " + title
+}
+
+func set(city title: String) -> String {
+  return "The city is " + title
+}
+
+set(name: "Stewart")
+set(city: "Adelaide")
+```
+
+That said, you don't always need to include a label. If you set the label for the first parameter to an underscore, the label is no longer required.
+
+```swift
+func hello(_ person: String) -> String {
+  return "Hello " + person
+}
+hello("Stewart")
+```
+
+This only holds for the first parameter - if you have more than one, the second and subsequent parameters must have labels:
+
+```swift
+func hello(_ person: String, alive: Bool) -> String {
+  return "Hello " + person
+}
+hello("Stewart", alive: true)
+```
+
+Another neat trick is that we can make a parameter optional if we assign it a default value. In the above example there is a boolean. If we give it an initial value:
+
+```swift
+func hello(_ person: String, alive: Bool = true) -> String {
+  return "Hello " + person
+}
+```
+
+The parameter is now optional, and we can use hello("Stewart"), hello("Stewart", alive: true) and hello("Stewart", alive: false)
+
+Finally, a couple of interesting aspects of returning values in Swift functions. The first isn't terribly useful, but is neat: the return statement can be implicit. Both of the following two functions will work:
+
+```swift
+func hello() -> String {
+  return "Hello world"
+}
+```
+
+```swift
+func hello() -> String {
+  "Hello world"
+}
+```
+
+Second, unlike with many other languages, it is possible in Swift to return multiple values from a function, without using sneaky methods such as returning an array or a custom class. If, for example, you wished to return two Strings:
+
+```swift
+func hello(_ person: String) -> (name: String, welcome: String) {
+  return (person, "Hello ")
+}
+```
+
+The labels for the return values allow us to access the two Strings. For example:
+
+```swift
+var result = hello("Stewart")
+print(result.welcome + result.name)
+```
+
+## Loops
+
+### for … in
+
+for ... in loops cover both for and foreach loops, and are similar to the approach in Python. In general, a for loop iterates through a set, so the most basic form is to give a range of values and ask Swift to loop through them. Thus we get:
+
+```swift
+for x in 1...3 {
+  print("x = \(x)")
+}
+```
+
+This is roughly the equivalent of the Java/C# code:
+
+```java
+for (int x = 1; x <= 3; x++) {
+}
+```
+
+The "1...3" is the range to loop through, the x is what to assign each value to. However, things get a bit more complex if we want to do something more complex, such as loop backwards or have steps greater than one. There we need a function to create the range, and "stride" provides that service.
+
+```swift
+for x in stride(from: 3, through: 1, by: -1) {
+  print("x = \(x)")
+}
+```
+
+In the above example, we are counting from 3, through to 1, going by -1 each time.
+
+Along with a "for" loop, "for … in" also replaces foreach for iterating through a collection. For example:
+
+```swift
+var animals = ["Cat", "Dog", "Aye-Aye"]
+
+for animal in animals {
+  print("animal = \(animal)")
+}
+```
+
+Dictionaries use a very similar format:
+
+```swift
+var animals = ["Cat": 1, "Dog": 10, "Aye-Aye": 98]
+
+for (animal, num) in animals {
+  print("\(animal) = \(num)")
+}
+```
+
+(It should be noted that dictionaries do not necessarily output in the insertion order).
+
+### While loops
+
+While loops are just like in other languages, with no surprises. They loop while the condition returns true, and if it is never met, it never loops.
+
+```swift
+var x = 0
+
+while x < 3 {
+  print("x = \(x)")
+  x += 1
+}
+```
+
+### repeat … while loops
+
+repeat … while is, as with the while loop, reasonably standard. They differ from the while loop as they will loop once before it checks the condition, so even if the condition would return false, you will get one cycle of the loop.
+
+```swift
+var x = 3
+repeat {
+  print("x = \(x)")
+  x += 1
+} while x < 3
+```
+
+The above code will return "x = 3", even though there was never a situation when x was less than 3.
+
+
+## Classes
+Basic class definition:
+```swift
+class MyClass {
+}
+```
+
+### Initializers
+Basic initializer and using `self`:
+```swift
+class MyClass {
+  var name: String
+  
+  init() {
+    name = "Stewart"
+  }
+}
+
+class MyClass {
+  var name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+}
+```
+
+Setting constants in initializers:
+```swift
+class MyClass {
+  let name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+}
+```
+
+### Convenience Initializers
+Overloading initializers:
+```swift
+class MyClass {
+  let name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+
+  convenience init() {
+    self.init(name: "Anonymous")
+  }
+}
+```
+
+### Deinitializers
+Clean-up before destruction:
+```swift
+class MyClass {
+  let name: String
+  
+  init(name: String) {
+    self.name = name
+  }
+
+  deinit {
+    Store.saveName(name)
+  }
+}
+```
+
+### Structs
+Value types with auto-generated initializers:
+```swift
+struct MyStruct {
+  var name: String
+}
+
+// Usage
+var myStruct = MyStruct(name: "Stewart")
+```
+
+### Inheritance
+Basic inheritance and overriding:
+```swift
+class MySuperClass {}
+class MyClass: MySuperClass {}
+
+// Method overriding
+class MySuperClass {
+  func getName() -> String {
+    return "Stewart"
+  }  
+}
+
+class MySubClass: MySuperClass {
+  override func getName() -> String {
+    return "Jo"
+  }  
+}
+
+// Property overriding
+class MySuperClass {
+  var name: String {
+    get { return "Stewart" }
+  }  
+}
+
+class MySubClass: MySuperClass {
+  override var name: String {
+    get { return "Jo" }
+  }  
+}
+```
+
+Preventing overriding with `final`:
+```swift
+class MySuperClass {
+  final var name: String {
+    get { return "Stewart" }
+  }  
+}
+
+final class MyFinalClass {
+  var name: String {
+    get { return "Stewart" }
+  }  
+}
+```
+
+### Protocols
+Protocol definition and implementation:
+```swift
+protocol MyProtocol {
+  func method1()
+  func method2()
+}
+
+class MyClass: MyProtocol {
+  func method1() {}
+  func method2() {}
+}
+```
+
+Protocols with properties:
+```swift
+protocol MyProtocol {
+  var name: String { get }
+}
+
+struct MyStruct: MyProtocol {
+  var name: String
+}
+
+struct CustomStruct: MyProtocol {
+  var fullname: String
+  var name: String {
+    return fullname
+  }
+}
+```
+
+Protocols with initializers:
+```swift
+protocol MyProtocol {
+  init(name: String)
+}
+
+class Person: MyProtocol {
+  var name: String
+  required init(name: String) {
+    self.name = name
+  }
+}
+```
+
+### Optionality
+Optional properties and unwrapping:
+```swift
+struct Person {
+  var name: String?
+}
+
+// Usage
+var person1 = Person(name: "Jo")
+var person2 = Person()
+
+// Printing with unwrapping
+print("\(person1.name!)")  // Force unwrap (risky)
+print("\(person1.name)")   // Prints "Optional("Jo")"
+
+// Optional chaining
+var person: Person? = Person()
+print("\(person?.name)")   // Safe access
+```
+
+### Delegation
+Delegate pattern implementation:
+```swift
+protocol DelegateExample {
+  func updateUser(user: User)
+}
+
+class UserView: DelegateExample {
+  var model = Model()
+  
+  init() {
+    model.delegate = self
+  }
+
+  func updateUser(user: User) {
+    // Handle update
+  }
+}
+
+class Model {
+  var delegate: DelegateExample?
+  
+  func saveData(newUser: User) {
+    // Processing...
+    delegate?.updateUser(newUser)  // Optional chaining
+  }
+}
+```
+
+Key concepts:
+1. Classes use reference semantics, structs use value semantics
+2. `convenience init` must call designated initializers
+3. `deinit` can't take parameters
+4. Protocol requirements use `required` for initializers
+5. Optionals (`?`) allow nil values, while force-unwrapping (`!`) risks crashes
+6. Delegates combine protocols and optional properties for flexible architecture

@@ -1,0 +1,136 @@
+# CSharp
+
+## Component Script
+
+### Lifecycle Method
+
+- **Awake()**: Called when the script instance is first loaded. (Earliest callback)
+- **OnEnable()**: Called when the object or component becomes enabled.
+- **Start()**: Called before the first frame update, after OnEnable().
+- **FixedUpdate()**: Called at a fixed time interval, independent of frame rate.
+- **Update()**: Called once per frame.
+- **LateUpdate()**: Called once per frame, after all Update() calls.
+- **OnDisable()**: Called when the object or component becomes disabled.
+- **OnDestroy()**: Called when the object is destroyed.
+
+```CSharp
+using UnityEngine;
+
+public class Move : MonoBehaviour
+{
+    private void Awake()
+    {
+        Debug.Log("awake");
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("OnEnable");
+    }
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        Debug.Log("Start");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Debug.Log("Update");
+    }
+
+    private void LateUpdate()
+    {
+        // Debug.Log("LateUpdate");
+    }
+
+    // 0.02 second
+    private void FixedUpdate()
+    {
+        // Debug.Log("FixedUpdate");
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("OnDisable");
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("OnDestory");
+    }
+}
+
+```
+
+### Vector
+```CSharp
+using Unity.Burst.Intrinsics;
+using UnityEngine;
+
+public class NewMonoBehaviourScript : MonoBehaviour
+{
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        Vector3 v = new Vector3(1, 1, 0.5f);
+        v = Vector3.zero;
+        v = Vector3.right;
+
+        Vector3 v2 = Vector3.forward;
+
+        // Calculate the angle between two vectors
+        Debug.Log(Vector3.Angle(v, v2));
+
+        // Calculate the distance between two vectors
+        Debug.Log(Vector3.Distance(v, v2));
+
+        // Vector dot product
+        Debug.Log(Vector3.Dot(v, v2));
+
+        // Vector cross product
+        Debug.Log(Vector3.Cross(v, v2));
+
+        // Vector Lerp
+        Debug.Log(Vector3.Lerp(Vector3.zero, Vector3.one, 0.8f));
+
+        // Vector Magnitude
+        Debug.Log(v.magnitude);
+
+        // Normalised
+        Debug.Log(v.normalized);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}
+
+```
+
+### Debug
+```CSharp
+    Debug.Log("test");
+    Debug.LogWarning("test");
+    Debug.LogError("test");
+
+    Debug.DrawLine(Vector3.zero, Vector3.one);
+    Debug.DrawRay(Vector3.zero, Vector3.one);
+```
+
+### Timer
+```CSharp
+    // Get the time from last frame to this frame
+    Debug.Log(Time.deltaTime);
+    float timer = 0;
+    timer += Time.deltaTime;
+```
+
+
+
+
+
+
+

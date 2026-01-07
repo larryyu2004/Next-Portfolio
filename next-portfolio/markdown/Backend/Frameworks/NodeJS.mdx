@@ -1,0 +1,46 @@
+# NodeJS
+
+## Create a Server
+- Enter `npm init -y`, it will create a JSON script file:
+```JSON
+{
+  "name": "cpat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+```
+- Install node ecosystem `npm install express`
+- Create server.js
+```JS
+// server.js
+const express = require('express');
+const app = express();
+const PORT = 8383;
+
+app.listen(PORT, () => {
+    console.log(`Server has started on: ${PORT}`);
+});
+```
+- Boot the server `node server.js`.
+
+### Developer Dependency
+- Enter `npm install --save-dev nodemon`. It will restart the server after you have made any modifications. 
+
+### Todo Example
+- `npm install express bcryptjs jsonwebtoken`, bcryptjs is to encrypting data specifically usernames and passwords.
+- `"dev": "node --watch --env-file=.env --experimental-strip-types --experimental-sqlite ./src/server.js"`
+
+
+## Chapter4
+- `npm install prisma @prisma/client pg`
+- `docker compose build`
+- `docker compose run app npx prisma migrate dev --name init`
+- `docker compose up`
+- `docker exec -it postgres-db psql -U postgres -d todoapp`

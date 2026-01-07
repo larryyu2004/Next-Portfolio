@@ -1,0 +1,402 @@
+# TypeScript
+
+## Types
+
+- **number**: Represents any number, such as 1, -33, or 2.5.
+- **string**: Represents any text, like 'hi', "hi", or `hi`.
+- **boolean**: A true or false value.
+- **literal**: A specific fixed value. For example, a variable can be limited to only hold "hello" or 42.
+- **any**: Represents any type. It disables type checking, so use with caution.
+- **unknown**: Also represents any type, but is type-safe and requires type checking before use.
+- **void**: Indicates no value is returned (commonly used in functions that return nothing). Often equivalent to undefined.
+- **never**: Indicates a value that never occurs. For example, a function that always throws an error or never finishes.
+- **object**: Represents any JavaScript object, such as `{ name: 'Sun Wukong' }`.
+- **array**: A list of values like [1, 2, 3].
+- **tuple**: A fixed-length array with specific types for each element, like [4, 5].
+- **enum**: A way to define named constants, e.g., `enum { A, B }`.
+
+### Object
+
+**Basic Syntax**
+
+```TS
+// The object must have a 'name' property of type string.
+// The 'age' property is optional (denoted by the `?`).
+let b: { name: string; age?: number };
+
+b = { name: 'Sun Wukong', age: 18 };
+```
+
+- Adding `a ?` after the property name (like age?) means the property is optional.
+
+**Allowing Arbitrary Properties**
+
+```TS
+// 'name' must be a string.
+// Any other property with a string key is allowed, and its value can be of any type.
+let c: { name: string; [propName: string]: any };
+
+c = { name: 'Zhu Bajie', age: 18, gender: 'male' };
+```
+
+- This is useful when you’re working with flexible data structures, such as API responses.
+
+## Type Assertion
+
+- First style (using as)
+
+```TS
+let someValue: unknown = "this is a string";
+let strLength: number = (someValue as string).length;
+```
+
+- Second style (using angle brackets)
+
+```TS
+let someValue: unknown = "this is a string";
+let strLength: number = (<string>someValue).length;
+```
+
+- ⚠️ Note: When working in .tsx files (React), only the as syntax is allowed to avoid conflicts with JSX.
+
+## Compilation Options
+
+### Automatically Compile a File
+
+- **Watch mode**: Automatically recompile a file when it changes. `tsc xxx.ts -w`.
+- **Compile the whole project**: Run `tsc` to compile all .ts files, but first create a tsconfig.json in the project root.
+
+```JSON
+// tsconfig.json
+{
+   // This compiles all files in src and tests folders.
+  "include": ["src/**/*", "tests/**/*"],
+
+  // None of the files in the hello directory under src will be compiled
+  "exclude": ["./src/hello/**/*"],
+
+  // The current configuration file will automatically include all configuration information in base.json under the config directory
+  "extends": "./configs/base",
+
+  // Specifies the list of files to be compiled. This is only used when there are few files to be compiled.
+  "files": [
+              "core.ts",
+              "sys.ts",
+              "types.ts",
+              "scanner.ts",
+              "parser.ts",
+              "utilities.ts",
+              "binder.ts",
+              "checker.ts",
+              "tsc.ts"
+            ],
+
+    // The compilerOptions contains multiple sub-options to complete the compilation configuration
+    "compilerOptions": {
+
+        // Set the target version of ts code compilation
+        // ES3（Default）、ES5、ES6/ES2015、ES7/ES2016、ES2017、ES2018、ES2019、ES2020、ESNext
+        "target": "ES6",
+
+        // Sets the module system used by compiled code
+        // CommonJS、UMD、AMD、System、ES2020、ESNext、None
+        "module": "CommonJS",
+
+        // Specifies the libraries included when the code is run (host environment)
+        "lib": ["ES6", "DOM"],
+
+        // After setting, the compiled js file will be generated in the dist directory
+        "outDir": "dist",
+
+        // Compile all files into one js file
+        "outFile": "dist/app.js",
+
+        // Whether to check and compile js files
+        "allowJs": true,
+        "checkJs": true,
+
+        // Delete comments
+        "removeComments": true,
+
+        // Do not generate compiled files
+        "noEmit": true,
+
+        // Do not generate compiled files when errors occur
+        "noEmitOnError": true,
+
+        // Enable all strict checks. The default value is true. Setting this setting is equivalent to enabling all strict checks.
+        "strict": true,
+
+        // Always complie with the strict mode
+        "alwaysStrict": true,
+
+        // Disallow implicit any type
+        "noImplicitAny": true,
+
+        // Disallowing ambiguous this types
+        "noImplicitThis": true,
+
+        // Strict null checking
+        "strictNullChecks": true,
+    }
+}
+```
+
+## Object-Oriented
+
+### Basic
+
+```TS
+class ClassName {
+    // Instance attribute -> Access by the instance
+    // Read & Write
+    attribute1: number = 1;
+
+    // Static attribute -> Access by the class (ClassName.attribute2)
+    static attribute2: number = 2;
+
+    // Read-only
+    readonly attribute3: number = 3
+
+    // Read-only and static attribute
+    static readonly attribute4: number = 4;
+
+    attribute5: string;
+    attribute6: number;
+    constructor(para1: string, para2: number) {
+        this.attribute5 = para1;
+        this.attribute6 = para2;
+    }
+
+    // Method
+    method1 () {
+        console.log("m1")
+    }
+
+    // Static Method
+    static method2 () {
+        console.log("m2")
+    }
+}
+
+const cn = new ClassName("para1", 2)
+console.log(cn.attribute1)
+console.log(ClassName.attribute2)
+```
+
+### Inheritance
+
+```TS
+class Animal {
+    name: string;
+    age: number;
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+    sayHello() { }
+
+    getAge () {
+        console.log(this.age)
+    }
+}
+class Dog extends Animal {
+    color: string;
+    constructor(name: string, age: number, color: string) {
+        super(name, age)
+        this.color = color
+    }
+    sayHello() {
+        console.log("dog");
+    }
+
+    getAge () {
+        super.getAge()
+    }
+}
+```
+
+- Use `extends` to inherit parent class
+- `sayHello()` in the child class will override the `sayHello()` in the parent class.
+- Use `super()` to invoke the constructor in the parent class and use `super` to invoke the method from parent class.
+
+### Abstract Class
+
+```TS
+abstract class Animal {
+  name: string;
+  age: number;
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+  abstract sayHello(): void;
+}
+
+class Dog extends Animal {
+  sayHello() {
+    console.log("dog");
+  }
+}
+```
+
+- Abstract class and Abstract method
+
+### Type & Interface
+
+- **type** is used to describe the type for an object.
+
+```TS
+type myType = {
+    name: string,
+    age: number
+};
+```
+
+- **interface** is used to define the structure of a class, used to define the attributes and methods in a class.
+- At the same time, **interfaces** can also be used as type declarations.
+
+```TS
+interface myInterface {
+  name: string;
+  sayHello(): void;
+}
+
+class Myclass implements myInterface {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+  sayHello(): void {
+    throw new Error("Method not implemented.");
+  }
+}
+```
+
+### Encapsulation
+
+#### Public
+
+```TS
+class Person {
+  public name: string;
+  public age: number;
+
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  sayHello() {
+    console.log(`I am ${this.name}`);
+  }
+}
+
+class Employee extends Person {
+  constructor(name: string, age: number) {
+    super(name, age);
+    this.name = name;
+  }
+}
+
+const p = new Person("P1", 18);
+p.name = "P1";
+```
+
+#### Protected
+
+```TS
+class Person {
+  protected name: string;
+  protected age: number;
+
+  constructor(name: string, age: number) {
+    this.name = name; // Allow to modify
+    this.age = age;
+  }
+
+  sayHello() {
+    console.log(`I am ${this.name}`);
+  }
+}
+
+class Employee extends Person {
+  constructor(name: string, age: number) {
+    super(name, age);
+    this.name = name; // Allow to modify in the child class
+  }
+}
+
+const p = new Person("P1", 18);
+// p.name = 'P2'; // Not allow to modify
+```
+
+#### Private
+```TS
+class Person {
+  private _name: string;
+  private _age: number;
+
+  constructor(name: string, age: number) {
+    this._name = name; // Allow to modify
+    this._age = age;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  set name(newName: string) {
+    this._name = newName;
+  }
+}
+
+class Employee extends Person {
+  constructor(name: string, age: number) {
+    super(name, age);
+    // this.name = name; // Not Allow to modify in the child class
+  }
+}
+
+const p = new Person("P1", 18);
+// p.name = 'P2';// Not Allow to modify
+```
+
+## Generic
+
+### Basic Usage
+```TS
+function fn<T>(a: T): T {
+  return a;
+}
+
+// Calling a generic function:
+
+let result = fn(10);           // TypeScript infers T as number
+let result2 = fn<string>('hi'); // Explicitly specify T as string
+```
+
+### Multiple Generics
+```TS
+function fn2<T, K>(a: T, b: K): T {
+  console.log(b);
+  return a;
+}
+
+fn2<number, string>(123, 'hello');
+```
+
+### Object
+```TS
+class MyClass<T> {
+  name: T;
+
+  constructor(name: T) {
+    this.name = name;
+  }
+}
+
+// Creating an instance of the generic class
+const mc = new MyClass<string>('7M#2');
+```
