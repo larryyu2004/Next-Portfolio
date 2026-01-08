@@ -29,10 +29,10 @@ export default async function Page({ params }: PageProps) {
           <NavWeb />
         </div>
 
-        <div className="mt-[25px] xl:mt-[60px] px-2 sm:px-4 py-8 w-full h-full box-border">
+        <div className="pt-[25px] xl:pt-[80px] px-2 sm:px-4 py-8 w-full h-full box-border">
           <div className="flex flex-col xl:flex-row gap-6 max-w-[1920px] mx-auto h-full">
             {/* Main Content */}
-            <div className="w-full xl:w-4/5 xl:h-[calc(100vh-120px)] xl:overflow-y-scroll bg-white dark:bg-slate-900/80 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700/60 backdrop-blur-sm scroll-smooth custom-scrollbar">
+            <div className="w-full xl:w-4/5 xl:h-[calc(100vh-140px)] xl:overflow-y-scroll bg-white dark:bg-slate-900/80 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700/60 backdrop-blur-sm scroll-smooth custom-scrollbar scroll-pt-24">
               <div className="p-6 ">
                 <article className="prose prose-lg dark:prose-invert max-w-none">
                   <Post />

@@ -10,7 +10,7 @@ export default function TableOfContent() {
 
   useEffect(() => {
     const headingElements = Array.from(
-      document.querySelectorAll("h2, h3")
+      document.querySelectorAll(".prose h2, .prose h3")
     ) as HTMLHeadElement[];
 
     const newHeadings: Heading[] = headingElements.map((heading, index) => {
